@@ -11,4 +11,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class MessageVo {
 	private String id;
+	private String asd;
 }
