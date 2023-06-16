@@ -1,10 +1,13 @@
 package com.example.demo.schedule;
 
+import java.lang.reflect.Member;
 import java.sql.Timestamp;
 import java.util.Date;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+
+import com.example.demo.schedulegroup.ScheduleGroup;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,14 +33,17 @@ public class Schedule {
 	@SequenceGenerator(name="seq_gen", sequenceName = "seq_schedule", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_schedule")
 	private int schedule_num;
+	
 	@ManyToOne
 	@JoinColumn(name="group_num", nullable= false)
 	@OnDelete(action=OnDeleteAction.CASCADE)
-	private int group_num;
+	private ScheduleGroup group_num;
+	
 	@ManyToOne
 	@JoinColumn(name="email", nullable= false)
 	@OnDelete(action=OnDeleteAction.CASCADE)
-	private String schedule_email;
+	private Member schedule_email;
+	
 	private String schedule_title;
 	private Date schedule_startdate;
 	private Date schedule_enddate;

@@ -2,6 +2,7 @@ package com.example.demo.subscribeboard;
 
 import java.util.Date;
 
+import com.example.demo.member.Member;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,7 +17,7 @@ import lombok.ToString;
 @AllArgsConstructor
 public class SubscribeBoardDto {
 	private int subscribe_num;
-	private String email;
+	private Member email;
 	private String title;
 	private String site;
 	private int total_point;
