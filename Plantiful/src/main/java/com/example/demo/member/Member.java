@@ -21,6 +21,7 @@ public class Member {
 	private String pwd;
 	private String nickname;
 	private String phone;
+	//조인 해야하나? 
 	private int cash;
 	private String img;
 	

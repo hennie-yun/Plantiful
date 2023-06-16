@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +29,9 @@ public class MemberController {
 	private JwtTokenProvider tokenprovider;
 	// 회원가입/세션아이디발급/검색/내정보수정/삭제
 
+	@Value("${spring.servlet.multipart.location}")
+	private String path; // C:/plantiful/
+	
 	// 가입
 	@PostMapping("")
 	public Map join(MemberDto dto) {
@@ -155,4 +159,5 @@ public class MemberController {
 		map.put("flag", flag);
 		return map;
 	}
+
 }
