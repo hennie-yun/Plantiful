@@ -5,6 +5,9 @@ import java.util.Date;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import com.example.demo.schedule.Schedule;
+import com.example.demo.subscribeboard.SubscribeBoard;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -34,7 +37,7 @@ public class SubscribeParty {
 	@ManyToOne
 	@JoinColumn(name="subscribe_num", nullable=false)
 	@OnDelete(action=OnDeleteAction.CASCADE) //만약 board에서 본인이삭제하면 걍 아예 안뜨는걸로 
-	private int subscribe_num;
+	private SubscribeBoard subscribe_num;
 	private String email;
 	private int point_basket;
 	private Date remain_month;
@@ -42,6 +45,6 @@ public class SubscribeParty {
 	@OneToOne
 	@JoinColumn(name="schedule_num", nullable=true)
 	@OnDelete(action=OnDeleteAction.CASCADE)
-	private int schedule_num;
+	private Schedule schedule_num;
 	
 }

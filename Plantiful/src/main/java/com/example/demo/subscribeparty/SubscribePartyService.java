@@ -26,16 +26,16 @@ public class SubscribePartyService {
 		return list2;
 	}
 	
-	//email로 검색
-	public ArrayList<SubscribePartyDto> getByEmail(String email){
-		SubscribeParty s = new SubscribeParty(0,0,email,0,null,0,0);
-		ArrayList<SubscribeParty> list = (ArrayList<SubscribeParty>) dao.findbyEmail(s);
-		ArrayList<SubscribePartyDto> list2 = new ArrayList<SubscribePartyDto>();
-		for (SubscribeParty sp : list) {
-			list2.add(new SubscribePartyDto(sp.getParty(),sp.getSubscribe_num(),sp.getEmail(), sp.getPoint_basket(),sp.getRemain_month(),sp.getStart_check(),sp.getSchedule_num()));
-		}
-		return list2;
-	}
+//	//email로 검색
+//	public ArrayList<SubscribePartyDto> getByEmail(String email){
+//		SubscribeParty s = new SubscribeParty(0,0,Mem,0,null,0,0);
+//		ArrayList<SubscribeParty> list = (ArrayList<SubscribeParty>) dao.findbyEmail(s);
+//		ArrayList<SubscribePartyDto> list2 = new ArrayList<SubscribePartyDto>();
+//		for (SubscribeParty sp : list) {
+//			list2.add(new SubscribePartyDto(sp.getParty(),sp.getSubscribe_num(),sp.getEmail(), sp.getPoint_basket(),sp.getRemain_month(),sp.getStart_check(),sp.getSchedule_num()));
+//		}
+//		return list2;
+//	}
 	
 	//pk로 검색
 	public SubscribePartyDto getParty(int party) {

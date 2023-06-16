@@ -5,6 +5,8 @@ import java.util.Date;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
+import com.example.demo.member.Member;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -37,7 +39,7 @@ public class SubscribeBoard {
 	@ManyToOne
 	@JoinColumn(name="email", nullable=true) //null이면 탈퇴한 회원입니다라고 보여주기
 //	@OnDelete(action = OnDeleteAction.CASCADE) //이거 지우면 걍 null값으로 나타나나??
-	private String email; //작성자 
+	private Member email; //작성자 
 	private String title; //제목
 	private String site; //사이트 종류
 	private int total_point; //전체 금액

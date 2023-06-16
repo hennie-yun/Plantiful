@@ -2,12 +2,9 @@ package com.example.demo.subscribeparty;
 
 import java.util.Date;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import com.example.demo.schedule.Schedule;
+import com.example.demo.subscribeboard.SubscribeBoard;
 
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,10 +18,10 @@ import lombok.ToString;
 @AllArgsConstructor
 public class SubscribePartyDto {
 	private int party;
-	private int subscribe_num;
+	private SubscribeBoard subscribe_num;
 	private String email;
 	private int point_basket;
 	private Date remain_month;
 	private int start_check;
-	private int schedule_num;
+	private Schedule schedule_num;
 }
