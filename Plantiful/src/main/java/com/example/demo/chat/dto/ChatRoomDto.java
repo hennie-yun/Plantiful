@@ -1,8 +1,5 @@
 package com.example.demo.chat.dto;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import lombok.AllArgsConstructor;

@@ -6,7 +6,9 @@ import java.util.Collections;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.chat.ChatRoomMap;
+import com.example.demo.chat.dao.ChatRoomDao;
 import com.example.demo.chat.dto.ChatRoomDto;
+import com.example.demo.chat.dto.ChatRoom;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ChatServiceMain {
 	private final MsgChatService msgChatService;
+	private final ChatRoomDao dao;
 	
 	/** 
 	 * 전체 채팅방 조회 

@@ -1,5 +1,9 @@
 package com.example.demo.chat.dto;
 
+import java.sql.Timestamp;
+
+import com.example.demo.member.Member;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,8 +25,10 @@ public class ChatDto {
 	}
 	
 	private MessageType type;	// 메세지 타입
-	private String roomId;		// 방 번호
-	private String sender;		// 채팅을 보낸 사람
-	private String message;		// 메세지
-	private String time;		// 채팅 발송 시간
+	private long num;
+	private String roomId;
+	private Member member;
+	private String message;
+	private Timestamp time;
+	private boolean isRequest;
 }

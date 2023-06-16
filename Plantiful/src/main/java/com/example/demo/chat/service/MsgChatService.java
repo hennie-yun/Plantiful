@@ -8,15 +8,22 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.chat.ChatRoomMap;
+import com.example.demo.chat.dao.ChatDao;
+import com.example.demo.chat.dto.ChatDto;
+import com.example.demo.chat.dto.ChatDto.MessageType;
 import com.example.demo.chat.dto.ChatRoomDto;
+import com.example.demo.chat.dto.Chat;
+import com.example.demo.member.Member;
+import com.example.demo.member.MemberDao;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RequiredArgsConstructor
 @Service
 public class MsgChatService {
+	private final ChatDao dao;
+	private final MemberDao memDao;
+	
 	public ChatRoomDto createChatRoom(String roomName, String roomPwd, int maxCount) {
 		// roomName과 roomPwd로 빌드 후 return
 		ChatRoomDto room = ChatRoomDto.builder()
@@ -26,7 +33,9 @@ public class MsgChatService {
 		return room;
 	}
 	
-	/** 채팅방 유저 리스트에 유저 추가 */
+	/** 
+	 * 채팅방 유저 리스트에 유저 추가 
+	 * */
 	public String addUser(Map<String, ChatRoomDto> chatRoomMap, String roomId, String userName) {
 		ChatRoomDto room = chatRoomMap.get(roomId);
 		String userUUID = UUID.randomUUID().toString();
@@ -39,7 +48,9 @@ public class MsgChatService {
 		return userUUID;
 	}
 	
-	/** 채팅방 유저 이름 중복 확인 */
+	/** 
+	 * 채팅방 유저 이름 중복 확인 
+	 * */
 	public boolean isDuplicateName(Map<String, ChatRoomDto> chatRoomMap, String roomId, String userName) {
 		boolean flag = true;
 		ChatRoomDto room = chatRoomMap.get(roomId);
@@ -75,5 +86,12 @@ public class MsgChatService {
 	public void delUser(Map<String, ChatRoomDto> chatRoomMap, String roomId, String userUUID) {
 		ChatRoomDto room = chatRoomMap.get(roomId);
 		room.getUserList().remove(userUUID);
+	}
+	
+	public Chat chatting(Chat chat) {
+		Member member = memDao.findById(chat.getMember().getEmail())
+				.orElseThrow(() ->new IllegalArgumentException("가입되지 않은 사용자"));
+		chat.setMember(member);
+		return dao.save(chat);
 	}
 }
