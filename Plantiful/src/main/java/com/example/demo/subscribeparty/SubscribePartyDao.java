@@ -10,9 +10,9 @@ import com.example.demo.subscribeboard.SubscribeBoard;
 
 @Repository
 public interface SubscribePartyDao extends JpaRepository<SubscribeParty, Integer> {
-//
-//    ArrayList<SubscribeParty> findBySubNum(SubscribeBoard subscribeNum);
-//	
-//    ArrayList<SubscribeParty> findByEmail(Member email);
+
+    ArrayList<SubscribeParty> findBySubscribeNum(SubscribeBoard subscribe_num);
+	
+    ArrayList<SubscribeParty> findByEmail(Member email);
 }
 

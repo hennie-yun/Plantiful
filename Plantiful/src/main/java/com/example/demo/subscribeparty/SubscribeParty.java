@@ -9,6 +9,7 @@ import com.example.demo.member.Member;
 import com.example.demo.schedule.Schedule;
 import com.example.demo.subscribeboard.SubscribeBoard;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -36,9 +37,9 @@ public class SubscribeParty {
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="seq_subparty")//값 자동생성설정
 	private int party;
 	@ManyToOne
-	@JoinColumn(name="subscribe_num", nullable=false)
+	@JoinColumn(name="subscribeNum", nullable=false)
 	@OnDelete(action=OnDeleteAction.CASCADE) //만약 board에서 본인이삭제하면 걍 아예 안뜨는걸로 
-	private SubscribeBoard subscribe_num;
+	private SubscribeBoard subscribeNum;
 	@ManyToOne
 	@JoinColumn(name="email", nullable=true)
 	private Member email;

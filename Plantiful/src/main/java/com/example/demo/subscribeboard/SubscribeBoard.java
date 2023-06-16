@@ -7,6 +7,7 @@ import org.hibernate.annotations.DynamicInsert;
 
 import com.example.demo.member.Member;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -35,7 +36,8 @@ public class SubscribeBoard {
 	@Id
 	@SequenceGenerator(name="seq_subnum", sequenceName="seq_subnum", allocationSize=1, initialValue=1)
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="seq_subnum")
-	private int subscribe_num; //게시글 번호
+	@Column(name = "subscribe_num")
+	private int subscribeNum; //게시글 번호
 	@ManyToOne
 	@JoinColumn(name="email", nullable=true) //null이면 탈퇴한 회원입니다라고 보여주기
 //	@OnDelete(action = OnDeleteAction.CASCADE) //이거 지우면 걍 null값으로 나타나나??

@@ -24,11 +24,14 @@ public class SubscribeBoardController {
 	//추가
 	@PostMapping("")
 	public Map add(SubscribeBoardDto dto) {
+//		dto.makeDate();
+//		System.out.println(dto.getPayment_date());
 		Map map = new HashMap();
 		SubscribeBoardDto dto2 = null;
 		boolean flag = true;
 		try {
-			int num = service.save(dto);
+			int subscribe_num = service.save(dto);
+			service.getBoard(subscribe_num);
 		} catch(Exception e) {
 			flag = false;
 		}

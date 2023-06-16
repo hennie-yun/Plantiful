@@ -18,7 +18,14 @@ public class SubscribeBoardService {
 				dto.getTotal_point(), dto.getTotal_people(), dto.getRegister_date(), dto.getRecruit_endperiod(),
 				dto.getPayment_date(), dto.getSubscribe_startdate(), dto.getSubscribe_enddate(), 0));
 
-		return sb.getSubscribe_num(); //바로 상세페이지로 이동
+		return sb.getSubscribeNum(); //바로 상세페이지로 이동
+	}
+	
+	//add_check party 하나만 수정
+	//구독번호로 검색
+	//나머지 값은 그대로, 하나만 바꿈 
+	public void editCheck(int subscribeNum) {
+//		SubscribeBoard sb = 
 	}
 
 	// 글 삭제
@@ -31,7 +38,7 @@ public class SubscribeBoardService {
 		ArrayList<SubscribeBoard> list = (ArrayList<SubscribeBoard>) dao.findAll();
 		ArrayList<SubscribeBoardDto> list2 = new ArrayList<SubscribeBoardDto>();
 		for (SubscribeBoard sb : list) {
-			list2.add(new SubscribeBoardDto(sb.getSubscribe_num(), sb.getEmail(), sb.getTitle(),sb.getSite(),sb.getTotal_point(),sb.getTotal_people(),sb.getRegister_date(),sb.getRecruit_endperiod(),sb.getPayment_date(),sb.getSubscribe_startdate(),sb.getSubscribe_enddate(),sb.getAdd_check()));
+			list2.add(new SubscribeBoardDto(sb.getSubscribeNum(), sb.getEmail(), sb.getTitle(),sb.getSite(),sb.getTotal_point(),sb.getTotal_people(),sb.getRegister_date(),sb.getRecruit_endperiod(),sb.getPayment_date(),sb.getSubscribe_startdate(),sb.getSubscribe_enddate(),sb.getAdd_check()));
 		}
 		return list2;
 	}
@@ -43,6 +50,6 @@ public class SubscribeBoardService {
 		if(sb == null) {
 			return null;
 		}
-		return new SubscribeBoardDto(sb.getSubscribe_num(), sb.getEmail(), sb.getTitle(),sb.getSite(),sb.getTotal_point(),sb.getTotal_people(),sb.getRegister_date(),sb.getRecruit_endperiod(),sb.getPayment_date(),sb.getSubscribe_startdate(),sb.getSubscribe_enddate(),sb.getAdd_check());
+		return new SubscribeBoardDto(sb.getSubscribeNum(), sb.getEmail(), sb.getTitle(),sb.getSite(),sb.getTotal_point(),sb.getTotal_people(),sb.getRegister_date(),sb.getRecruit_endperiod(),sb.getPayment_date(),sb.getSubscribe_startdate(),sb.getSubscribe_enddate(),sb.getAdd_check());
 	}
 }
