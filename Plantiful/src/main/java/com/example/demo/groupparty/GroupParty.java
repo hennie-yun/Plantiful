@@ -3,7 +3,7 @@ package com.example.demo.groupparty;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import com.example.demo.schedule.Schedule;
+import com.example.demo.member.Member;
 import com.example.demo.schedulegroup.ScheduleGroup;
 
 import jakarta.persistence.Entity;
@@ -27,13 +27,13 @@ public class GroupParty {
 	private int groupparty_num;
 
 	@ManyToOne
-	@JoinColumn(name = "group_num", nullable = false)
+	@JoinColumn(name = "schedulegroup_num", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE) // 만약 board에서 본인이삭제하면 걍 아예 안뜨는걸로
-	private ScheduleGroup group_num;
+	private ScheduleGroup schedulegroup_num;
 
 	@ManyToOne
-	@JoinColumn(name = "schedule_email", nullable = false)
+	@JoinColumn(name = "member_email", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE) // 만약 board에서 본인이삭제하면 걍 아예 안뜨는걸로
-	private Schedule schedule_email;
+	private Member member_email;
 
 }

@@ -21,7 +21,7 @@ public class ScheduleGroup {
 	@Id
 	@SequenceGenerator(name = "seq_gen", sequenceName = "seq_schedulegroup", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_schedulegroup")
-	private int group_num;
-	private String group_title;
-	private int group_color;
+	private int schedulegroup_num;
+	private String schedulegroup_title;
+	private int schedulegroup_color;
 }

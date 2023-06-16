@@ -12,7 +12,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ScheduleGroupDto {
-	private int group_num;
-	private String group_title;
-	private int group_color;
+	private int schedulegroup_num;
+	private String schedulegroup_title;
+	private int schedulegroup_color;
 }

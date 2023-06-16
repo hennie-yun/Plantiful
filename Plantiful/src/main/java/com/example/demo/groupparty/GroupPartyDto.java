@@ -1,5 +1,6 @@
 package com.example.demo.groupparty;
 
+import com.example.demo.member.Member;
 import com.example.demo.schedule.Schedule;
 import com.example.demo.schedulegroup.ScheduleGroup;
 
@@ -16,6 +17,6 @@ import lombok.ToString;
 @NoArgsConstructor
 public class GroupPartyDto {
 	private int groupparty_num;
-	private ScheduleGroup group_num;
-	private Schedule schedule_email;
+	private ScheduleGroup schedulegroup_num;
+	private Member member_email;
 }
