@@ -1,10 +1,13 @@
 package com.example.demo.member;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,8 +17,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.auth.JwtTokenProvider;
+
+import io.jsonwebtoken.io.IOException;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -35,9 +41,29 @@ public class MemberController {
 	// 가입
 	@PostMapping("")
 	public Map join(MemberDto dto) {
-		MemberDto d = service.save(dto);
+		//MemberDto d = service.save(dto);
 		Map map = new HashMap();
-		map.put("dto", d);
+		try {
+	        // 이미지 파일이 제공되었는지 확인
+	        MultipartFile imageFile = dto.getF();
+	        if (imageFile != null && !imageFile.isEmpty()) {
+	            String originalFilename = imageFile.getOriginalFilename();
+	            // 이미지 파일을 원하는 위치에 저장
+	            String filePath = path + originalFilename;
+	            File file = new File(filePath);
+	            imageFile.transferTo(file);
+	            dto.setImg(originalFilename);
+	        }
+
+	        MemberDto Dto = service.save(dto);
+	        map.put("success", true);
+	        map.put("message", "회원 가입이 성공");
+	        map.put("dto", Dto);
+	    } catch (Exception e) {
+	        map.put("success", false);
+	        map.put("message", "회원 가입에 실패");
+	        e.printStackTrace();
+	    }
 		return map;
 	}
 
@@ -55,7 +81,6 @@ public class MemberController {
 		map.put("flag", flag);
 		return map;
 	}
-
 
 	
 	@PostMapping("/token")
@@ -138,6 +163,37 @@ public class MemberController {
 		return map;
 	}
 
+	@GetMapping("/read_img")
+	public Map read_img(String fname) {
+	    Map resultMap = new HashMap<>();
+
+	    try {
+	        File f = new File(path + fname); // 이미지 파일 경로
+	        if (f.exists()) {
+	            HttpHeaders headers = new HttpHeaders();
+	            headers.add("Content-Type", Files.probeContentType(f.toPath()));
+
+	            byte[] imageBytes = Files.readAllBytes(f.toPath());
+	            resultMap.put("success", true);
+	            resultMap.put("message", "이미지 파일을 성공적으로 읽어왔습니다.");
+	            resultMap.put("data", imageBytes);
+	            resultMap.put("headers", headers);
+	        } else {
+	            resultMap.put("success", false);
+	            resultMap.put("message", "이미지 파일을 찾을 수 없습니다.");
+	        }
+	    } catch (IOException e) {
+	        resultMap.put("success", false);
+	        resultMap.put("message", "이미지 파일을 읽어오는 중에 오류가 발생했습니다.");
+	        e.printStackTrace();
+	    } catch (java.io.IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	    return resultMap;
+	}
+	
 	@DeleteMapping("/{email}")
 	public Map del(@PathVariable("email") String email, @RequestHeader(name = "token", required = false) String token) {
 		boolean flag = true;

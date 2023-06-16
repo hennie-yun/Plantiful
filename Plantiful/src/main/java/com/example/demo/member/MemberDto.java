@@ -20,6 +20,7 @@ public class MemberDto {
 	private int cash;
 	private String img;
 	private MultipartFile f;
+	
 
 
 }

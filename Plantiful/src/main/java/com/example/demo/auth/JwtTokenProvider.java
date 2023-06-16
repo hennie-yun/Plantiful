@@ -24,6 +24,7 @@ public class JwtTokenProvider {
     // 토큰 생성기
     public String generateJwtToken(MemberDto member) {
         Date now = new Date();
+        System.out.println(member);
         JwtBuilder builder = Jwts.builder()
                 .setSubject(member.getEmail()) // 보통 username
                 .setHeader(createHeader())
@@ -46,7 +47,7 @@ public class JwtTokenProvider {
     // 토큰에 추가 정보 셋팅
     private Map<String, Object> createClaims(MemberDto member) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("username", member.getNickname()); // 로그인 id
+        claims.put("username", member.getEmail()); // 로그인 id
         return claims;
     }
 
@@ -56,7 +57,7 @@ public class JwtTokenProvider {
 
     // 토큰에 저장한 로그인 id값 꺼내서 반환
     public String getUsernameFromToken(String token) {
-        return getClaims(token).getSubject();
+        return (String) getClaims(token).get("username");
     }
 
     // 토큰에 저장한 user type값 꺼내서 반환
