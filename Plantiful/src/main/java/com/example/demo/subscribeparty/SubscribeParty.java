@@ -5,6 +5,7 @@ import java.util.Date;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import com.example.demo.member.Member;
 import com.example.demo.schedule.Schedule;
 import com.example.demo.subscribeboard.SubscribeBoard;
 
@@ -38,7 +39,9 @@ public class SubscribeParty {
 	@JoinColumn(name="subscribe_num", nullable=false)
 	@OnDelete(action=OnDeleteAction.CASCADE) //만약 board에서 본인이삭제하면 걍 아예 안뜨는걸로 
 	private SubscribeBoard subscribe_num;
-	private String email;
+	@ManyToOne
+	@JoinColumn(name="email", nullable=true)
+	private Member email;
 	private int point_basket;
 	private Date remain_month;
 	private int start_check;
