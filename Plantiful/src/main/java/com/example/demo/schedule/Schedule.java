@@ -1,12 +1,12 @@
 package com.example.demo.schedule;
 
-import java.lang.reflect.Member;
 import java.sql.Timestamp;
 import java.util.Date;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import com.example.demo.member.Member;
 import com.example.demo.schedulegroup.ScheduleGroup;
 
 import jakarta.persistence.Entity;
