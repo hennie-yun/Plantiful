@@ -247,7 +247,7 @@ public class MemberController {
 	            int numIndex=random.nextInt(10); 
 	            key+=numIndex;
 	         }
-	         String mail = "\n인증번호 입력창에 입력 후 가입을 완료해주세요.";
+	         String mail = "\n Plantiful 회원가입 이메일 인증.";
 	         message.setSubject("회원가입을 위한 이메일 인증번호 전송 메일입니다."); // 이메일 제목
 	         message.setText("인증번호는 " + key + " 입니다." + mail); // 이메일 내용
 	         try {
