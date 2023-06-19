@@ -1,9 +1,20 @@
 package com.example.demo.chat.dao;
 
+import java.util.ArrayList;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
+import com.example.demo.chat.dto.Chat;
 import com.example.demo.chat.dto.ChatRoom;
+import com.example.demo.member.Member;
 
-public interface ChatRoomDao extends JpaRepository<ChatRoom, String> {
-
+@Repository
+public interface ChatRoomDao extends JpaRepository<ChatRoom, Long>{
+	
+//	@Query(value = "select distinct(num) * from chat_room where num (select room_num from chat where email = :#{member.email})", 
+//			nativeQuery = true)
+//	ArrayList<ChatRoom> findDistinctById(@Param("member") Member member);
 }
