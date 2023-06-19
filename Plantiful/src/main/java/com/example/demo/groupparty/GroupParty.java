@@ -29,7 +29,7 @@ public class GroupParty {
 	@ManyToOne
 	@JoinColumn(name = "schedulegroup_num", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE) // 만약 board에서 본인이삭제하면 걍 아예 안뜨는걸로
-	private ScheduleGroup schedulegroup_num;
+	private ScheduleGroup scheduleGroupNum;
 
 	@ManyToOne
 	@JoinColumn(name = "member_email", nullable = false)
