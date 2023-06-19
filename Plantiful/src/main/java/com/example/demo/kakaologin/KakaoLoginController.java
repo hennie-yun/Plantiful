@@ -32,15 +32,16 @@ public class KakaoLoginController {
 			HttpServletRequest request) throws Exception {
 		String reqUrl = 
 				"https://kauth.kakao.com/oauth/authorize"
-				+ "?client_id=f8071907fae4877f2a0f469e969f639f"
-				+ "&redirect_uri=http://localhost:8181/login/oauth_kakao"
+				+ "?client_id=d54083f94196531e75d7de474142e52e"
+				+ "&redirect_uri=http://localhost:8181/login"
 				+ "&response_type=code";
 		
+
 		return reqUrl;
 	}
 	
 	// 카카오 연동정보 조회
-	@RequestMapping(value = "/login/oauth_kakao")
+	@RequestMapping(value = "/login")
 	public String oauthKakao(
 			@RequestParam(value = "code", required = false) String code
 			, Model model) throws Exception {
@@ -80,8 +81,8 @@ public class KakaoLoginController {
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
             StringBuilder sb = new StringBuilder();
             sb.append("grant_type=authorization_code");
-            sb.append("&client_id=f8071907fae4877f2a0f469e969f639f");  //본인이 발급받은 key
-            sb.append("&redirect_uri=http://localhost:8181/login/oauth_kakao");     // 본인이 설정해 놓은 경로
+            sb.append("&client_id=d54083f94196531e75d7de474142e52e");  //본인이 발급받은 key
+            sb.append("&redirect_uri=http://localhost:8181/login");     // 본인이 설정해 놓은 경로
             sb.append("&code=" + authorize_code);
             bw.write(sb.toString());
             bw.flush();
