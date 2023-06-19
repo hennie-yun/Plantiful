@@ -5,10 +5,12 @@ import java.util.Date;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
+import com.example.demo.listener.subscribeboardlistener;
 import com.example.demo.member.Member;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,6 +27,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
+@EntityListeners(subscribeboardlistener.class)
 @DynamicInsert //Default 값을 적용하기 위해 사용하는 어노테이션. insert 시 지정된 default 값을 적용
 @Setter
 @Getter
@@ -47,7 +50,7 @@ public class SubscribeBoard {
 	private int total_point; //전체 금액
 	private int total_people; //모집 인원
 	
-	@Temporal(TemporalType.TIMESTAMP) //sysdate 넣기 prePersist 연계 
+//	@Temporal(TemporalType.TIMESTAMP) //sysdate 넣기 prePersist 연계 
 	private Date register_date; //등록일
 	private Date recruit_endperiod; //모집 마지막 날짜
 	private Date payment_date; //지불일
