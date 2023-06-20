@@ -3,6 +3,7 @@ package com.example.demo.subscribeboard;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -35,7 +36,7 @@ public class SubscribeBoardService {
 
 	// 글 전체 목록 불러오기
 	public ArrayList<SubscribeBoardDto> getAll(){
-		ArrayList<SubscribeBoard> list = (ArrayList<SubscribeBoard>) dao.findAll();
+		ArrayList<SubscribeBoard> list = (ArrayList<SubscribeBoard>) dao.findAll(Sort.by(Sort.Direction.ASC, "SubscribeNum"));
 		ArrayList<SubscribeBoardDto> list2 = new ArrayList<SubscribeBoardDto>();
 		for (SubscribeBoard sb : list) {
 			list2.add(new SubscribeBoardDto(sb.getSubscribeNum(), sb.getEmail(), sb.getTitle(),sb.getSite(),sb.getTotal_point(),sb.getTotal_people(),sb.getRegister_date(),sb.getRecruit_endperiod(),sb.getPayment_date(),sb.getSubscribe_startdate(),sb.getSubscribe_enddate(),sb.getAdd_check()));
@@ -51,5 +52,15 @@ public class SubscribeBoardService {
 			return null;
 		}
 		return new SubscribeBoardDto(sb.getSubscribeNum(), sb.getEmail(), sb.getTitle(),sb.getSite(),sb.getTotal_point(),sb.getTotal_people(),sb.getRegister_date(),sb.getRecruit_endperiod(),sb.getPayment_date(),sb.getSubscribe_startdate(),sb.getSubscribe_enddate(),sb.getAdd_check());
+	}
+	
+	//사이트 별로 검색
+	public ArrayList<SubscribeBoardDto> getBySite(String site){
+		ArrayList<SubscribeBoard> list = (ArrayList<SubscribeBoard>) dao.findBySiteOrderBySubscribeNumAsc(site);
+		ArrayList<SubscribeBoardDto> list2 = new ArrayList<SubscribeBoardDto>();
+		for (SubscribeBoard sb : list) {
+			list2.add(new SubscribeBoardDto(sb.getSubscribeNum(), sb.getEmail(), sb.getTitle(),sb.getSite(),sb.getTotal_point(),sb.getTotal_people(),sb.getRegister_date(),sb.getRecruit_endperiod(),sb.getPayment_date(),sb.getSubscribe_startdate(),sb.getSubscribe_enddate(),sb.getAdd_check()));
+		}
+		return list2;
 	}
 }

@@ -73,5 +73,13 @@ public class SubscribeBoardController {
 		return map;
 	}
 	
+	//사이트별로 검색
+	@GetMapping("/site/{site}") //주소 조심하기 !! 
+	public Map getBySite (@PathVariable("site") String site) {
+		ArrayList<SubscribeBoardDto> list = service.getAll();
+		Map map = new HashMap();
+		map.put("list", list);
+		return map;
+	}
 	
 }
