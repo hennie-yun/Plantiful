@@ -23,8 +23,10 @@ public class ChatRoomService {
 	private ChatDao chatDao;
 	
 	public ArrayList<ChatRoomDto> findRoomById(Member member) {
-		ArrayList<ChatRoom> roomList = null;
-//				dao.findDistinctById(member);
+		ArrayList<ChatRoom> roomList = (ArrayList<ChatRoom>) dao.findByMember(member);
+		if(roomList.isEmpty()) { 
+			return null;
+		}
 		ArrayList<ChatRoomDto> dtoList = new ArrayList<>();
 		for(ChatRoom room : roomList) {
 			ChatRoomDto dto = new ChatRoomDto(room.getNum(), room.getLastMsg(), room.getUserCount());
@@ -39,5 +41,16 @@ public class ChatRoomService {
 				new Member(email, "", "", "", 0, ""), email+" 입장", null, true ));
 		ChatDto dto = new ChatDto(chat.getNum(), chat.getRoom(), chat.getMember(), chat.getMessage(), chat.getSendTime(), chat.isRequest());
 		return dto;
+	}
+
+	public ArrayList<ChatDto> findChatByRoomNum(long roomNum) {
+		ArrayList<Chat> list = chatDao.findAllByRoomNumOrderBySendTime(roomNum);
+		ArrayList<ChatDto> dtoList = new ArrayList<>();
+		for(Chat chat : list) {
+			ChatDto dto = new ChatDto(chat.getNum(), chat.getRoom(), chat.getMember(), chat.getMessage(), chat.getSendTime(), chat.isRequest());
+			dtoList.add(dto);
+		}
+		
+		return dtoList;
 	}
 }
