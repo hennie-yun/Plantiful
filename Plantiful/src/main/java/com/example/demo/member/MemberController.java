@@ -9,6 +9,9 @@ import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -46,34 +49,59 @@ public class MemberController {
 	private String path; // C:/plantiful/
 	
 	// 가입
+//	@PostMapping("")
+//	public Map join(MemberDto dto) {
+//		//MemberDto d = service.save(dto);
+//		Map map = new HashMap();
+//		try {
+//	        // 이미지 파일이 제공되었는지 확인
+//	        MultipartFile imageFile = dto.getF();
+//	        if (imageFile != null && !imageFile.isEmpty()) {
+//	            String originalFilename = imageFile.getOriginalFilename();
+//	            // 이미지 파일을 원하는 위치에 저장
+//	            String filePath = path + originalFilename;
+//	            File file = new File(filePath);
+//	            imageFile.transferTo(file);
+//	            dto.setImg(originalFilename);
+//	        }
+//
+//	        MemberDto Dto = service.save(dto);
+//	        map.put("success", true);
+//	        map.put("message", "회원 가입이 성공");
+//	        map.put("dto", Dto);
+//	    } catch (Exception e) {
+//	        map.put("success", false);
+//	        map.put("message", "회원 가입에 실패");
+//	        e.printStackTrace();
+//	    }
+//		return map;
+//	}
+
+	
 	@PostMapping("")
-	public Map join(MemberDto dto) {
-		//MemberDto d = service.save(dto);
-		Map map = new HashMap();
-		try {
-	        // 이미지 파일이 제공되었는지 확인
-	        MultipartFile imageFile = dto.getF();
-	        if (imageFile != null && !imageFile.isEmpty()) {
-	            String originalFilename = imageFile.getOriginalFilename();
-	            // 이미지 파일을 원하는 위치에 저장
-	            String filePath = path + originalFilename;
-	            File file = new File(filePath);
-	            imageFile.transferTo(file);
-	            dto.setImg(originalFilename);
+	public void join(MemberDto dto) {
+	    boolean flag = true;
+	    try {
+	        String email = service.save(dto);
+	        if (dto.getF() != null && !dto.getF().isEmpty()) {
+	            MultipartFile f = dto.getF();
+	            String fname = f.getOriginalFilename();
+	            File newfile = new File(path + email);
+	            try {
+	                f.transferTo(newfile); // 파일 업로드
+	                dto.setImg(fname);
+	            } catch (IOException e) {
+	                e.printStackTrace();
+	            }
+	            service.save(dto);
+	            System.out.println(dto);
 	        }
-
-	        MemberDto Dto = service.save(dto);
-	        map.put("success", true);
-	        map.put("message", "회원 가입이 성공");
-	        map.put("dto", Dto);
 	    } catch (Exception e) {
-	        map.put("success", false);
-	        map.put("message", "회원 가입에 실패");
-	        e.printStackTrace();
+	        flag = false;
 	    }
-		return map;
 	}
-
+	
+	
 	//로그인
 	@PostMapping("/login") 
 	public Map login(String email, String pwd) {
@@ -82,14 +110,17 @@ public class MemberController {
 		MemberDto dto = service.getMember(email);
 		if (dto != null && pwd.equals(dto.getPwd())) {
 			String token = tokenprovider.generateJwtToken(dto);
+			String loginId = dto.getEmail();
 			flag = true;
 			map.put("token", token);
+			map.put("loginId", loginId);
 		}
 		map.put("flag", flag);
 		return map;
 	}
 
 	
+	//토큰값 
 	@PostMapping("/token")
 	public Map getByToken(String token) {
 		boolean flag = true;
@@ -122,6 +153,7 @@ public class MemberController {
 	}
 
 
+	//정보 한개 빼오기 
 	@GetMapping("/{email}")
 	public Map get(@PathVariable("email") String email, @RequestHeader(name = "token", required = false) String token) {
 		Map map = new HashMap();
@@ -137,70 +169,102 @@ public class MemberController {
 				map.put("dto", null);
 				return map;
 			}
-		}
+		}	
 		MemberDto d = service.getMember(email);
 		map.put("dto", d);
 		return map;
 	}
 
-	@PutMapping("")
-	public Map edit(MemberDto dto, @RequestHeader(name = "token", required = false) String token) {
-		boolean flag = true;
-		Map map = new HashMap();
-		if (token != null) {// 로그인 후
-			try {
-				String id = tokenprovider.getUsernameFromToken(token);
-				if (!id.equals(dto.getEmail())) {
-					flag = false;
-				}
-			} catch (Exception e) {
-				// flag = false;
-				flag = false;
-			}
-		}
-		if (flag) {
-			MemberDto old = service.getMember(dto.getEmail());
-			old.setPwd(dto.getPwd());
-			old.setNickname(dto.getNickname());
-			old.setPhone(dto.getPhone());
-			MemberDto d = service.save(old);
-			map.put("dto", d);
-		}
-		map.put("flag", flag);
-		return map;
-	}
+	
+//	@PutMapping("")
+//	public Map edit(MemberDto dto, @RequestHeader(name = "token", required = false) String token) {
+//		boolean flag = true;
+//		Map map = new HashMap();
+//		if (token != null) {// 로그인 후
+//			try {
+//				String id = tokenprovider.getUsernameFromToken(token);
+//				if (!id.equals(dto.getEmail())) {
+//					flag = false;
+//				}
+//			} catch (Exception e) {
+//				// flag = false;
+//				flag = false;
+//			}
+//		}
+//		if (flag) {
+//			MemberDto old = service.getMember(dto.getEmail());
+//			old.setPwd(dto.getPwd());
+//			old.setNickname(dto.getNickname());
+//			old.setPhone(dto.getPhone());
+//			MemberDto d = service.save(old);
+//			map.put("dto", d);
+//		}
+//		map.put("flag", flag);
+//		return map;
+//	}
 
-	@GetMapping("/read_img")
-	public Map read_img(String fname) {
-	    Map resultMap = new HashMap<>();
-
+	//이미지만 수정 
+	
+	//이미지 읽어드리기
+//	@GetMapping("/read_img/{img}/{email}") // 경로 변수로 수정
+//	public ResponseEntity<byte[]> read_img(@PathVariable("img") String img, @PathVariable("email") String email) {
+//	    Map resultMap = new HashMap<>();
+//	    String fname = "";
+//	    MemberDto dto = service.getMember(email);
+//	    fname = dto.getImg();
+//	    try {
+//	        File f = new File(path + fname); // 이미지 파일 경로
+//	        System.out.println(f);
+//	        if (f.exists()) {
+//	            HttpHeaders headers = new HttpHeaders();
+//	            headers.add("Content-Type", Files.probeContentType(f.toPath()));
+//
+//	            byte[] imageBytes = Files.readAllBytes(f.toPath());
+//	            resultMap.put("success", true);
+//	            resultMap.put("message", "이미지 파일을 성공적으로 읽어왔습니다.");
+//	            resultMap.put("data", imageBytes);
+//	            resultMap.put("headers", headers);
+//	        } else {
+//	            resultMap.put("success", false);
+//	            resultMap.put("message", "이미지 파일을 찾을 수 없습니다.");
+//	        }
+//	    } catch (IOException e) {
+//	        resultMap.put("success", false);
+//	        resultMap.put("message", "이미지 파일을 읽어오는 중에 오류가 발생했습니다.");
+//	        e.printStackTrace();
+//	    } catch (java.io.IOException e) {
+//	        e.printStackTrace();
+//	    }
+//
+//	    return (ResponseEntity<byte[]>) resultMap;
+//	}
+	
+	@GetMapping("/read_img/{img}/{email}")
+	public ResponseEntity<byte[]> read_img(@PathVariable("img") String img, @PathVariable("email") String email) {
+	    String fname = "";
+	    MemberDto dto = service.getMember(email);
+	    fname = dto.getImg();
 	    try {
 	        File f = new File(path + fname); // 이미지 파일 경로
 	        if (f.exists()) {
-	            HttpHeaders headers = new HttpHeaders();
-	            headers.add("Content-Type", Files.probeContentType(f.toPath()));
-
 	            byte[] imageBytes = Files.readAllBytes(f.toPath());
-	            resultMap.put("success", true);
-	            resultMap.put("message", "이미지 파일을 성공적으로 읽어왔습니다.");
-	            resultMap.put("data", imageBytes);
-	            resultMap.put("headers", headers);
+	            HttpHeaders headers = new HttpHeaders();
+	            headers.setContentType(MediaType.IMAGE_JPEG); // 이미지의 콘텐츠 타입을 설정
+
+	            return ResponseEntity.ok().headers(headers).body(imageBytes);
 	        } else {
-	            resultMap.put("success", false);
-	            resultMap.put("message", "이미지 파일을 찾을 수 없습니다.");
+	            return ResponseEntity.notFound().build();
 	        }
 	    } catch (IOException e) {
-	        resultMap.put("success", false);
-	        resultMap.put("message", "이미지 파일을 읽어오는 중에 오류가 발생했습니다.");
 	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 	    } catch (java.io.IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	    return resultMap;
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    }
 	}
 	
+	//계정 탈퇴
 	@DeleteMapping("/{email}")
 	public Map del(@PathVariable("email") String email, @RequestHeader(name = "token", required = false) String token) {
 		boolean flag = true;
@@ -256,6 +320,7 @@ public class MemberController {
 	            e.printStackTrace();
 	         }
 	         map.put("key", key);
+	         
 	      }
 	        return map;
 	   }
