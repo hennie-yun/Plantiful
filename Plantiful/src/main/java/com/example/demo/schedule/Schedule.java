@@ -1,7 +1,7 @@
 package com.example.demo.schedule;
 
-import java.sql.Timestamp;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -28,29 +28,38 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+
 public class Schedule {
 	@Id
-	@SequenceGenerator(name="seq_gen", sequenceName = "seq_schedule", allocationSize = 1)
+	@SequenceGenerator(name = "seq_gen", sequenceName = "seq_schedule", allocationSize = 1)
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_schedule")
-	private int schedule_num;
-	
+	private int schedule_num; // 스케줄 번호
+
 	@ManyToOne
-	@JoinColumn(name="group_num", nullable= false)
-	@OnDelete(action=OnDeleteAction.CASCADE)
-	private ScheduleGroup group_num;
-	
+	@JoinColumn(name = "group_num", nullable = true)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	private ScheduleGroup group_num; // 그룹번호
+
 	@ManyToOne
-	@JoinColumn(name="email", nullable= false)
-	@OnDelete(action=OnDeleteAction.CASCADE)
-	private Member schedule_email;
+	@JoinColumn(name = "email", nullable = true)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	private Member email; // 작성자
+
+	private String title; // 스케줄 제목
+	private LocalDate startDate; // 스케줄 시작일
+	private LocalDate endDate; // 스케줄 마지막일
+	private String  startTime; // 스케줄 시작시간
+	private String  endTime; // 스케줄 마지막시간
+	private String info; // 스케줄 내용
+	private LocalTime  alert; // 알림
+	private int isLoop; // 반복 유무
+	private int day; // 반복일
 	
-	private String schedule_title;
-	private Date schedule_startdate;
-	private Date schedule_enddate;
-	private Timestamp schedule_starttime;
-	private Timestamp scehdule_endtime;
-	private String schedule_info;
-	private Timestamp schedule_alert;
-	private int isLoop;
-	private int day;
+	
+//	 public void setTime(LocalTime time) {
+//	        this.startTime = time;
+//	        this.endTime = time;
+//	    }
+
+	// LocalDate (2023-05-14) / LocalTime(07:00:00) 이런 형식으로 들어감
 }
