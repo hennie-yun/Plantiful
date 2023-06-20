@@ -15,12 +15,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 @SequenceGenerator(allocationSize = 1, initialValue = 1, name = "seq_chat", sequenceName = "seq_chat")
 public class Chat {
 	

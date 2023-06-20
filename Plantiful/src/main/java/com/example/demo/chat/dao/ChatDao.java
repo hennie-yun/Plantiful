@@ -7,9 +7,9 @@ import org.springframework.stereotype.Repository;
 
 import com.example.demo.chat.dto.Chat;
 import com.example.demo.chat.dto.ChatRoom;
-import com.example.demo.member.Member;
 
 @Repository
 public interface ChatDao extends JpaRepository<Chat, Long>{
-//	ArrayList<Chat> findByRoomNum(ChatRoom room);
+	ArrayList<Chat> findByRoom(ChatRoom room);
+	ArrayList<Chat> findAllByRoomNumOrderBySendTime(long roomNum);
 }

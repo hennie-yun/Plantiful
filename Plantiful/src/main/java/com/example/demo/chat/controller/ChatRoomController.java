@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -17,6 +18,7 @@ import com.example.demo.chat.service.ChatRoomService;
 import com.example.demo.member.Member;
 
 @Controller
+@CrossOrigin(origins = "*")
 public class ChatRoomController {
 	
 	@Autowired
@@ -37,10 +39,12 @@ public class ChatRoomController {
 	@RequestMapping("chat/joinroom")
 	@ResponseBody
 	public Map joinRoom(long roomNum, @RequestHeader(name = "token", required = false) String token) {
-		String email = tokenProvider.getUsernameFromToken(token);
-		ChatDto dto = service.joinRoom(roomNum, email);
+//		String email = tokenProvider.getUsernameFromToken(token);
+//		ChatDto dto = service.joinRoom(roomNum, email);
+		ArrayList<ChatDto> list = service.findChatByRoomNum(roomNum);
 		Map map = new HashMap();
-		map.put("dto", dto);
+//		map.put("dto", dto);
+		map.put("list", list);
 		return map;
 	}
 }

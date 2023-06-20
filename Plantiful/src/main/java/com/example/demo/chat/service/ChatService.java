@@ -22,6 +22,7 @@ public class ChatService {
 	private MemberDao memDao;
 	
 	public ChatDto chatting(ChatDto dto) {
+		dto.setRoom(new ChatRoom(1, dto.getMessage(), 0));
 		Chat chat = new Chat(0, dto.getRoom(), dto.getMember(), dto.getMessage(), dto.getSendTime(), dto.isRequest());
 		String email = dto.getMember().getEmail();
 		Member member = memDao.findById(email).orElse(null); 
@@ -29,25 +30,11 @@ public class ChatService {
 		Chat savedChat = dao.save(chat);
 		if(savedChat != null) {
 			ChatDto newDto = new ChatDto(savedChat.getNum(), savedChat.getRoom(), savedChat.getMember(), 
-					savedChat.getMessage(), savedChat.getSendTime(), savedChat.isRequest());
+					savedChat.getMessage(), savedChat.getSendTime(), true);
 			return newDto;
 		} else {
 			return null;
 		}
-	}
-	
-	public ArrayList<ChatDto> findMsgByRoom(long roomNum) {
-		ChatRoom room = new ChatRoom(roomNum, null, 0);
-		ArrayList<Chat> chatList = null; 
-				//dao.findByRoomNum(room);
-		ArrayList<ChatDto> list = new ArrayList<>();
-		for(Chat chat : chatList) {
-			ChatDto dto = new ChatDto(chat.getNum(), chat.getRoom(), chat.getMember(), 
-					chat.getMessage(), chat.getSendTime(), chat.isRequest());
-			list.add(dto);
-		}
-		
-		return list;
 	}
 
 }
