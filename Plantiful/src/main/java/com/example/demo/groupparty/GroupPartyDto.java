@@ -16,9 +16,6 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GroupPartyDto {
-	public GroupPartyDto(int groupparty_num2, int schedulegroup_num2, String email) {
-		// TODO Auto-generated constructor stub
-	}
 	private int groupparty_num;
 	private ScheduleGroup schedulegroup_num;
 	private Member member_email;

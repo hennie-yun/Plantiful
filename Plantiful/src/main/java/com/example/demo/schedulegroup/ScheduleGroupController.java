@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.auth.JwtTokenProvider;
 import com.example.demo.groupparty.GroupPartyDto;
 import com.example.demo.groupparty.GroupPartyService;
+import com.example.demo.member.Member;
+import com.example.demo.member.MemberService;
 
 @RestController // rest api controller
 @CrossOrigin(origins = "*") // 모든 ip로부터 요청 받기 허용
@@ -24,11 +26,16 @@ import com.example.demo.groupparty.GroupPartyService;
 public class ScheduleGroupController {
 	@Autowired
 	private ScheduleGroupService service;
+	
 	@Autowired
 	private GroupPartyService groupservice;
-	@Autowired
-	private JwtTokenProvider tokenprovider;
 
+	@Autowired
+	private MemberService memberservice;
+	
+	@Autowired
+	private JwtTokenProvider tokenProvider;
+	
 	// 그룹목록
 	@GetMapping("")
 	public Map getAll() {
@@ -38,28 +45,24 @@ public class ScheduleGroupController {
 		return map;
 	}
 
+
 	// 그룹추가
 	@PostMapping("")
-	public Map add(ScheduleGroupDto dto) {
-		//String email = tokenprovider.getUsernameFromToken(token);
-		ScheduleGroupDto sg = service.save(new ScheduleGroupDto(0, dto.getSchedulegroup_title(), dto.getSchedulegroup_color()));
+	public Map add(ScheduleGroupDto dto, @RequestHeader("token") String token) {
+		ScheduleGroupDto sg= service.save(new ScheduleGroupDto(0, dto.getSchedulegroup_title(), dto.getSchedulegroup_color()));
+		
+		String email = tokenProvider.getUsernameFromToken(token);
+		Member member = new Member(email, null, null, null, 0, null);
+		ScheduleGroup group = new ScheduleGroup(sg.getSchedulegroup_num(), null, 0);
+		GroupPartyDto party = new GroupPartyDto(0, group, member);
+		
 		Map map = new HashMap();
 		map.put("dto", sg);
-		GroupPartyDto gp = new GroupPartyDto(0, sg.getSchedulegroup_num(), null);
-		groupservice.save(gp);
+		
+		groupservice.save(party);
+		
 		return map;
 	}
-//	// 그룹추가
-//	@PostMapping("")
-//	public Map add(ScheduleGroupDto dto, @RequestHeader("token") String token) {
-//		String email = tokenprovider.getUsernameFromToken(token);
-//		ScheduleGroupDto sg = service.save(new ScheduleGroupDto(0, dto.getSchedulegroup_title(), dto.getSchedulegroup_color()));
-//		Map map = new HashMap();
-//		map.put("dto", sg);
-//		GroupPartyDto gp = new GroupPartyDto(0, sg.getSchedulegroup_num(), email);
-//		groupservice.save(gp);
-//		return map;
-//	}
 
 	// 그룹 상세
 	@GetMapping("/{schedulegroup_num}")
