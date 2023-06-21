@@ -13,7 +13,6 @@ import com.example.demo.member.Member;
 @Repository
 public interface ChatRoomDao extends JpaRepository<ChatRoom, Long>{
 	
-	@Query(value = "select * from chat_room where num in (select room_num from chat where email = :member", 
-			nativeQuery = true)
-	public List<ChatRoom> findByMember(@Param("member") Member member);
+	@Query(value = "select * from chat_room where num in (select room_num from chat where email = :email)", nativeQuery = true)
+	public List<ChatRoom> findByMember(@Param("email") String email);
 }

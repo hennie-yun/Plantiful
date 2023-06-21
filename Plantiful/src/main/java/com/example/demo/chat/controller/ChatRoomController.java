@@ -29,9 +29,9 @@ public class ChatRoomController {
 	
 	@RequestMapping("/chat/roomlist")
 	@ResponseBody
-	public Map findRoomById(Member member) {
+	public Map findRoomById(String email) {
 		Map map = new HashMap();
-		ArrayList<ChatRoomDto> list = service.findRoomById(member);
+		ArrayList<ChatRoomDto> list = service.findRoomById(email);
 		map.put("list", list);
 		return map;
 	}
