@@ -10,8 +10,13 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.example.demo.auth.JwtTokenProvider;
+import com.example.demo.groupparty.GroupPartyDto;
+import com.example.demo.groupparty.GroupPartyService;
 
 @RestController // rest api controller
 @CrossOrigin(origins = "*") // 모든 ip로부터 요청 받기 허용
@@ -19,6 +24,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class ScheduleGroupController {
 	@Autowired
 	private ScheduleGroupService service;
+	@Autowired
+	private GroupPartyService groupservice;
+	@Autowired
+	private JwtTokenProvider tokenprovider;
 
 	// 그룹목록
 	@GetMapping("")
@@ -32,11 +41,25 @@ public class ScheduleGroupController {
 	// 그룹추가
 	@PostMapping("")
 	public Map add(ScheduleGroupDto dto) {
-		ScheduleGroupDto sg = service.save(dto);
+		//String email = tokenprovider.getUsernameFromToken(token);
+		ScheduleGroupDto sg = service.save(new ScheduleGroupDto(0, dto.getSchedulegroup_title(), dto.getSchedulegroup_color()));
 		Map map = new HashMap();
 		map.put("dto", sg);
+		GroupPartyDto gp = new GroupPartyDto(0, sg.getSchedulegroup_num(), null);
+		groupservice.save(gp);
 		return map;
 	}
+//	// 그룹추가
+//	@PostMapping("")
+//	public Map add(ScheduleGroupDto dto, @RequestHeader("token") String token) {
+//		String email = tokenprovider.getUsernameFromToken(token);
+//		ScheduleGroupDto sg = service.save(new ScheduleGroupDto(0, dto.getSchedulegroup_title(), dto.getSchedulegroup_color()));
+//		Map map = new HashMap();
+//		map.put("dto", sg);
+//		GroupPartyDto gp = new GroupPartyDto(0, sg.getSchedulegroup_num(), email);
+//		groupservice.save(gp);
+//		return map;
+//	}
 
 	// 그룹 상세
 	@GetMapping("/{schedulegroup_num}")

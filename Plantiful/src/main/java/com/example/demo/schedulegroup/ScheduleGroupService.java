@@ -5,11 +5,16 @@ import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.groupparty.GroupPartyDao;
+
 @Service
 public class ScheduleGroupService {
 	@Autowired
 	private ScheduleGroupDao dao;
+	
 
+	
+	
 	// 그룹 생성
 	public ScheduleGroupDto save(ScheduleGroupDto dto) {
 		ScheduleGroup entity = dao.save(new ScheduleGroup(dto.getSchedulegroup_num(), dto.getSchedulegroup_title(),

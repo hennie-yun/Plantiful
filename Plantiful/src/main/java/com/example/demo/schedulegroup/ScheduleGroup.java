@@ -19,8 +19,8 @@ import lombok.ToString;
 @NoArgsConstructor
 public class ScheduleGroup {
 	@Id
-	@SequenceGenerator(name = "seq_gen", sequenceName = "seq_schedulegroup", allocationSize = 1)
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_schedulegroup")
+	@SequenceGenerator(name = "seq_gen", sequenceName = "seq_schedulegroup_num", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_schedulegroup_num")
 	private int schedulegroup_num;
 	private String schedulegroup_title;
 	private int schedulegroup_color;
