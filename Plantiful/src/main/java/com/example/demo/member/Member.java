@@ -1,5 +1,6 @@
 package com.example.demo.member;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
@@ -23,6 +24,7 @@ public class Member {
 	private String phone;
 	//조인 해야하나? 
 	private int cash;
+	@Column(nullable = true)
 	private String img;
 	
 

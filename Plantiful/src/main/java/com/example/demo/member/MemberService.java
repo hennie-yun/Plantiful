@@ -9,17 +9,18 @@ public class MemberService {
 	@Autowired
 	private MemberDao dao;
 
-	// 회원가입, 내정보수정
-//	public MemberDto save(MemberDto dto) {
-//			Member entity = dao.save(new Member(dto.getEmail(),dto.getPwd(),dto.getNickname(),dto.getPhone(),dto.getCash(),dto.getImg()));
-//			return new MemberDto(entity.getEmail(),entity.getPwd(),entity.getNickname(),entity.getPhone(),entity.getCash(),entity.getImg(),null);
-//		}
-//	
+	// 내정보수정
+	public MemberDto edit(MemberDto dto) {
+			Member entity = dao.save(new Member(dto.getEmail(),dto.getPwd(),dto.getNickname(),dto.getPhone(),dto.getCash(),dto.getImg()));
+			return new MemberDto(entity.getEmail(),entity.getPwd(),entity.getNickname(),entity.getPhone(),entity.getCash(),entity.getImg(),null);
+		}
+	
 	public String save(MemberDto dto) {
 		Member entity = dao.save(new Member(dto.getEmail(), dto.getPwd(), dto.getNickname(), dto.getPhone(),
 				dto.getCash(), dto.getImg()));
 		return entity.getEmail();
 	}
+	
 
 	// 로그인, 내정보확인
 	public MemberDto getMember(String email) {

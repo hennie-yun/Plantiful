@@ -10,18 +10,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,7 +39,7 @@ public class MemberController {
 
 	@Autowired
 	private MemberService service;
-	
+
 	@Autowired
 	private JavaMailSender javaMailSender;
 
@@ -47,63 +49,158 @@ public class MemberController {
 
 	@Value("${spring.servlet.multipart.location}")
 	private String path; // C:/plantiful/
-	
-	// 가입
-//	@PostMapping("")
-//	public Map join(MemberDto dto) {
-//		//MemberDto d = service.save(dto);
-//		Map map = new HashMap();
-//		try {
-//	        // 이미지 파일이 제공되었는지 확인
-//	        MultipartFile imageFile = dto.getF();
-//	        if (imageFile != null && !imageFile.isEmpty()) {
-//	            String originalFilename = imageFile.getOriginalFilename();
-//	            // 이미지 파일을 원하는 위치에 저장
-//	            String filePath = path + originalFilename;
-//	            File file = new File(filePath);
-//	            imageFile.transferTo(file);
-//	            dto.setImg(originalFilename);
-//	        }
-//
-//	        MemberDto Dto = service.save(dto);
-//	        map.put("success", true);
-//	        map.put("message", "회원 가입이 성공");
-//	        map.put("dto", Dto);
-//	    } catch (Exception e) {
-//	        map.put("success", false);
-//	        map.put("message", "회원 가입에 실패");
-//	        e.printStackTrace();
-//	    }
-//		return map;
-//	}
 
-	
+	// 가입
 	@PostMapping("")
 	public void join(MemberDto dto) {
-	    boolean flag = true;
-	    try {
-	        String email = service.save(dto);
-	        if (dto.getF() != null && !dto.getF().isEmpty()) {
-	            MultipartFile f = dto.getF();
-	            String fname = f.getOriginalFilename();
-	            File newfile = new File(path + email);
-	            try {
-	                f.transferTo(newfile); // 파일 업로드
-	                dto.setImg(fname);
-	            } catch (IOException e) {
-	                e.printStackTrace();
-	            }
-	            service.save(dto);
-	            System.out.println(dto);
-	        }
-	    } catch (Exception e) {
-	        flag = false;
-	    }
+		boolean flag = true;
+		try {
+			String email = service.save(dto);
+			File dir = new File(path + email);
+			dir.mkdir(); // 파일 디렉토리까지 생성
+
+			MultipartFile f = dto.getF();
+			String fname = f.getOriginalFilename();
+
+			if (fname != null && !fname.equals("")) {
+				String newpath = path + email + "/" + fname;
+				File newfile = new File(newpath);
+				System.out.println(newpath);
+				try {
+					f.transferTo(newfile); // 파일 업로드
+					dto.setImg(newpath);
+				} catch (IllegalStateException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			service.save(dto);
+		} catch (Exception e) {
+			flag = false;
+		}
 	}
 	
+	//이미지 제외 수정 
+	@PostMapping("/editinfo/{email}")
+	public Map<String, Object> editinfo(@PathVariable("email") String email, @RequestBody MemberDto dto) {
+	    Map response = new HashMap<>();
+	    MemberDto oldDto = service.getMember(email);    
+	    if (oldDto != null) {
+	        if (dto.getImg() == null) {
+	            dto.setImg(oldDto.getImg());
+	        }
+	        service.edit(dto);
+	        response.put("message", "정보 수정 완료.");
+	    } 
+	    return response;
+	}
 	
-	//로그인
-	@PostMapping("/login") 
+	//이미지 수정 
+	@PostMapping("/{email}/updateImg")
+	public Map updateProfile(@PathVariable("email") String email, @RequestParam("file") MultipartFile file) {
+	    Map response = new HashMap<>();
+	    boolean flag = true;
+	    MemberDto dto = service.getMember(email);
+	    if (dto == null) {
+	        flag = false;
+	        response.put("flag", flag);
+	        return response;
+	    }
+	    String newFilePath = path + email + "/";
+	    File dir = new File(newFilePath);
+	    if (!dir.exists()) {
+	        dir.mkdirs(); // 폴더가 존재하지 않으면 생성합니다.
+	    }
+	    String fileName = file.getOriginalFilename();
+	    String newFileName = fileName; // 새로운 파일 이름을 이메일과 연결하여 중복 방지
+	    String newFileFullPath = newFilePath + newFileName;
+	    File newFile = new File(newFileFullPath);
+
+	    try {
+	        file.transferTo(newFile);
+	        String deletedFilePath = dto.getImg();
+	        dto.setImg(newFileFullPath);
+
+	        if (deletedFilePath != null) {
+	            File delFile = new File(deletedFilePath);
+	            delFile.delete();
+	        }
+	        service.edit(dto);
+	        response.put("message", "이미지 변경 완료.");
+	        return response;
+	    } catch (IllegalStateException | IOException e) {
+	        e.printStackTrace();
+	        response.put("error", "이미지 업로드 실패.");
+	        return response;
+	    } catch (java.io.IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    return response;
+	}
+
+	//이미지 폴더에서 삭제 
+	  @PostMapping("/delprofile")
+	    public void deleteProfile(@RequestParam("email") String email) {	
+	        MemberDto dto = service.getMember(email);
+	        String deletedFilePath = dto.getImg();
+	        dto.setImg(null);
+	        if (deletedFilePath != null) {
+	            File delFile = new File(deletedFilePath);
+	            delFile.delete();         
+	        }
+	        service.save(dto);
+	    }
+	
+	
+	@PutMapping("/newpwd/{email}/{pwd}")
+	public Map updatePassword(@PathVariable("email") String email, @PathVariable("pwd") String pwd) {
+	    boolean flag = true;
+	    Map response = new HashMap<>();
+	    MemberDto dto = service.getMember(email);
+	    if (dto == null) {
+	        flag = false;
+	    } else {
+	        MemberDto old = service.getMember(dto.getEmail());
+	        old.setPwd(pwd);
+	        old.setEmail(dto.getEmail());
+	        MemberDto updatedDto = service.edit(old);
+	        response.put("dto", updatedDto);
+	    }
+
+	    response.put("flag", flag);
+	    return response;
+	}
+	
+	// 이미지 빼기
+	@GetMapping("plantiful/{email}") // email/이미지파일명
+	public ResponseEntity<byte[]> read_img(@PathVariable("email") String email) {
+		String fname = "";
+		MemberDto dto = service.getMember(email);// 이메일로 검색
+		fname = dto.getImg();
+		System.out.println(fname);
+		File f = new File(fname);
+		HttpHeaders header = new HttpHeaders();
+		ResponseEntity<byte[]> result = null;
+		try {
+			header.add("Content-Type", Files.probeContentType(f.toPath()));
+			// 응답 객체 생성
+			result = new ResponseEntity<byte[]>(FileCopyUtils.copyToByteArray(f), header, HttpStatus.OK);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (java.io.IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	// 로그인
+	@PostMapping("/login")
 	public Map login(String email, String pwd) {
 		Map map = new HashMap();
 		boolean flag = false;
@@ -119,8 +216,7 @@ public class MemberController {
 		return map;
 	}
 
-	
-	//토큰값 
+	// 토큰값
 	@PostMapping("/token")
 	public Map getByToken(String token) {
 		boolean flag = true;
@@ -136,8 +232,7 @@ public class MemberController {
 		return map;
 	}
 
-
-	//토큰값으로 정보 불러오기
+	// 토큰값으로 정보 불러오기
 	@GetMapping("")
 	public Map getInfo(@RequestHeader("token") String token) {
 		boolean flag = true;
@@ -152,9 +247,8 @@ public class MemberController {
 		return map;
 	}
 
-
-	//정보 한개 빼오기 
-	@GetMapping("/{email}")
+	// 정보 한개 빼오기
+	@GetMapping("getmember/{email}")
 	public Map get(@PathVariable("email") String email, @RequestHeader(name = "token", required = false) String token) {
 		Map map = new HashMap();
 		if (token != null) {// 로그인 후
@@ -169,102 +263,13 @@ public class MemberController {
 				map.put("dto", null);
 				return map;
 			}
-		}	
+		}
 		MemberDto d = service.getMember(email);
 		map.put("dto", d);
 		return map;
 	}
 
-	
-//	@PutMapping("")
-//	public Map edit(MemberDto dto, @RequestHeader(name = "token", required = false) String token) {
-//		boolean flag = true;
-//		Map map = new HashMap();
-//		if (token != null) {// 로그인 후
-//			try {
-//				String id = tokenprovider.getUsernameFromToken(token);
-//				if (!id.equals(dto.getEmail())) {
-//					flag = false;
-//				}
-//			} catch (Exception e) {
-//				// flag = false;
-//				flag = false;
-//			}
-//		}
-//		if (flag) {
-//			MemberDto old = service.getMember(dto.getEmail());
-//			old.setPwd(dto.getPwd());
-//			old.setNickname(dto.getNickname());
-//			old.setPhone(dto.getPhone());
-//			MemberDto d = service.save(old);
-//			map.put("dto", d);
-//		}
-//		map.put("flag", flag);
-//		return map;
-//	}
-
-	//이미지만 수정 
-	
-	//이미지 읽어드리기
-//	@GetMapping("/read_img/{img}/{email}") // 경로 변수로 수정
-//	public ResponseEntity<byte[]> read_img(@PathVariable("img") String img, @PathVariable("email") String email) {
-//	    Map resultMap = new HashMap<>();
-//	    String fname = "";
-//	    MemberDto dto = service.getMember(email);
-//	    fname = dto.getImg();
-//	    try {
-//	        File f = new File(path + fname); // 이미지 파일 경로
-//	        System.out.println(f);
-//	        if (f.exists()) {
-//	            HttpHeaders headers = new HttpHeaders();
-//	            headers.add("Content-Type", Files.probeContentType(f.toPath()));
-//
-//	            byte[] imageBytes = Files.readAllBytes(f.toPath());
-//	            resultMap.put("success", true);
-//	            resultMap.put("message", "이미지 파일을 성공적으로 읽어왔습니다.");
-//	            resultMap.put("data", imageBytes);
-//	            resultMap.put("headers", headers);
-//	        } else {
-//	            resultMap.put("success", false);
-//	            resultMap.put("message", "이미지 파일을 찾을 수 없습니다.");
-//	        }
-//	    } catch (IOException e) {
-//	        resultMap.put("success", false);
-//	        resultMap.put("message", "이미지 파일을 읽어오는 중에 오류가 발생했습니다.");
-//	        e.printStackTrace();
-//	    } catch (java.io.IOException e) {
-//	        e.printStackTrace();
-//	    }
-//
-//	    return (ResponseEntity<byte[]>) resultMap;
-//	}
-	
-	@GetMapping("/read_img/{img}/{email}")
-	public ResponseEntity<byte[]> read_img(@PathVariable("img") String img, @PathVariable("email") String email) {
-	    String fname = "";
-	    MemberDto dto = service.getMember(email);
-	    fname = dto.getImg();
-	    try {
-	        File f = new File(path + fname); // 이미지 파일 경로
-	        if (f.exists()) {
-	            byte[] imageBytes = Files.readAllBytes(f.toPath());
-	            HttpHeaders headers = new HttpHeaders();
-	            headers.setContentType(MediaType.IMAGE_JPEG); // 이미지의 콘텐츠 타입을 설정
-
-	            return ResponseEntity.ok().headers(headers).body(imageBytes);
-	        } else {
-	            return ResponseEntity.notFound().build();
-	        }
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-	    } catch (java.io.IOException e) {
-	        e.printStackTrace();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-	    }
-	}
-	
-	//계정 탈퇴
+	// 계정 탈퇴
 	@DeleteMapping("/{email}")
 	public Map del(@PathVariable("email") String email, @RequestHeader(name = "token", required = false) String token) {
 		boolean flag = true;
@@ -286,43 +291,82 @@ public class MemberController {
 		map.put("flag", flag);
 		return map;
 	}
-	
-	//이메일 인증 
+
+	// 이메일 초기 인증
 	@ResponseBody
-	   @PostMapping("/email")
-	   public Map email(String email) {
-	      Map map = new HashMap<>();
-	      MemberDto dto = service.getMember(email);
-	      if(dto != null) {
-	         map.put("exist", "이미 존재하는 이메일입니다.");
-	      } else {
-	         Random random=new Random();  //난수 생성을 위한 랜덤 클래스
-	         String key="";  //인증번호 
-	         
-	         SimpleMailMessage message = new SimpleMailMessage(); // 이메일 제목, 내용 작업 메서드
-	         message.setTo(email); //스크립트에서 보낸 메일을 받을 사용자 이메일 주소 
-	         //입력 키를 위한 코드
-	         //난수 생성 
-	         for(int i=0; i<3;i++) {
-	            int index=random.nextInt(26)+65; 
-	            key+=(char)index;
-	         }
-	         for(int i=0; i<6; i++) {
-	            int numIndex=random.nextInt(10); 
-	            key+=numIndex;
-	         }
-	         String mail = "\n Plantiful 회원가입 이메일 인증.";
-	         message.setSubject("회원가입을 위한 이메일 인증번호 전송 메일입니다."); // 이메일 제목
-	         message.setText("인증번호는 " + key + " 입니다." + mail); // 이메일 내용
-	         try {
-	            javaMailSender.send(message); // 이메일 전송
-	         } catch (Exception e) {
-	            e.printStackTrace();
-	         }
-	         map.put("key", key);
-	         
-	      }
-	        return map;
-	   }
+	@PostMapping("/email")
+	public Map email(String email) {
+		Map map = new HashMap<>();
+		MemberDto dto = service.getMember(email);
+		if (dto != null) {
+			map.put("exist", "이미 존재하는 이메일입니다.");
+		} else {
+			Random random = new Random(); // 난수 생성을 위한 랜덤 클래스
+			String key = ""; // 인증번호
+
+			SimpleMailMessage message = new SimpleMailMessage(); // 이메일 제목, 내용 작업 메서드
+			message.setTo(email); // 스크립트에서 보낸 메일을 받을 사용자 이메일 주소
+			// 입력 키를 위한 코드
+			// 난수 생성
+			for (int i = 0; i < 3; i++) {
+				int index = random.nextInt(26) + 65;
+				key += (char) index;
+			}
+			for (int i = 0; i < 6; i++) {
+				int numIndex = random.nextInt(10);
+				key += numIndex;
+			}
+			String mail = "\n Plantiful 회원가입 이메일 인증.";
+			message.setSubject("회원가입을 위한 이메일 인증번호 전송 메일입니다."); // 이메일 제목
+			message.setText("인증번호는 " + key + " 입니다." + mail); // 이메일 내용
+			try {
+				javaMailSender.send(message); // 이메일 전송
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			map.put("key", key);
+			map.put("dto", dto);
+
+		}
+		return map;
+	}
+
+	// 비밀번호 재설정 메일
+	@ResponseBody
+	@PostMapping("/emailpwdcheck")
+	public Map pwdcheck(String email) {
+		Map map = new HashMap<>();
+		MemberDto dto = service.getMember(email);
+		if (dto == null) {
+			map.put("exist", "존재하지 않는 이메일 입니다.");
+		} else {
+			Random random = new Random(); // 난수 생성을 위한 랜덤 클래스
+			String key = ""; // 인증번호
+
+			SimpleMailMessage message = new SimpleMailMessage(); // 이메일 제목, 내용 작업 메서드
+			message.setTo(email); // 스크립트에서 보낸 메일을 받을 사용자 이메일 주소
+			// 입력 키를 위한 코드
+			// 난수 생성
+			for (int i = 0; i < 3; i++) {
+				int index = random.nextInt(26) + 65;
+				key += (char) index;
+			}
+			for (int i = 0; i < 6; i++) {
+				int numIndex = random.nextInt(10);
+				key += numIndex;
+			}
+			String mail = "\n Plantiful 회원가입 이메일 인증.";
+			message.setSubject("비밀번호 재설정 위한 이메일 인증번호 전송 메일입니다."); // 이메일 제목
+			message.setText("인증번호는 " + key + " 입니다." + mail); // 이메일 내용
+			try {
+				javaMailSender.send(message); // 이메일 전송
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			map.put("key", key);
+			map.put("dto", dto);
+		}
+		return map;
+	}
 
 }
