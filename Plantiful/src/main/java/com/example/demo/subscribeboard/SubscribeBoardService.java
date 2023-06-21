@@ -17,7 +17,7 @@ public class SubscribeBoardService {
 		SubscribeBoard sb = dao.save(
 				new SubscribeBoard(dto.getSubscribe_num(), dto.getEmail(), dto.getTitle(), dto.getSite(),
 				dto.getTotal_point(), dto.getTotal_people(), dto.getRegister_date(), dto.getRecruit_endperiod(),
-				dto.getPayment_date(), dto.getSubscribe_startdate(), dto.getSubscribe_enddate(), 0));
+				dto.getPayment_date(), dto.getSubscribe_startdate(), dto.getSubscribe_enddate()));
 
 		return sb.getSubscribeNum(); //바로 상세페이지로 이동
 	}
@@ -39,7 +39,7 @@ public class SubscribeBoardService {
 		ArrayList<SubscribeBoard> list = (ArrayList<SubscribeBoard>) dao.findAll(Sort.by(Sort.Direction.ASC, "SubscribeNum"));
 		ArrayList<SubscribeBoardDto> list2 = new ArrayList<SubscribeBoardDto>();
 		for (SubscribeBoard sb : list) {
-			list2.add(new SubscribeBoardDto(sb.getSubscribeNum(), sb.getEmail(), sb.getTitle(),sb.getSite(),sb.getTotal_point(),sb.getTotal_people(),sb.getRegister_date(),sb.getRecruit_endperiod(),sb.getPayment_date(),sb.getSubscribe_startdate(),sb.getSubscribe_enddate(),sb.getAdd_check()));
+			list2.add(new SubscribeBoardDto(sb.getSubscribeNum(), sb.getEmail(), sb.getTitle(),sb.getSite(),sb.getTotal_point(),sb.getTotal_people(),sb.getRegister_date(),sb.getRecruit_endperiod(),sb.getPayment_date(),sb.getSubscribe_startdate(),sb.getSubscribe_enddate()));
 		}
 		return list2;
 	}
@@ -51,7 +51,7 @@ public class SubscribeBoardService {
 		if(sb == null) {
 			return null;
 		}
-		return new SubscribeBoardDto(sb.getSubscribeNum(), sb.getEmail(), sb.getTitle(),sb.getSite(),sb.getTotal_point(),sb.getTotal_people(),sb.getRegister_date(),sb.getRecruit_endperiod(),sb.getPayment_date(),sb.getSubscribe_startdate(),sb.getSubscribe_enddate(),sb.getAdd_check());
+		return new SubscribeBoardDto(sb.getSubscribeNum(), sb.getEmail(), sb.getTitle(),sb.getSite(),sb.getTotal_point(),sb.getTotal_people(),sb.getRegister_date(),sb.getRecruit_endperiod(),sb.getPayment_date(),sb.getSubscribe_startdate(),sb.getSubscribe_enddate());
 	}
 	
 	//사이트 별로 검색
@@ -59,7 +59,7 @@ public class SubscribeBoardService {
 		ArrayList<SubscribeBoard> list = (ArrayList<SubscribeBoard>) dao.findBySiteOrderBySubscribeNumAsc(site);
 		ArrayList<SubscribeBoardDto> list2 = new ArrayList<SubscribeBoardDto>();
 		for (SubscribeBoard sb : list) {
-			list2.add(new SubscribeBoardDto(sb.getSubscribeNum(), sb.getEmail(), sb.getTitle(),sb.getSite(),sb.getTotal_point(),sb.getTotal_people(),sb.getRegister_date(),sb.getRecruit_endperiod(),sb.getPayment_date(),sb.getSubscribe_startdate(),sb.getSubscribe_enddate(),sb.getAdd_check()));
+			list2.add(new SubscribeBoardDto(sb.getSubscribeNum(), sb.getEmail(), sb.getTitle(),sb.getSite(),sb.getTotal_point(),sb.getTotal_people(),sb.getRegister_date(),sb.getRecruit_endperiod(),sb.getPayment_date(),sb.getSubscribe_startdate(),sb.getSubscribe_enddate()));
 		}
 		return list2;
 	}

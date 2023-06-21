@@ -22,7 +22,7 @@ public class SubscribePartyDto {
 	private SubscribeBoard subscribe_num;
 	private Member email;
 	private int point_basket;
-	private Date remain_month;
+	private Date enddate;
 	private int start_check;
 	private Schedule schedule_num;
 }

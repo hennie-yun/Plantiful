@@ -44,7 +44,7 @@ public class SubscribeParty {
 	@JoinColumn(name="email", nullable=true)
 	private Member email;
 	private int point_basket;
-	private Date remain_month;
+	private Date enddate;
 	private int start_check;
 	@OneToOne
 	@JoinColumn(name="schedule_num", nullable=true)
