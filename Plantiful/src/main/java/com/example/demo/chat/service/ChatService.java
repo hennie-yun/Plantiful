@@ -31,6 +31,7 @@ public class ChatService {
 		if(savedChat != null) {
 			ChatDto newDto = new ChatDto(savedChat.getNum(), savedChat.getRoom(), savedChat.getMember(), 
 					savedChat.getMessage(), savedChat.getSendTime(), true);
+			System.out.println(newDto.getSendTime());
 			return newDto;
 		} else {
 			return null;

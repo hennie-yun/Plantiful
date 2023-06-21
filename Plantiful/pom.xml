@@ -31,12 +31,12 @@
 
 <!--메일링서비스 폼 추가 시작 -->
 <!-- https://mvnrepository.com/artifact/javax.mail/mail -->
-<!--<dependency>-->
-<!--    <groupId>javax.mail</groupId>-->
-<!--    <artifactId>mail</artifactId>-->
-<!--    <version>1.4.7</version>-->
-<!--</dependency>-->
-
+<!--<dependency>
+    <groupId>javax.mail</groupId>
+    <artifactId>mail</artifactId>
+    <version>1.4.7</version>
+</dependency>
+-->
 <!-- https://mvnrepository.com/artifact/org.springframework/spring-context-support -->
 <!--<dependency>-->
 <!--    <groupId>org.springframework</groupId>-->

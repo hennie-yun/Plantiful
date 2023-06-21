@@ -22,8 +22,8 @@ public class ChatRoomService {
 	@Autowired
 	private ChatDao chatDao;
 	
-	public ArrayList<ChatRoomDto> findRoomById(Member member) {
-		ArrayList<ChatRoom> roomList = (ArrayList<ChatRoom>) dao.findByMember(member);
+	public ArrayList<ChatRoomDto> findRoomById(String email) {
+		ArrayList<ChatRoom> roomList = (ArrayList<ChatRoom>) dao.findByMember(email);
 		if(roomList.isEmpty()) { 
 			return null;
 		}
@@ -52,5 +52,14 @@ public class ChatRoomService {
 		}
 		
 		return dtoList;
+	}
+	
+	public void saveLastMsg(ChatRoom room) {
+		ChatRoom newRoom = dao.findById(room.getNum()).orElse(null);
+		newRoom.setLastMsg(room.getLastMsg());
+		ChatRoom savedRoom = dao.save(newRoom);
+		if(savedRoom == null) {
+			System.out.println("null");
+		}
 	}
 }

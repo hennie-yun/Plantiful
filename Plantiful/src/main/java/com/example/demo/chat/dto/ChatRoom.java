@@ -9,10 +9,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @SequenceGenerator(allocationSize = 1, initialValue = 1, name = "seq_room", sequenceName = "seq_room")
