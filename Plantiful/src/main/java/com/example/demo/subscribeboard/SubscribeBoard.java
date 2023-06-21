@@ -56,9 +56,6 @@ public class SubscribeBoard {
 	private Date payment_date; //지불일
 	private Date subscribe_startdate; //구독 시작날짜
 	private Date subscribe_enddate; //구독 끝 날짜
-
-	@ColumnDefault("0") // 들어갈 Default 값 설정 
-	private int add_check; //party에 추가했는지 여부확인
 	
 	@PrePersist
     public void prePersist() { //sysdate

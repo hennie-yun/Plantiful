@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.subscribeparty.SubscribePartyService;
+
 @RestController
 @Controller
 @RequestMapping("/subscribeboard")
@@ -20,7 +22,8 @@ public class SubscribeBoardController {
 
 	@Autowired
 	private SubscribeBoardService service;
-	
+	@Autowired
+	private SubscribePartyService spservice; 
 	//추가
 	@PostMapping("")
 	public Map add(SubscribeBoardDto dto) {

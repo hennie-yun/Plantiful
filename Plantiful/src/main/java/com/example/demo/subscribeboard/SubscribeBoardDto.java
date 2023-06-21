@@ -27,7 +27,6 @@ public class SubscribeBoardDto {
 	private Date payment_date; //test3
 	private Date subscribe_startdate; //test4
 	private Date subscribe_enddate; //test5
-	private int add_check; //party에 추가했는지 여부확인
 //	private String test1;
 //	private String test2;
 //	private String test3;
