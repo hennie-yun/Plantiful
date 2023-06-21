@@ -1,6 +1,5 @@
 package com.example.demo.schedule;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 
 import com.example.demo.member.Member;
@@ -23,12 +22,12 @@ public class ScheduleDto {
 	private ScheduleGroup group_num;
 	private Member email;
 	private String title;
-	private LocalDate startDate;
-	private LocalDate endDate;
+	private String start;
+	private String end;
 	private String startTime;
 	private String endTime;
 	private String info;
 	private LocalTime alert;
 	private int isLoop;
-	private int day;
+	private String day;
 }

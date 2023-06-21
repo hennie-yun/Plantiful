@@ -9,6 +9,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import com.example.demo.member.Member;
 import com.example.demo.schedulegroup.ScheduleGroup;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -46,14 +47,14 @@ public class Schedule {
 	private Member email; // 작성자
 
 	private String title; // 스케줄 제목
-	private LocalDate startDate; // 스케줄 시작일
-	private LocalDate endDate; // 스케줄 마지막일
+	private String startDate; // 스케줄 시작일
+	private String endDate; // 스케줄 마지막일
 	private String  startTime; // 스케줄 시작시간
 	private String  endTime; // 스케줄 마지막시간
 	private String info; // 스케줄 내용
 	private LocalTime  alert; // 알림
 	private int isLoop; // 반복 유무
-	private int day; // 반복일
+	private String day; // 반복일
 	
 	
 //	 public void setTime(LocalTime time) {

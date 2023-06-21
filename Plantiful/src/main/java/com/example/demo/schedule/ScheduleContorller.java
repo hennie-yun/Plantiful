@@ -39,6 +39,15 @@ public class ScheduleContorller {
 		return map;
 	}
 
+	// email로 검색?
+	@GetMapping("/email/{email}")
+	public Map getByEmail(@PathVariable("email") String email) {
+		ArrayList<ScheduleDto> list = service.getByEmail(email);
+		Map map = new HashMap();
+		map.put("list", list);
+		return map;
+	}
+
 	// 전체검색
 	@GetMapping("")
 	public Map getAll() {
@@ -53,8 +62,8 @@ public class ScheduleContorller {
 	public Map edit(ScheduleDto dto) {
 		ScheduleDto old = service.getSchedule(dto.getSchedule_num());
 		old.setTitle(dto.getTitle());
-		old.setStartDate(dto.getStartDate());
-		old.setEndDate(dto.getEndDate());
+		old.setStart(dto.getStart());
+		old.setEnd(dto.getEnd());
 		old.setStartTime(dto.getStartTime());
 		old.setEndTime(dto.getEndTime());
 		old.setInfo(dto.getInfo());
