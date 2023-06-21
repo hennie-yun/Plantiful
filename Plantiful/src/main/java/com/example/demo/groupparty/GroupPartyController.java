@@ -19,6 +19,7 @@ public class GroupPartyController {
 	@Autowired
 	private GroupPartyService service;
 
+	
 	// 그룹 가입
 	@PostMapping("")
 	public Map join(GroupPartyDto dto) {
@@ -34,7 +35,7 @@ public class GroupPartyController {
 		boolean flag = true;
 		Map map = new HashMap();
 		try {
-			service.outParty(groupparty_num);
+		//	service.outParty(groupparty_num);
 		} catch (Exception e) {
 			flag = false;
 		}
