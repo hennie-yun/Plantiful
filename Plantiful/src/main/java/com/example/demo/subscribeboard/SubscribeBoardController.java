@@ -41,6 +41,7 @@ public class SubscribeBoardController {
 		}
 		map.put("flag", flag);
 		map.put("dto2", dto2);
+		System.out.println(dto2);
 		return map;
 	}
 	
