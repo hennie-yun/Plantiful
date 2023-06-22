@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.schedulegroup.ScheduleGroup;
+import com.example.demo.schedulegroup.ScheduleGroupService;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -21,7 +22,8 @@ public class GroupPartyController {
 	@Autowired
 	private GroupPartyService service;
 	
-	
+	@Autowired
+	private ScheduleGroupService scheduleservice;
 	
 	
 	
@@ -46,6 +48,9 @@ public class GroupPartyController {
 			if(group.size()==1) {
 				map.put("schedule_num", group);
 				service.outParty(groupparty_num);
+				int schedulenum = num.getSchedulegroup_num();
+				ScheduleGroup schedule = new ScheduleGroup(schedulenum, null, 0);
+				scheduleservice.DelGroup(schedule.getSchedulegroup_num());
 			}
 		} catch (Exception e) {
 			flag = false;
