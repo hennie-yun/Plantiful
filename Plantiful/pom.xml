@@ -55,6 +55,12 @@
 <!--        </dependency>-->
     
 <!--메일링서비스 폼 끝-->
+    <!-- 다른 의존성들... -->
+<!--      <dependency>-->
+<!--        <groupId>com.example</groupId>-->
+<!--        <artifactId>business-exceptions</artifactId>-->
+<!--        <version>3.0.0</version>-->
+<!--    </dependency>-->
 
       <dependency>
           <groupId>org.apache.tomcat.embed</groupId>
