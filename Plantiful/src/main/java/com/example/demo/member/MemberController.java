@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -56,12 +58,13 @@ public class MemberController {
 		boolean flag = true;
 		try {
 			String email = service.save(dto);
-			File dir = new File(path + email);
+			File dir = new File(path + "/"+ email);
 			dir.mkdir(); // 파일 디렉토리까지 생성
-
 			MultipartFile f = dto.getF();
 			String fname = f.getOriginalFilename();
-
+			System.out.println("path : "+ path);
+			System.out.println("email : " + email);
+			System.out.println("fname : "+fname);
 			if (fname != null && !fname.equals("")) {
 				String newpath = path + email + "/" + fname;
 				File newfile = new File(newpath);
@@ -296,6 +299,15 @@ public class MemberController {
 	@ResponseBody
 	@PostMapping("/email")
 	public Map email(String email) {
+		JavaMailSenderImpl mailSenderImpl = new JavaMailSenderImpl();
+		Properties prop = new Properties();
+		mailSenderImpl.setHost("smtp.gmail.com");
+		mailSenderImpl.setPort(587);
+		mailSenderImpl.setUsername("plantifultest@gmail.com");
+		mailSenderImpl.setPassword("pwrapugvstauftfe");
+		prop.put("mail.smtp.auth", true);
+		prop.put("mail.smtp.starttls.enable", true);
+		mailSenderImpl.setJavaMailProperties(prop);
 		Map map = new HashMap<>();
 		MemberDto dto = service.getMember(email);
 		if (dto != null) {
@@ -305,6 +317,7 @@ public class MemberController {
 			String key = ""; // 인증번호
 
 			SimpleMailMessage message = new SimpleMailMessage(); // 이메일 제목, 내용 작업 메서드
+			message.setFrom("workjuwon92@gmail.com");
 			message.setTo(email); // 스크립트에서 보낸 메일을 받을 사용자 이메일 주소
 			// 입력 키를 위한 코드
 			// 난수 생성
@@ -312,15 +325,18 @@ public class MemberController {
 				int index = random.nextInt(26) + 65;
 				key += (char) index;
 			}
+			
 			for (int i = 0; i < 6; i++) {
 				int numIndex = random.nextInt(10);
 				key += numIndex;
 			}
+			
 			String mail = "\n Plantiful 회원가입 이메일 인증.";
 			message.setSubject("회원가입을 위한 이메일 인증번호 전송 메일입니다."); // 이메일 제목
 			message.setText("인증번호는 " + key + " 입니다." + mail); // 이메일 내용
 			try {
-				javaMailSender.send(message); // 이메일 전송
+//				javaMailSender.send(message); // 이메일 전송
+				mailSenderImpl.send(message);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
