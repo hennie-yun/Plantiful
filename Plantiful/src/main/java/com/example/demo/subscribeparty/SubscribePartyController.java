@@ -58,17 +58,20 @@ public class SubscribePartyController {
 	
 	//subscribe_num으로 검색 (파티 전체 검색)
 	@GetMapping("/party/{subscribe_num}")
-	public Map getBySubNum(@PathVariable("subscrbie_num") int subscribe_num) {
+	public Map getBySubNum(@PathVariable("subscribe_num") int subscribe_num) {
 		ArrayList<SubscribePartyDto> list = service.getBySubNum(subscribe_num);
 		Map map = new HashMap();
 		map.put("list", list);
+		
 		return map;
 	}
 	
 	//email 로 검색
 	@PostMapping("/{email}")
 	public Map getByEmail(@PathVariable("email") String email) {
+		System.out.println(email);
 		ArrayList<SubscribePartyDto> list = service.getByEmail(email);
+		System.out.println(list);
 		Map map = new HashMap();
 		map.put("list", list);
 		return map;
