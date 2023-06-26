@@ -40,12 +40,17 @@ public class SubscribePartyController {
 	}
 	
 	
-	//파티 시작 여부 수정
-	@PatchMapping("/{subscribe_num}") //컬럼 일부 수정
-	public Map editStart(@PathVariable("subscribe_num") int subscribe_num) {
-		boolean flag = true;
+	//파티 시작 여부 수정 1. 
+	//인원수 기간안에 안차면 false로 보냄, 인원수 모집 기간안에 차면 true로 보냄  
+	@PatchMapping("/{subscribe_num}/{flag}") //컬럼 일부 수정
+	public Map editStart(@PathVariable("subscribe_num") int subscribe_num, @PathVariable("flag") boolean flag) {
 		try {
-			service.editStart(subscribe_num);
+			if (flag == true) {
+				service.editStart(subscribe_num); //시작중 (1)로 수정
+			} else {
+				service.endStart(subscribe_num); //끝남 (2) 로 수정 
+			}
+			
 		} catch (Exception e) {
 			flag = false;
 		}
@@ -54,6 +59,8 @@ public class SubscribePartyController {
 		return map;
 	}
 	
+
+	
 	
 	
 	//subscribe_num으로 검색 (파티 전체 검색)
@@ -61,7 +68,16 @@ public class SubscribePartyController {
 	public Map getBySubNum(@PathVariable("subscribe_num") int subscribe_num) {
 		ArrayList<SubscribePartyDto> list = service.getBySubNum(subscribe_num);
 		Map map = new HashMap();
+		boolean flag=false;
+		
+		if(list.size()> 1) {
+			flag = false; 
+		}else {
+			flag = true;
+		}
 		map.put("list", list);
+		map.put("flag", flag);
+//		map.put("cnt", count(list.size()));
 		
 		return map;
 	}
