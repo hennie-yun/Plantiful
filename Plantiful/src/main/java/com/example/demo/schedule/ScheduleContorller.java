@@ -11,8 +11,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.example.demo.auth.JwtTokenProvider;
 
 @RestController // rest api controller
 @CrossOrigin(origins = "*") // 모든 ip로부터 요청 받기 허용
@@ -20,6 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class ScheduleContorller {
 	@Autowired
 	private ScheduleService service;
+
+	@Autowired(required = false)
+	private JwtTokenProvider tokenProvider;
 
 	// 스케줄 추가
 	@PostMapping("")
@@ -39,23 +45,52 @@ public class ScheduleContorller {
 		return map;
 	}
 
-	// email로 검색?
-	@GetMapping("/email/{email}")
-	public Map getByEmail(@PathVariable("email") String email) {
-		ArrayList<ScheduleDto> list = service.getByEmail(email);
+	// 토큰값으로 정보 불러오기
+		@GetMapping("")
+		public Map getInfo(@RequestHeader("token") String token) {
+			boolean flag = true;
+			Map map = new HashMap();
+			try {
+				String email = tokenProvider.getUsernameFromToken(token);
+				map.put("email", email);
+			} catch (Exception e) {
+				flag = false;
+			}
+			map.put("flag", flag);
+			return map;
+		}
+	
+	// email로 검색
+	@GetMapping("email/{email}")
+	public Map getByEmail(@PathVariable("email") String email,
+			@RequestHeader(name = "token", required = false) String token) {
 		Map map = new HashMap();
+		if (token != null) {
+			try {
+				String id = tokenProvider.getUsernameFromToken(token);
+				if (!email.equals(id)) {
+					map.put("dto", null);
+					return map;
+				}
+			} catch (Exception e) {
+				map.put("dto", null);
+				return map;
+			}
+		}
+		ArrayList<ScheduleDto> list = service.getByEmail(email);
+		System.out.println(list);
 		map.put("list", list);
 		return map;
 	}
 
-	// 전체검색
-	@GetMapping("")
-	public Map getAll() {
-		ArrayList<ScheduleDto> list = service.getall();
-		Map map = new HashMap();
-		map.put("list", list);
-		return map;
-	}
+//	// 전체검색
+//	@GetMapping("")
+//	public Map getAll() {
+//		ArrayList<ScheduleDto> list = service.getall();
+//		Map map = new HashMap();
+//		map.put("list", list);
+//		return map;
+//	}
 
 	// 스케줄 수정
 	@PutMapping("")

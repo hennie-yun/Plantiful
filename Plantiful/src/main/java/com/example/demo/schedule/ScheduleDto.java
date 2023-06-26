@@ -1,7 +1,5 @@
 package com.example.demo.schedule;
 
-import java.time.LocalTime;
-
 import com.example.demo.member.Member;
 import com.example.demo.schedulegroup.ScheduleGroup;
 
@@ -27,7 +25,7 @@ public class ScheduleDto {
 	private String startTime;
 	private String endTime;
 	private String info;
-	private LocalTime alert;
+	private String alert;
 	private int isLoop;
 	private String day;
 }

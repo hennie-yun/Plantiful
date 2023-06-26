@@ -1,15 +1,11 @@
 package com.example.demo.schedule;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import com.example.demo.member.Member;
 import com.example.demo.schedulegroup.ScheduleGroup;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -42,7 +38,7 @@ public class Schedule {
 	private ScheduleGroup group_num; // 그룹번호
 
 	@ManyToOne
-	@JoinColumn(name = "email", nullable = true)
+	@JoinColumn(name = "email", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Member email; // 작성자
 
@@ -52,7 +48,7 @@ public class Schedule {
 	private String  startTime; // 스케줄 시작시간
 	private String  endTime; // 스케줄 마지막시간
 	private String info; // 스케줄 내용
-	private LocalTime  alert; // 알림
+	private String  alert; // 알림
 	private int isLoop; // 반복 유무
 	private String day; // 반복일
 	
