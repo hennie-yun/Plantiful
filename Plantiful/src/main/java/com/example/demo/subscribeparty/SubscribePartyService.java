@@ -70,6 +70,9 @@ public class SubscribePartyService {
 		dao.updateStartCheck(subscribe_num);
 	}
 	
-	
+	//start check 끝내기
+	public void endStart(int subscribe_num) {
+		dao.endStartCheck(subscribe_num);
+	}
 	
 }
