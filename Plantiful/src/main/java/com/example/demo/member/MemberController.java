@@ -44,6 +44,9 @@ public class MemberController {
 
 	@Autowired
 	private JavaMailSender javaMailSender;
+	
+	@Autowired
+	private CheckinfoService checkinfoservice;
 
 	@Autowired
 	private JwtTokenProvider tokenprovider;
@@ -51,7 +54,7 @@ public class MemberController {
 
 	@Value("${spring.servlet.multipart.location}")
 	private String path; // C:/plantiful/
-
+	
 	// 가입
 	@PostMapping("")
 	public void join(MemberDto dto) {
@@ -86,6 +89,8 @@ public class MemberController {
 		}
 	}
 	
+
+	
 	//이미지 제외 수정 
 	@PostMapping("/editinfo/{email}")
 	public Map<String, Object> editinfo(@PathVariable("email") String email, @RequestBody MemberDto dto) {
@@ -103,22 +108,23 @@ public class MemberController {
 	
 	//이미지 수정 
 	@PostMapping("/{email}/updateImg")
-	public Map updateProfile(@PathVariable("email") String email, @RequestParam("file") MultipartFile file) {
-	    Map response = new HashMap<>();
+	public Map<String, Object> updateProfile(@PathVariable("email") String email, @RequestParam("file") MultipartFile file) {
+	   
+	    Map<String, Object> response = new HashMap<>();
 	    boolean flag = true;
 	    MemberDto dto = service.getMember(email);
 	    if (dto == null) {
 	        flag = false;
 	        response.put("flag", flag);
-	        return response;
+	      
 	    }
 	    String newFilePath = path + email + "/";
 	    File dir = new File(newFilePath);
 	    if (!dir.exists()) {
-	        dir.mkdirs(); // 폴더가 존재하지 않으면 생성합니다.
+	        dir.mkdirs();
 	    }
 	    String fileName = file.getOriginalFilename();
-	    String newFileName = fileName; // 새로운 파일 이름을 이메일과 연결하여 중복 방지
+	    String newFileName = fileName;
 	    String newFileFullPath = newFilePath + newFileName;
 	    File newFile = new File(newFileFullPath);
 
@@ -133,11 +139,12 @@ public class MemberController {
 	        }
 	        service.edit(dto);
 	        response.put("message", "이미지 변경 완료.");
-	        return response;
-	    } catch (IllegalStateException | IOException e) {
+	    } catch (IllegalStateException e) {
 	        e.printStackTrace();
-	        response.put("error", "이미지 업로드 실패.");
-	        return response;
+	        response.put("error", "이미지 업로드 실패. 상태 예외 발생.");
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	        response.put("error", "이미지 업로드 실패. IO 예외 발생.");
 	    } catch (java.io.IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -158,7 +165,7 @@ public class MemberController {
 	        service.save(dto);
 	    }
 	
-	
+	//비밀번호만 변경 
 	@PutMapping("/newpwd/{email}/{pwd}")
 	public Map updatePassword(@PathVariable("email") String email, @PathVariable("pwd") String pwd) {
 	    boolean flag = true;
@@ -271,7 +278,8 @@ public class MemberController {
 		map.put("dto", d);
 		return map;
 	}
-
+	
+	
 	// 계정 탈퇴
 	@DeleteMapping("/{email}")
 	public Map del(@PathVariable("email") String email, @RequestHeader(name = "token", required = false) String token) {
@@ -299,6 +307,7 @@ public class MemberController {
 	@ResponseBody
 	@PostMapping("/email")
 	public Map email(String email) {
+		
 		JavaMailSenderImpl mailSenderImpl = new JavaMailSenderImpl();
 		Properties prop = new Properties();
 		mailSenderImpl.setHost("smtp.gmail.com");
@@ -324,19 +333,16 @@ public class MemberController {
 			for (int i = 0; i < 3; i++) {
 				int index = random.nextInt(26) + 65;
 				key += (char) index;
-			}
-			
-			for (int i = 0; i < 6; i++) {
+			} for (int i = 0; i < 6; i++) {
 				int numIndex = random.nextInt(10);
 				key += numIndex;
 			}
 			
 			String mail = "\n Plantiful 회원가입 이메일 인증.";
 			message.setSubject("회원가입을 위한 이메일 인증번호 전송 메일입니다."); // 이메일 제목
-			message.setText("인증번호는 " + key + " 입니다." + mail); // 이메일 내용
+			message.setText(mail + "인증번호는 " + key + " 입니다."); // 이메일 내용
 			try {
-//				javaMailSender.send(message); // 이메일 전송
-				mailSenderImpl.send(message);
+				mailSenderImpl.send(message); // 이메일 전송
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -369,7 +375,6 @@ public class MemberController {
 			String key = ""; // 인증번호
 
 			SimpleMailMessage message = new SimpleMailMessage(); // 이메일 제목, 내용 작업 메서드
-			message.setFrom("workjuwon92@gmail.com");
 			message.setTo(email); // 스크립트에서 보낸 메일을 받을 사용자 이메일 주소
 			// 입력 키를 위한 코드
 			// 난수 생성
@@ -384,8 +389,8 @@ public class MemberController {
 			}
 			
 			String mail = "\n Plantiful 비밀번호 재설정 이메일 인증.";
-			message.setSubject("비밀전호 재설정을 위한 이메일 인증번호 전송 메일입니다."); // 이메일 제목
-			message.setText("인증번호는 " + key + " 입니다." + mail); // 이메일 내용
+			message.setSubject("비밀번호 재설정을 위한 이메일 인증번호 전송 메일입니다."); // 이메일 제목
+			message.setText(mail + "인증번호는 " + key + " 입니다."); // 이메일 내용
 			try {
 //				javaMailSender.send(message); // 이메일 전송
 				mailSenderImpl.send(message);
@@ -398,5 +403,24 @@ public class MemberController {
 		}
 		return map;
 	}
+	
+	//본인인증완료 후 빼내 온 정보 중 핸드폰 번호와 입력한 핸드폰 번호가 일치한지 확인하고 
+	//일치하면 true 아니면 false 를 반환해서 완벽하게 이루어 졌나 확인 한다. 
+	@GetMapping("/certifications/redirect")
+    public boolean handleRedirect(@RequestParam("imp_uid") String impUid, @RequestParam("email") String email) {
+		boolean flag = false;
+      System.out.println("Received imp_uid: " + impUid);
+     String phone = checkinfoservice.getAccessToken(impUid);
+     System.out.println(phone);
+     
+     MemberDto dto = service.getMember(email);
+     if (dto !=null) {
+    	 if(dto.getPhone() == phone) {
+    		 flag = true;
+    	}  
+     }
+      return flag; 
+    } 
+
 
 }

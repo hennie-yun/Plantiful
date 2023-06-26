@@ -11,13 +11,13 @@ public class MemberService {
 
 	// 내정보수정
 	public MemberDto edit(MemberDto dto) {
-			Member entity = dao.save(new Member(dto.getEmail(),dto.getPwd(),dto.getNickname(),dto.getPhone(),dto.getCash(),dto.getImg()));
-			return new MemberDto(entity.getEmail(),entity.getPwd(),entity.getNickname(),entity.getPhone(),entity.getCash(),entity.getImg(),null);
+			Member entity = dao.save(new Member(dto.getEmail(),dto.getPwd(),dto.getNickname(),dto.getPhone(),dto.getId(),dto.getImg()));
+			return new MemberDto(entity.getEmail(),entity.getPwd(),entity.getNickname(),entity.getPhone(),entity.getId(),entity.getImg(),null);
 		}
 	
 	public String save(MemberDto dto) {
 		Member entity = dao.save(new Member(dto.getEmail(), dto.getPwd(), dto.getNickname(), dto.getPhone(),
-				dto.getCash(), dto.getImg()));
+				dto.getId(),dto.getImg()));
 		return entity.getEmail();
 	}
 	
@@ -29,7 +29,13 @@ public class MemberService {
 			return null;
 		}
 		return new MemberDto(entity.getEmail(), entity.getPwd(), entity.getNickname(), entity.getPhone(),
-				entity.getCash(), entity.getImg(), null);
+				entity.getId(),entity.getImg(), null);
+	}
+	
+	
+	//카카오로 회원가입 했을 대 쓸거임 
+	public void saveMemberKaKao(String email, long id, String nickname) {   
+	        Member entity = dao.save(new Member(email, null, nickname, null, id, null));	     
 	}
 
 	// 탈퇴
