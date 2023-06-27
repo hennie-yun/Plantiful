@@ -14,40 +14,41 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/payment")
 public class PaymentController {
 
-	
-//	
-//	private IamportClient iamportClient;
-
 	@Autowired
 	private PaymentService service;
+
+	//결제 하면 금액 추가 
+	
+//	public Map save(PaymentDto dto) {
+//		Map map = new HashMap<>();
+//		Payment payment = service.findByEmail(dto.getEmail());
+//		if (payment == null) {
+//			service.save(dto);
+//		} else
+//			map.put("dto", dto);
+//		System.out.println(dto);
+//		return map;
 //
-//	
-//	@Autowired
-//	private final IamportClient iamportClientApi;
-//
-//	
-//	IamportClient client = new IamportClient("6828054376104647", "0kYhkRiK36tiyg4YtBaERfyhA7TcnJx496IEGOE44gQMXSeT7NjTgRnc5pYHEQVl4CXmOpGwSRbNiZLC", true);
-//
-//	public IamportResponse<Payment> paymentLookup(String impUid) throws IamportResponseException, IOException{
-//		return iamportClientApi.paymentByImpUid(impUid);
-//	}
-//	
-//	@ResponseBody
-//	@PostMapping("/verify/{imp_uid}")
-//	public IamportResponse<Payment> paymentByImpUid(@PathVariable("imp_uid") String imp_uid, PaymentDto dto)
-//			throws IamportResponseException, IOException {
-//		return iamportClient.paymentByImpUid(imp_uid);
 //	}
 	
 	@PostMapping("")
-	public Map save (PaymentDto dto) {
+	public Map save(PaymentDto dto) {
 		Map map = new HashMap<>();
-		service.save(dto);
-		map.put("dto", dto);
+	    Payment payment = service.findByEmail(dto.getEmail()); //이메일이 있나 찾아
+	    
+
+	    if (payment != null) {
+	        // 동일한 이메일 있으면? 
+	        int newPaidAmount = payment.getPaidamount() + dto.getPaidamount();
+	        
+	        dto.setPaidamount(newPaidAmount); // 결제 정보의 Paidamount를 업데이트
+	        service.save(dto);
+	    } else {
+	    	service.save(dto);
+	    }
+	    map.put("dto", dto);
 		System.out.println(dto);
 		return map;
-		
-	}
-			
+	    }
 	
 }

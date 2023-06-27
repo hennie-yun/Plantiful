@@ -57,36 +57,30 @@ public class MemberController {
 	
 	// 가입
 	@PostMapping("")
-	public void join(MemberDto dto) {
-		boolean flag = true;
-		try {
-			String email = service.save(dto);
-			File dir = new File(path + "/"+ email);
-			dir.mkdir(); // 파일 디렉토리까지 생성
-			MultipartFile f = dto.getF();
-			String fname = f.getOriginalFilename();
-			System.out.println("path : "+ path);
-			System.out.println("email : " + email);
-			System.out.println("fname : "+fname);
-			if (fname != null && !fname.equals("")) {
-				String newpath = path + email + "/" + fname;
-				File newfile = new File(newpath);
-				System.out.println(newpath);
-				try {
-					f.transferTo(newfile); // 파일 업로드
-					dto.setImg(newpath);
-				} catch (IllegalStateException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			service.save(dto);
-		} catch (Exception e) {
-			flag = false;
-		}
+	public void join(MemberDto dto, @RequestParam(required = false) MultipartFile f) {
+	    boolean flag = true;
+	    try {
+	        String email = service.save(dto);
+	        File dir = new File(path + "/" + email);
+	        dir.mkdir(); // 파일 디렉토리까지 생성
+
+	        if (f != null && !f.isEmpty()) {
+	            String fname = f.getOriginalFilename();
+	            String newpath = path + email + "/" + fname;
+	            File newfile = new File(newpath);
+
+	            try {
+	                f.transferTo(newfile); // 파일 업로드
+	                dto.setImg(newpath);
+	            } catch (IllegalStateException | IOException e) {
+	                e.printStackTrace();
+	            }
+	        }
+
+	        service.save(dto);
+	    } catch (Exception e) {
+	        flag = false;
+	    }
 	}
 	
 

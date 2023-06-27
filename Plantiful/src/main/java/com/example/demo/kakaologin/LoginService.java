@@ -46,16 +46,16 @@ public class LoginService {
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
 			StringBuilder sb = new StringBuilder();
 
-			// 0번 파라미터 grant_type 입니다 authorization_code로 고정이라니 고정등록해줍니다
+			// 0번 파라미터 grant_type 입니다 authorization_code로 고정
 			sb.append("grant_type=authorization_code");
 
-			// 1번 파라미터 client_id입니다. ***자신의 앱 REST API KEY로 변경해주세요***
+			// 1번 파라미터 client_id입니다. 
 			sb.append("&client_id=d54083f94196531e75d7de474142e52e");
 
-			// 2번 파라미터 redirect_uri입니다. ***자신의 redirect uri로 변경해주세요***
+			// 2번 파라미터 redirect_uri입니다.
 			sb.append("&redirect_uri=http://localhost:8181/kakaologin");
 
-			// 3번 파라미터 code입니다. 인자로 받아온 인증코드입니다.
+			// 3번 파라미터 code
 			sb.append("&code=" + code);
 
 			sb.append("&client_secret=ffySwI0e3mED14F05NWZIOH2r0xy9YWH");
