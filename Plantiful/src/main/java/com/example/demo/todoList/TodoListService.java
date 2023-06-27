@@ -20,15 +20,19 @@ public class TodoListService {
 			TodoListDto dto = new TodoListDto(todo.getEmail(), todo.getMember(), todo.getText());
 			return dto;
 		} else {
-			return null;
+			TodoListDto dto = new TodoListDto(email, new Member(email, "", "", "", 0, ""), "");
+			return dto;
 		}
 	}
 	
 	public TodoListDto saveTodoList(TodoListDto dto) {
 		Member member = memDao.findById(dto.getEmail()).orElse(null);
 		if(member != null) dto.setMember(member);
+		else member = new Member(dto.getEmail(), "", "", "", 0, "");
 		TodoList todo = new TodoList(dto.getEmail(), dto.getMember(), dto.getText());
+		System.out.println("todo : "+todo.getText());
 		TodoList savedTodo = dao.save(todo);
+		System.out.println("savedTodo : "+savedTodo.getText());
 		TodoListDto newDto = new TodoListDto(savedTodo.getEmail(), savedTodo.getMember(), savedTodo.getText());
 		return newDto;
 	}
