@@ -1,7 +1,11 @@
 package com.example.demo.todoList;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
 import com.example.demo.member.Member;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -22,11 +26,15 @@ import lombok.ToString;
 public class TodoList {
 	
 	@Id
+	@JoinColumn(name = "email")
 	private String email;
 	
 	@OneToOne
 	@MapsId
-	@JoinColumn(name = "member_email", nullable = false)
+	@JoinColumn(name = "email")
+	@Cascade(CascadeType.ALL)	
 	private Member member;
+	
+	@Column(nullable = true)
 	private String text;
 }
