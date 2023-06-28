@@ -26,13 +26,13 @@ public class PaymentService {
 			return entity;
 
 		}
-	
-		
-		
 		//이메일 String 으로 찾기 
 		  @Transactional
 		    public PaymentDto findByEmail(String email) {
 		      Payment payment = dao.findByEmail(email);
+		      if(payment == null) {
+		    	  return null;
+		      }
 		      return new PaymentDto (payment.getPaymentnum(), payment.getEmail(),payment.getPaidamount());
 		    }
 		

@@ -81,8 +81,8 @@ public class PaymentController {
 
 		if (paymentdto != null) {
 			map.put("paydto", paymentdto);
-		} else {
-			map.put("message", "찾는 정보가 없습니다");
+		} else  {
+			map.put("message", "돈이 없습니다");
 		}
 
 		return map;
