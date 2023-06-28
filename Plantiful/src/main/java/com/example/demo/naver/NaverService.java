@@ -1,6 +1,8 @@
 package com.example.demo.naver;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.net.URLEncoder;
 import java.security.SecureRandom;
 
 import org.springframework.stereotype.Service;
@@ -14,5 +16,6 @@ public class NaverService {
 	        return state;
 	}
 	
+
 	
 }
