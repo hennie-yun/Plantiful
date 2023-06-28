@@ -7,9 +7,12 @@ import com.example.demo.member.Member;
 import com.example.demo.schedulegroup.ScheduleGroup;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +27,8 @@ import lombok.ToString;
 @NoArgsConstructor
 public class GroupParty {
 	@Id
+	@SequenceGenerator(name = "seq_gen", sequenceName = "seq_groupparty_num", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_groupparty_num")
 	private int groupparty_num;
 
 	@ManyToOne
@@ -34,6 +39,6 @@ public class GroupParty {
 	@ManyToOne
 	@JoinColumn(name = "member_email", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE) // 만약 board에서 본인이삭제하면 걍 아예 안뜨는걸로
-	private Member member_email;
+	private Member memberEmail;
 
 }
