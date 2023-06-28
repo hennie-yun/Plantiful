@@ -63,7 +63,7 @@ public class SubscribePartyController {
 	
 
 	//돈 움직이기(팀원들 pb 0으로 만듦)
-		@PostMapping("/{subscribe_num}")
+		@PostMapping("/money/{subscribe_num}")
 		public Map minusMoney(@PathVariable("subscribe_num") int subscribe_num) {
 			service.minusMoney(subscribe_num);
 			Map map = new HashMap();
