@@ -3,17 +3,16 @@ package com.example.demo.kakaologin;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.example.demo.member.MemberDto;
 import com.example.demo.member.MemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -53,7 +52,7 @@ public class LoginService {
 			sb.append("&client_id=d54083f94196531e75d7de474142e52e");
 
 			// 2번 파라미터 redirect_uri입니다.
-			sb.append("&redirect_uri=http://localhost:8181/kakaologin");
+			sb.append("&redirect_uri=http://localhost:8182/kakaojoin");
 
 			// 3번 파라미터 code
 			sb.append("&code=" + code);
@@ -66,7 +65,8 @@ public class LoginService {
 			// 실제 요청을 보내는 부분, 결과 코드가 200이라면 성공
 			int responseCode = conn.getResponseCode();
 			log.info("responsecode(200이면성공): {}", responseCode);
-
+			
+	
 			// 요청을 통해 얻은 JSON타입의 Response 메세지 읽어오기
 			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			String line = "";
@@ -82,6 +82,7 @@ public class LoginService {
 			ObjectMapper mapper = new ObjectMapper();
 			// kakaoToken에 result를 KakaoToken.class 형식으로 변환하여 저장
 			kakaoToken = mapper.readValue(result, KakaoToken.class);
+			System.out.println(kakaoToken);
 
 			// api호출용 access token
 			access_Token = kakaoToken.getAccess_token();
@@ -107,6 +108,9 @@ public class LoginService {
 		log.info("유저정보 요청 시작");
 		String strUrl = "https://kapi.kakao.com/v2/user/me"; // request를 보낼 주소
 		HashMap userInfo = new HashMap<>();
+	
+		userInfo.put("accessToken", accessToken);
+
 
 		try {
 			URL url = new URL(strUrl);
@@ -175,29 +179,6 @@ public class LoginService {
 		return userInfo;
 	}
 
-//	public void logout(String access_Token) {
-//	    String reqURL = "https://kapi.kakao.com/v1/user/logout";
-//	    try {
-//	        URL url = new URL(reqURL);
-//	        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-//	        conn.setRequestMethod("POST");
-//	        conn.setRequestProperty("Authorization", "Bearer " + access_Token);
-//	        
-//	        int responseCode = conn.getResponseCode();
-//	        System.out.println("responseCode : " + responseCode);
-//	        
-//	        BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-//	        
-//	        String result = "";
-//	        String line = "";
-//	        
-//	        while ((line = br.readLine()) != null) {
-//	            result += line;
-//	        }
-//	        System.out.println(result);
-//	    } catch (IOException e) {
-//	        e.printStackTrace();
-//	    }
-//	}
+
 
 }

@@ -44,7 +44,7 @@ public class MemberController {
 
 	@Autowired
 	private JavaMailSender javaMailSender;
-	
+
 	@Autowired
 	private CheckinfoService checkinfoservice;
 
@@ -54,131 +54,130 @@ public class MemberController {
 
 	@Value("${spring.servlet.multipart.location}")
 	private String path; // C:/plantiful/
-	
+
 	// 가입
 	@PostMapping("")
 	public void join(MemberDto dto, @RequestParam(required = false) MultipartFile f) {
-	    boolean flag = true;
-	    try {
-	        String email = service.save(dto);
-	        File dir = new File(path + "/" + email);
-	        dir.mkdir(); // 파일 디렉토리까지 생성
+		boolean flag = true;
+		try {
+			String email = service.save(dto);
+			File dir = new File(path + "/" + email);
+			dir.mkdir(); // 파일 디렉토리까지 생성
 
-	        if (f != null && !f.isEmpty()) {
-	            String fname = f.getOriginalFilename();
-	            String newpath = path + email + "/" + fname;
-	            File newfile = new File(newpath);
+			if (f != null && !f.isEmpty()) {
+				String fname = f.getOriginalFilename();
+				String newpath = path + email + "/" + fname;
+				File newfile = new File(newpath);
 
-	            try {
-	                f.transferTo(newfile); // 파일 업로드
-	                dto.setImg(newpath);
-	            } catch (IllegalStateException | IOException e) {
-	                e.printStackTrace();
-	            }
-	        }
+				try {
+					f.transferTo(newfile); // 파일 업로드
+					dto.setImg(newpath);
+				} catch (IllegalStateException | IOException e) {
+					e.printStackTrace();
+				}
+			}
 
-	        service.save(dto);
-	    } catch (Exception e) {
-	        flag = false;
-	    }
+			service.save(dto);
+		} catch (Exception e) {
+			flag = false;
+		}
 	}
-	
 
-	
-	//이미지 제외 수정 
+	// 이미지 제외 수정
 	@PostMapping("/editinfo/{email}")
 	public Map<String, Object> editinfo(@PathVariable("email") String email, @RequestBody MemberDto dto) {
-	    Map response = new HashMap<>();
-	    MemberDto oldDto = service.getMember(email);    
-	    if (oldDto != null) {
-	        if (dto.getImg() == null) {
-	            dto.setImg(oldDto.getImg());
-	        }
-	        service.edit(dto);
-	        response.put("message", "정보 수정 완료.");
-	    } 
-	    return response;
+		Map response = new HashMap<>();
+		MemberDto oldDto = service.getMember(email);
+		if (oldDto != null) {
+			if (dto.getImg() == null) {
+				dto.setImg(oldDto.getImg());
+			}
+			service.edit(dto);
+			response.put("message", "정보 수정 완료.");
+		}
+		return response;
 	}
-	
-	//이미지 수정 
+
+	// 이미지 수정
 	@PostMapping("/{email}/updateImg")
-	public Map<String, Object> updateProfile(@PathVariable("email") String email, @RequestParam("file") MultipartFile file) {
-	   
-	    Map<String, Object> response = new HashMap<>();
-	    boolean flag = true;
-	    MemberDto dto = service.getMember(email);
-	    if (dto == null) {
-	        flag = false;
-	        response.put("flag", flag);
-	      
-	    }
-	    String newFilePath = path + email + "/";
-	    File dir = new File(newFilePath);
-	    if (!dir.exists()) {
-	        dir.mkdirs();
-	    }
-	    String fileName = file.getOriginalFilename();
-	    String newFileName = fileName;
-	    String newFileFullPath = newFilePath + newFileName;
-	    File newFile = new File(newFileFullPath);
+	public Map<String, Object> updateProfile(@PathVariable("email") String email,
+			@RequestParam("file") MultipartFile file) {
 
-	    try {
-	        file.transferTo(newFile);
-	        String deletedFilePath = dto.getImg();
-	        dto.setImg(newFileFullPath);
+		Map<String, Object> response = new HashMap<>();
+		boolean flag = true;
+		MemberDto dto = service.getMember(email);
+		if (dto == null) {
+			flag = false;
+			response.put("flag", flag);
 
-	        if (deletedFilePath != null) {
-	            File delFile = new File(deletedFilePath);
-	            delFile.delete();
-	        }
-	        service.edit(dto);
-	        response.put("message", "이미지 변경 완료.");
-	    } catch (IllegalStateException e) {
-	        e.printStackTrace();
-	        response.put("error", "이미지 업로드 실패. 상태 예외 발생.");
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	        response.put("error", "이미지 업로드 실패. IO 예외 발생.");
-	    } catch (java.io.IOException e) {
+		}
+		String newFilePath = path + email + "/";
+		File dir = new File(newFilePath);
+		if (!dir.exists()) {
+			dir.mkdirs();
+		}
+		String fileName = file.getOriginalFilename();
+		String newFileName = fileName;
+		String newFileFullPath = newFilePath + newFileName;
+		File newFile = new File(newFileFullPath);
+
+		try {
+			file.transferTo(newFile);
+			String deletedFilePath = dto.getImg();
+			dto.setImg(newFileFullPath);
+
+			if (deletedFilePath != null) {
+				File delFile = new File(deletedFilePath);
+				delFile.delete();
+			}
+			service.edit(dto);
+			response.put("message", "이미지 변경 완료.");
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+			response.put("error", "이미지 업로드 실패. 상태 예외 발생.");
+		} catch (IOException e) {
+			e.printStackTrace();
+			response.put("error", "이미지 업로드 실패. IO 예외 발생.");
+		} catch (java.io.IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	    return response;
+		return response;
 	}
 
-	//이미지 폴더에서 삭제 
-	  @PostMapping("/delprofile")
-	    public void deleteProfile(@RequestParam("email") String email) {	
-	        MemberDto dto = service.getMember(email);
-	        String deletedFilePath = dto.getImg();
-	        dto.setImg(null);
-	        if (deletedFilePath != null) {
-	            File delFile = new File(deletedFilePath);
-	            delFile.delete();         
-	        }
-	        service.save(dto);
-	    }
-	
-	//비밀번호만 변경 
+	// 이미지 폴더에서 삭제
+	@PostMapping("/delprofile")
+	public void deleteProfile(@RequestParam("email") String email) {
+		MemberDto dto = service.getMember(email);
+		String deletedFilePath = dto.getImg();
+		dto.setImg(null);
+		if (deletedFilePath != null) {
+			File delFile = new File(deletedFilePath);
+			delFile.delete();
+		}
+		service.save(dto);
+	}
+
+	// 비밀번호만 변경
 	@PutMapping("/newpwd/{email}/{pwd}")
 	public Map updatePassword(@PathVariable("email") String email, @PathVariable("pwd") String pwd) {
-	    boolean flag = true;
-	    Map response = new HashMap<>();
-	    MemberDto dto = service.getMember(email);
-	    if (dto == null) {
-	        flag = false;
-	    } else {
-	        MemberDto old = service.getMember(dto.getEmail());
-	        old.setPwd(pwd);
-	        old.setEmail(dto.getEmail());
-	        MemberDto updatedDto = service.edit(old);
-	        response.put("dto", updatedDto);
-	    }
+		boolean flag = true;
+		Map response = new HashMap<>();
+		MemberDto dto = service.getMember(email);
+		if (dto == null) {
+			flag = false;
+		} else {
+			MemberDto old = service.getMember(dto.getEmail());
+			old.setPwd(pwd);
+			old.setEmail(dto.getEmail());
+			MemberDto updatedDto = service.edit(old);
+			response.put("dto", updatedDto);
+		}
 
-	    response.put("flag", flag);
-	    return response;
+		response.put("flag", flag);
+		return response;
 	}
-	
+
 	// 이미지 빼기
 	@GetMapping("plantiful/{email}") // email/이미지파일명
 	public ResponseEntity<byte[]> read_img(@PathVariable("email") String email) {
@@ -272,8 +271,7 @@ public class MemberController {
 		map.put("dto", d);
 		return map;
 	}
-	
-	
+
 	// 계정 탈퇴
 	@DeleteMapping("/{email}")
 	public Map del(@PathVariable("email") String email, @RequestHeader(name = "token", required = false) String token) {
@@ -301,7 +299,7 @@ public class MemberController {
 	@ResponseBody
 	@PostMapping("/email")
 	public Map email(String email) {
-		
+
 		JavaMailSenderImpl mailSenderImpl = new JavaMailSenderImpl();
 		Properties prop = new Properties();
 		mailSenderImpl.setHost("smtp.gmail.com");
@@ -327,11 +325,12 @@ public class MemberController {
 			for (int i = 0; i < 3; i++) {
 				int index = random.nextInt(26) + 65;
 				key += (char) index;
-			} for (int i = 0; i < 6; i++) {
+			}
+			for (int i = 0; i < 6; i++) {
 				int numIndex = random.nextInt(10);
 				key += numIndex;
 			}
-			
+
 			String mail = "\n Plantiful 회원가입 이메일 인증.";
 			message.setSubject("회원가입을 위한 이메일 인증번호 전송 메일입니다."); // 이메일 제목
 			message.setText(mail + "인증번호는 " + key + " 입니다."); // 이메일 내용
@@ -376,12 +375,12 @@ public class MemberController {
 				int index = random.nextInt(26) + 65;
 				key += (char) index;
 			}
-			
+
 			for (int i = 0; i < 6; i++) {
 				int numIndex = random.nextInt(10);
 				key += numIndex;
 			}
-			
+
 			String mail = "\n Plantiful 비밀번호 재설정 이메일 인증.";
 			message.setSubject("비밀번호 재설정을 위한 이메일 인증번호 전송 메일입니다."); // 이메일 제목
 			message.setText(mail + "인증번호는 " + key + " 입니다."); // 이메일 내용
@@ -397,27 +396,38 @@ public class MemberController {
 		}
 		return map;
 	}
-	
-	//본인인증완료 후 빼내 온 정보 중 핸드폰 번호와 입력한 핸드폰 번호가 일치한지 확인하고 
-	//일치하면 true 아니면 false 를 반환해서 완벽하게 이루어 졌나 확인 한다. 
+
+	// 본인인증완료 후 빼내 온 정보 중 핸드폰 번호와 입력한 핸드폰 번호가 일치한지 확인하고
+	// 일치하면 true 아니면 false 를 반환해서 완벽하게 이루어 졌나 확인 한다.
 	@GetMapping("/certifications/redirect")
-    public Map handleRedirect(@RequestParam("imp_uid") String impUid, @RequestParam("email") String email) {
+	public Map handleRedirect(@RequestParam("imp_uid") String impUid, @RequestParam("email") String email) {
 		boolean flag = false;
 		Map map = new HashMap<>();
-      System.out.println("Received imp_uid: " + impUid);
-     String phone = checkinfoservice.getAccessToken(impUid);
-     System.out.println(phone);
-     
-   
-     MemberDto dto = service.getMember(email);
-     if (dto != null) {
-    	 if(dto.getPhone().equals(phone)) {
-         flag = true;
-    	 }
-     }
-     map.put("flag", flag);
-     return map;
- }
+		System.out.println("Received imp_uid: " + impUid);
+		String phone = checkinfoservice.getAccessToken(impUid);
+		System.out.println(phone);
 
+		MemberDto dto = service.getMember(email);
+		if (dto != null) {
+			if (dto.getPhone().equals(phone)) {
+				flag = true;
+			}
+		}
+		map.put("flag", flag);
+		return map;
+	}
+
+	// 카카오톡 로그인 정보 빼오기
+	@GetMapping("/getKakaomember/{email}")
+	public Map get(@PathVariable("email") String email) {
+		Map map = new HashMap();
+		MemberDto d = service.getMember(email);
+		if (d != null) {// 로그인 후
+			map.put("dto", d);
+		} else {
+			map.put("messeage", "존재하지 않는 회원이니 회원가입해라");
+		}
+		return map;
+	}
 
 }

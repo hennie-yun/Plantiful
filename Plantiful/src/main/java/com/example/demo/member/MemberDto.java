@@ -19,7 +19,7 @@ public class MemberDto {
 	private String pwd;
 	private String nickname;
 	private String phone;
-	private long id;
+	private long id; 
 	private String img;
 	private MultipartFile f;
 	
