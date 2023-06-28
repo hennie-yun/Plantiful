@@ -1,20 +1,22 @@
-package com.example.demo.chat.controller;
+package com.example.demo.chat;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 
-import com.example.demo.chat.dto.ChatDto;
-import com.example.demo.chat.dto.ChatRoom;
-import com.example.demo.chat.service.ChatRoomService;
-import com.example.demo.chat.service.ChatService;
+import com.example.demo.member.Member;
+import com.example.demo.member.MemberDto;
+import com.example.demo.member.MemberService;
 
 @Controller
 public class ChatController {
 
 	@Autowired
 	private ChatService service;
+	
+	@Autowired
+	private MemberService memService;
 	
 	@Autowired 
 	private ChatRoomService roomService;
@@ -24,8 +26,12 @@ public class ChatController {
 	public ChatDto chatting(ChatDto dto) {
 		String message = dto.getMessage();
 		ChatRoom room = dto.getRoom();
+		MemberDto memDto = memService.getMember(dto.getMember().getEmail());
+		Member member = new Member(memDto.getEmail(), memDto.getPwd(), memDto.getNickname(), memDto.getPhone(), 
+					memDto.getId() , memDto.getImg());
+		room.setLastSender(member);
 		room.setLastMsg(message);
-		roomService.saveLastMsg(dto.getRoom());
+		roomService.saveLastMsg(room);
 		return service.chatting(dto);
 	}
 
