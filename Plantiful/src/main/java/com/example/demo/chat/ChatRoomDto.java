@@ -1,4 +1,6 @@
-package com.example.demo.chat.dto;
+package com.example.demo.chat;
+
+import com.example.demo.member.Member;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,5 +16,6 @@ import lombok.ToString;
 public class ChatRoomDto {
 	private long num;
 	private String lastMsg;
+	private Member lastSender;
 	private long userCount;
 }

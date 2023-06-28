@@ -1,16 +1,10 @@
-package com.example.demo.chat.service;
+package com.example.demo.chat;
 
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.chat.dao.ChatDao;
-import com.example.demo.chat.dao.ChatRoomDao;
-import com.example.demo.chat.dto.Chat;
-import com.example.demo.chat.dto.ChatDto;
-import com.example.demo.chat.dto.ChatRoom;
-import com.example.demo.chat.dto.ChatRoomDto;
 import com.example.demo.member.Member;
 
 @Service
@@ -29,7 +23,7 @@ public class ChatRoomService {
 		}
 		ArrayList<ChatRoomDto> dtoList = new ArrayList<>();
 		for(ChatRoom room : roomList) {
-			ChatRoomDto dto = new ChatRoomDto(room.getNum(), room.getLastMsg(), room.getUserCount());
+			ChatRoomDto dto = new ChatRoomDto(room.getNum(), room.getLastMsg(), room.getLastSender(), room.getUserCount());
 			dtoList.add(dto);
 		}
 		
@@ -37,7 +31,7 @@ public class ChatRoomService {
 	}
 	
 	public ChatDto joinRoom(long roomNum, String email) {
-		Chat chat = chatDao.save(new Chat(0, new ChatRoom(roomNum, "", 0), 
+		Chat chat = chatDao.save(new Chat(0, new ChatRoom(roomNum, "", new Member(email, "", "", "", 0, ""), 0), 
 				new Member(email, "", "", "", 0, ""), email+" 입장", null, true ));
 		ChatDto dto = new ChatDto(chat.getNum(), chat.getRoom(), chat.getMember(), chat.getMessage(), chat.getSendTime(), chat.isRequest());
 		return dto;
@@ -57,6 +51,7 @@ public class ChatRoomService {
 	public void saveLastMsg(ChatRoom room) {
 		ChatRoom newRoom = dao.findById(room.getNum()).orElse(null);
 		newRoom.setLastMsg(room.getLastMsg());
+		newRoom.setLastSender(room.getLastSender());
 		ChatRoom savedRoom = dao.save(newRoom);
 		if(savedRoom == null) {
 			System.out.println("null");

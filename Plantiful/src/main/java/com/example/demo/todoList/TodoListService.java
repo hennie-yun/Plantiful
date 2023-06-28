@@ -20,7 +20,8 @@ public class TodoListService {
 			TodoListDto dto = new TodoListDto(todo.getEmail(), todo.getMember(), todo.getText());
 			return dto;
 		} else {
-			TodoListDto dto = new TodoListDto(email, new Member(email, "", "", "", 0, ""), "");
+			Member member = memDao.findById(email).orElse(null);
+			TodoListDto dto = new TodoListDto(email, member, "ToDoList!!!!");
 			return dto;
 		}
 	}

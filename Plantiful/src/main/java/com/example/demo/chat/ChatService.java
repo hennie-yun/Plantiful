@@ -1,12 +1,8 @@
-package com.example.demo.chat.service;
+package com.example.demo.chat;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.chat.dao.ChatDao;
-import com.example.demo.chat.dto.Chat;
-import com.example.demo.chat.dto.ChatDto;
-import com.example.demo.chat.dto.ChatRoom;
 import com.example.demo.member.Member;
 import com.example.demo.member.MemberDao;
 
@@ -20,7 +16,7 @@ public class ChatService {
 	private MemberDao memDao;
 	
 	public ChatDto chatting(ChatDto dto) {
-		dto.setRoom(new ChatRoom(1, dto.getMessage(), 0));
+		dto.setRoom(new ChatRoom(1, dto.getMessage(), dto.getMember(),0));
 		Chat chat = new Chat(0, dto.getRoom(), dto.getMember(), dto.getMessage(), dto.getSendTime(), dto.isRequest());
 		String email = dto.getMember().getEmail();
 		Member member = memDao.findById(email).orElse(null); 

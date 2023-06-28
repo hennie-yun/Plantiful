@@ -3,6 +3,7 @@ package com.example.demo.todoList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/todolist")
+@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class TodoListController {
 	
