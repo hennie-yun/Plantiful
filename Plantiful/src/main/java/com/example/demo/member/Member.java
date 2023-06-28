@@ -1,5 +1,8 @@
 package com.example.demo.member;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -22,7 +25,7 @@ public class Member {
 	private String pwd;
 	private String nickname;
 	private String phone;
-	private long id; //카카오 전용 
+	private long id; 
 	
 	@Column(nullable = true)
 	private String img;

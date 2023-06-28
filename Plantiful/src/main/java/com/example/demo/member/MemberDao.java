@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MemberDao extends JpaRepository<Member, String> {
 
-	Member save(MemberDto memberDto);
+	
 
 }

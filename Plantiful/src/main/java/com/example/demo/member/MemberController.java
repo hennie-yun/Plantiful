@@ -252,7 +252,7 @@ public class MemberController {
 	}
 
 	// 정보 한개 빼오기
-	@GetMapping("getmember/{email}")
+	@GetMapping("/getmember/{email}")
 	public Map get(@PathVariable("email") String email, @RequestHeader(name = "token", required = false) String token) {
 		Map map = new HashMap();
 		if (token != null) {// 로그인 후
@@ -401,20 +401,23 @@ public class MemberController {
 	//본인인증완료 후 빼내 온 정보 중 핸드폰 번호와 입력한 핸드폰 번호가 일치한지 확인하고 
 	//일치하면 true 아니면 false 를 반환해서 완벽하게 이루어 졌나 확인 한다. 
 	@GetMapping("/certifications/redirect")
-    public boolean handleRedirect(@RequestParam("imp_uid") String impUid, @RequestParam("email") String email) {
+    public Map handleRedirect(@RequestParam("imp_uid") String impUid, @RequestParam("email") String email) {
 		boolean flag = false;
+		Map map = new HashMap<>();
       System.out.println("Received imp_uid: " + impUid);
      String phone = checkinfoservice.getAccessToken(impUid);
      System.out.println(phone);
      
+   
      MemberDto dto = service.getMember(email);
-     if (dto !=null) {
-    	 if(dto.getPhone() == phone) {
-    		 flag = true;
-    	}  
+     if (dto != null) {
+    	 if(dto.getPhone().equals(phone)) {
+         flag = true;
+    	 }
      }
-      return flag; 
-    } 
+     map.put("flag", flag);
+     return map;
+ }
 
 
 }

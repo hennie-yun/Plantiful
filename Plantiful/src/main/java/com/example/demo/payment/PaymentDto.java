@@ -14,11 +14,10 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PaymentDto {
 
-	private int paymentnum; 
-	private String impuid;
-	private String merchantuid;
-	private int paidamount;
-	private int applynum;
+	private int paymentnum;
 	private Member email;
+	private int paidamount;
+	
+	
 	
 }

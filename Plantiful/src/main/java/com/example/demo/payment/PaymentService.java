@@ -5,43 +5,35 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.member.Member;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class PaymentService {
 	
 	@Autowired
 	private PaymentDao dao;
+
 	
-	//페이 결과로 찾기 
-	public PaymentDto paymentLookupService(int paymentnum) {
-		Payment payment = dao.findById(paymentnum).orElse(null);
-		if (payment == null) {
-			return null;
-		}
-		return new PaymentDto(payment.getPaymentnum(), payment.getImpuid(), payment.getMerchantuid(), payment.getPaidamount(),
-				payment.getApplynum(), payment.getEmail());
-	}
-	
-	// 결제 완료 하면  추가 
+	// 처음 결제 하는 거면 추가 
 		public PaymentDto save(PaymentDto dto) {
-			Payment entity = dao.save(new Payment(dto.getPaymentnum(), dto.getImpuid(), dto.getMerchantuid(), dto.getPaidamount(),
-					dto.getApplynum(), dto.getEmail()));
-			return new PaymentDto(entity.getPaymentnum(), entity.getImpuid(), entity.getMerchantuid(), entity.getPaidamount(), entity.getApplynum(),
-					entity.getEmail());
+			Payment entity = dao.save(new Payment(dto.getPaidamount(),dto.getEmail(), dto.getPaidamount()));
+			return new PaymentDto(entity.getPaymentnum(), entity.getEmail(),entity.getPaidamount());
 		}
-		
-		//결제 완료 했는데 같은 이메일이 있을 시 Paidamount를 더해 
-//		public String update(PaymentDto dto) {
-//			
-//		}
+	
+		//같은 이메일이 있으면 추가가 아니라 금액만 update 
+		public Payment edit(PaymentDto oldPayment) {
+			Payment entity = dao.save(new Payment(oldPayment.getPaymentnum(),oldPayment.getEmail(),oldPayment.getPaidamount()));
+			return entity;
 
-		//회원의 돈 찾기 
-		public Payment findByEmail(Member email) {
-	        return dao.findByEmail(email);
-	    }
-		
-		//삭제하기
-		public void withdraw(int paymentnum) {
-			dao.deleteById(paymentnum);
 		}
-
+	
+		
+		
+		//이메일 String 으로 찾기 
+		  @Transactional
+		    public PaymentDto findByEmail(String email) {
+		      Payment payment = dao.findByEmail(email);
+		      return new PaymentDto (payment.getPaymentnum(), payment.getEmail(),payment.getPaidamount());
+		    }
+		
 }

@@ -2,6 +2,8 @@ package com.example.demo.member;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.demo.payment.Payment;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
