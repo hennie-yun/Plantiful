@@ -18,5 +18,5 @@ import lombok.ToString;
 public class GroupPartyDto {
 	private int groupparty_num;
 	private ScheduleGroup schedulegroup_num;
-	private Member member_email;
+	private Member member_email ;
 }

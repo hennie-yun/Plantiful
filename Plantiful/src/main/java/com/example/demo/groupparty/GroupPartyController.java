@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,12 +22,10 @@ import com.example.demo.schedulegroup.ScheduleGroupService;
 public class GroupPartyController {
 	@Autowired
 	private GroupPartyService service;
-	
+
 	@Autowired
 	private ScheduleGroupService scheduleservice;
-	
-	
-	
+
 	// 그룹 가입
 	@PostMapping("")
 	public Map join(GroupPartyDto dto) {
@@ -35,7 +34,24 @@ public class GroupPartyController {
 		map.put("dto", gp);
 		return map;
 	}
-	
+
+	// 전체 검색
+	@GetMapping("")
+	public Map getAll() {
+		ArrayList<GroupPartyDto> list = service.getAll();
+		Map map = new HashMap();
+		map.put("list", list);
+		return map;
+	}
+
+	// email로 검색
+	@GetMapping("email/{email}")
+	public Map getByEmail(@PathVariable("email") String email) {
+		ArrayList<GroupPartyDto> list = service.getByEmail(email);
+		Map map = new HashMap();
+		map.put("list", list);
+		return map;
+	}
 
 	// 그룹 삭제
 	@DeleteMapping("/{groupparty_num}")
@@ -45,7 +61,7 @@ public class GroupPartyController {
 		try {
 			ScheduleGroup num = service.getSchedulenum(groupparty_num);
 			ArrayList<GroupPartyDto> group = service.getGroupPartynum(num.getSchedulegroup_num());
-			if(group.size()==1) {
+			if (group.size() == 1) {
 				map.put("schedule_num", group);
 				service.outParty(groupparty_num);
 				int schedulenum = num.getSchedulegroup_num();
