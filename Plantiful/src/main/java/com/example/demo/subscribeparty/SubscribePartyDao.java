@@ -30,5 +30,10 @@ public interface SubscribePartyDao extends JpaRepository<SubscribeParty, Integer
 
 	SubscribeParty findBySubscribeNumAndEmail(SubscribeBoard subscribe_num, Member email);
 
+	//진행중인거 기간 끝난 후 모집자에게 돈 보내줌
+	//돈 빼냄 -> 모집자 cash로 이동 
+	@Query(value = "update subscribe_party set point_basket=0 where subscribe_num=:subscribe_num", nativeQuery = true)
+	void minusPeople(@Param("subscribe_num") int subscribe_num);
+	
 	
 }

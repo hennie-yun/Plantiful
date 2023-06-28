@@ -62,7 +62,14 @@ public class SubscribePartyController {
 	}
 	
 
-	
+	//돈 움직이기(팀원들 pb 0으로 만듦)
+		@PostMapping("/{subscribe_num}")
+		public Map minusMoney(@PathVariable("subscribe_num") int subscribe_num) {
+			service.minusMoney(subscribe_num);
+			Map map = new HashMap();
+			return map;
+		}
+		
 	
 	
 	//subscribe_num으로 검색 (파티 전체 검색)
@@ -104,6 +111,7 @@ public class SubscribePartyController {
 		map.put("dto", dto);
 		return map;
 	}
+	
 	
 	//email이랑 subnum으로 검색 (이미 참여했는지 아닌지 확인)
 //	@GetMapping("/{subscribe_num}/{email}")
