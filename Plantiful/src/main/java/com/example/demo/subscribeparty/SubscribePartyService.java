@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import com.example.demo.member.Member;
 import com.example.demo.subscribeboard.SubscribeBoard;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class SubscribePartyService {
 
@@ -46,6 +48,7 @@ public class SubscribePartyService {
 	}
 	
 //	//email로 검색
+//	@Transactional
 	public ArrayList<SubscribePartyDto> getByEmail(String email){
 		Member email2 = new Member(email, "","","",0,"");
 		ArrayList<SubscribeParty> list = (ArrayList<SubscribeParty>) dao.findByEmail(email2);
