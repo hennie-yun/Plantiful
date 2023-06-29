@@ -4,6 +4,7 @@ package com.example.demo.naver;
 
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
@@ -13,7 +14,10 @@ import java.net.URLEncoder;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -21,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
@@ -167,39 +172,80 @@ public class NaverController {
 	@RequestMapping("/api/naver/calendar")
 	public Map calendar(@RequestHeader("access_token") String access_token) throws java.io.IOException {	
 			boolean flag = false;
-		
+			
 			Map map = new HashMap();
-	        String calendarId = "YOUR_CALENDAR_ID";
-	        String title = "Meeting";
-	        String description = "Discuss project updates";
-	        String startDateTime = "2023-06-30T10:00:00";
-	        String endDateTime = "2023-06-30T11:00:00";
-	        String url = "https://openapi.naver.com/calendar/createSchedule.json";
-
-	        OkHttpClient client = new OkHttpClient();
-
-	        MediaType mediaType = MediaType.parse("application/json");
-	        RequestBody body = RequestBody.create(mediaType, "{\n    \"calendarId\":\"" + calendarId + "\",\n    \"title\":\"" + title + "\",\n    \"description\":\"" + description + "\",\n    \"startDateTime\":\"" + startDateTime + "\",\n    \"endDateTime\":\"" + endDateTime + "\"\n}");
-	        Request request = new Request.Builder()
-	                .url(url)
-	                .post(body)
-	                .addHeader("Content-Type", "application/json")
-	                .addHeader("Authorization", "Bearer " + access_token)
-	                .build();
-
-	        try {
-	            Response response = client.newCall(request).execute();
-	            if (response.isSuccessful()) {
-	            	flag = true;
-	                System.out.println("Schedule added successfully!");
-	            } else {
-	                System.out.println("Failed to add schedule. Error: " + response.body().string());
-	            }
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        }
-	        map.put("flag", flag);
-	        return map;
-	        
+			  String token = "access_token";
+		        String header = "Bearer " + access_token; // Bearer 다음에 공백 추가
+		        try {
+		            String apiURL = "https://openapi.naver.com/calendar/createSchedule.json";
+		            URL url = new URL(apiURL);
+		            HttpURLConnection con = (HttpURLConnection)url.openConnection();
+		            con.setRequestMethod("POST");
+		            con.setRequestProperty("Authorization", header);
+		            String calSum =  URLEncoder.encode("[제목] 캘린더API로 추가한 일정", "UTF-8");
+		            String calDes =  URLEncoder.encode("[상세] 회의 합니다", "UTF-8");
+		            String calLoc =  URLEncoder.encode("[장소] 그린팩토리", "UTF-8");
+		            String uid = UUID.randomUUID().toString();
+		            String scheduleIcalString = "BEGIN:VCALENDAR\n" +
+		                    "VERSION:2.0\n" +
+		                    "PRODID:Naver Calendar\n" +
+		                    "CALSCALE:GREGORIAN\n" +
+		                    "BEGIN:VTIMEZONE\n" +
+		                    "TZID:Asia/Seoul\n" +
+		                    "BEGIN:STANDARD\n" +
+		                    "DTSTART:20230629T000000\n" +
+		                    "TZNAME:GMT%2B09:00\n" +
+		                    "TZOFFSETFROM:%2B0900\n" +
+		                    "TZOFFSETTO:%2B0900\n" +
+		                    "END:STANDARD\n" +
+		                    "END:VTIMEZONE\n" +
+		                    "BEGIN:VEVENT\n" +
+		                    "SEQUENCE:0\n" +
+		                    "CLASS:PUBLIC\n" +
+		                    "TRANSP:OPAQUE\n" +
+		                    "UID:" + uid + "\n" +                          // 일정 고유 아이디
+		                    "DTSTART;TZID=Asia/Seoul:20230629T170000\n" +  // 시작 일시
+		                    "DTEND;TZID=Asia/Seoul:20230629T173000\n" +    // 종료 일시
+		                    "SUMMARY:"+ calSum +" \n" +                    // 일정 제목
+		                    "DESCRIPTION:"+ calDes +" \n" +                // 일정 상세 내용
+		                    "LOCATION:"+ calLoc +" \n" +                   // 장소
+		                    "RRULE:FREQ=YEARLY;BYDAY=FR;INTERVAL=1;UNTIL=20201231\n" +  // 일정 반복시 설정
+		                    "ORGANIZER;CN=관리자:mailto:admin@sample.com\n" + // 일정 만든 사람
+		                    "ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;CN=admin:mailto:user1@sample.com\n" + // 참석자
+		                    "CREATED:20230629T160000Z\n" +         // 일정 생성시각
+		                    "LAST-MODIFIED:20230629T160000Z\n" +   // 일정 수정시각
+		                    "DTSTAMP:20230629T160000Z\n" +         // 일정 타임스탬프
+		                    "END:VEVENT\n" +
+		                    "END:VCALENDAR";
+		            String postParams = "calendarId=defaultCalendarId&scheduleIcalString=" + scheduleIcalString;
+		            System.out.println(postParams);
+		            con.setDoOutput(true);
+		            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+		            wr.writeBytes(postParams);
+		            wr.flush();
+		            wr.close();
+		            int responseCode = con.getResponseCode();
+		            BufferedReader br;
+		            if(responseCode==200) { // 정상 호출
+		                br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+		                flag= true;
+		            } else {  // 에러 발생
+		                br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
+		            }
+		            String inputLine;
+		            StringBuffer response = new StringBuffer();
+		            while ((inputLine = br.readLine()) != null) {
+		                response.append(inputLine);
+		            }
+		            br.close();
+		            map.put("flag", flag);
+		            System.out.println(response.toString());
+		        } catch (Exception e) {
+		            System.out.println(e);
+		        }
+		        return map;
 	}
+	
+	
+
 } 
