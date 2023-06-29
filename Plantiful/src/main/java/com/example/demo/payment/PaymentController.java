@@ -31,7 +31,8 @@ public class PaymentController {
 	@PostMapping("")
 	public Map<String, Object> savePayment(@PathVariable("email") String email, PaymentDto dto) {
 		Map<String, Object> map = new HashMap<>();
-		PaymentDto oldPayment = service.findByEmail(email);
+		MemberDto memDto = memservice.getMember(email);
+		PaymentDto oldPayment = service.findByEmail(memDto);
 		System.out.println(oldPayment);
 		if (oldPayment != null) {
 			int newPaidAmount = oldPayment.getPaidamount() + dto.getPaidamount();
@@ -54,9 +55,8 @@ public class PaymentController {
 	@PostMapping("/withdraw/{email}")
 	public Map<String, Object> cashout(@PathVariable("email") String email, PaymentDto dto) {
 		Map<String, Object> map = new HashMap<>();
-
-		PaymentDto oldPayment = service.findByEmail(email);
-
+		MemberDto memDto = memservice.getMember(email);
+		PaymentDto oldPayment = service.findByEmail(memDto);
 		if (oldPayment != null) {
 			int newPaidAmount = oldPayment.getPaidamount() - dto.getPaidamount();
 			oldPayment.setPaidamount(newPaidAmount);
@@ -75,7 +75,8 @@ public class PaymentController {
 		System.out.println("email: " + email);
 		Map<String, Object> map = new HashMap<>();
 		
-		PaymentDto paymentdto = service.findByEmail(email);
+		MemberDto memDto = memservice.getMember(email);
+		PaymentDto paymentdto = service.findByEmail(memDto);
 
 		System.out.println("payment: " + paymentdto);
 

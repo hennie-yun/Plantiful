@@ -1,6 +1,7 @@
 package com.example.demo.chat;
 
 import com.example.demo.member.Member;
+import com.example.demo.subscribeparty.SubscribeParty;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,6 +34,9 @@ public class ChatRoom {
 	@ManyToOne
 	@JoinColumn(name = "email")
 	private Member lastSender;
-	private long userCount;
+	
+	@OneToOne
+	@JoinColumn(name = "party")
+	private SubscribeParty subscribeNum ;
 	
 }
