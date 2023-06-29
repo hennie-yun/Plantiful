@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.member.Member;
+import com.example.demo.member.MemberDto;
 
 import jakarta.transaction.Transactional;
 
@@ -22,13 +23,16 @@ public class PaymentService {
 	
 		//같은 이메일이 있으면 추가가 아니라 금액만 update 
 		public Payment edit(PaymentDto oldPayment) {
-			Payment entity = dao.save(new Payment(oldPayment.getPaymentnum(),oldPayment.getEmail(),oldPayment.getPaidamount()));
+			Payment e = new Payment(oldPayment.getPaymentnum(),oldPayment.getEmail(),oldPayment.getPaidamount());
+			Payment entity = dao.save(e);
+//			Payment entity = dao.updateByPaymentnum(oldPayment.getPaidamount(), oldPayment.getPaymentnum());
 			return entity;
 
 		}
 		//이메일 String 으로 찾기 
 		  @Transactional
-		    public PaymentDto findByEmail(String email) {
+		    public PaymentDto findByEmail(MemberDto dto) {
+			  Member email = new Member(dto.getEmail(), dto.getPwd(), dto.getNickname(), dto.getPhone(), dto.getId(), dto.getImg());
 		      Payment payment = dao.findByEmail(email);
 		      if(payment == null) {
 		    	  return null;

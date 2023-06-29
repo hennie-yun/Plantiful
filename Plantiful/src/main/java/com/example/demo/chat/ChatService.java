@@ -16,7 +16,7 @@ public class ChatService {
 	private MemberDao memDao;
 	
 	public ChatDto chatting(ChatDto dto) {
-		dto.setRoom(new ChatRoom(1, dto.getMessage(), dto.getMember(),0));
+		dto.setRoom(new ChatRoom(1, dto.getMessage(), dto.getMember(), null));
 		Chat chat = new Chat(0, dto.getRoom(), dto.getMember(), dto.getMessage(), dto.getSendTime(), dto.isRequest());
 		String email = dto.getMember().getEmail();
 		Member member = memDao.findById(email).orElse(null); 

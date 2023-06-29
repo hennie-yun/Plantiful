@@ -11,8 +11,17 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.chat.ChatDto;
+import com.example.demo.chat.ChatRoom;
+import com.example.demo.chat.ChatRoomDto;
+import com.example.demo.chat.ChatRoomService;
+import com.example.demo.chat.ChatService;
+import com.example.demo.member.Member;
+import com.example.demo.member.MemberDto;
+import com.example.demo.member.MemberService;
 import com.example.demo.subscribeboard.SubscribeBoardService;
 
 @RestController
@@ -25,6 +34,12 @@ public class SubscribePartyController {
 	private SubscribePartyService service; 
 	@Autowired
 	private SubscribeBoardService sbservice;
+	@Autowired
+	private ChatRoomService roomService;
+	@Autowired
+	private MemberService memService;
+	@Autowired
+	private ChatService chatService;
 	
 	//추가
 	@PostMapping("")
@@ -43,10 +58,18 @@ public class SubscribePartyController {
 	//파티 시작 여부 수정 1. 
 	//인원수 기간안에 안차면 false로 보냄, 인원수 모집 기간안에 차면 true로 보냄  
 	@PatchMapping("/{subscribe_num}/{flag}") //컬럼 일부 수정
-	public Map editStart(@PathVariable("subscribe_num") int subscribe_num, @PathVariable("flag") int flag) {
+	public Map editStart(@PathVariable("subscribe_num") int subscribe_num, @PathVariable("flag") int flag, @RequestParam(name = "email") String email) {
 		try {
 			if (flag == 1) {
 				service.editStart(subscribe_num); //시작중 (1)로 수정
+				ChatRoomDto roomDto = roomService.createRoom(subscribe_num);
+				System.out.println("email : "+email);
+				System.out.println(roomDto);
+				MemberDto memDto = memService.getMember(email);
+				if(memDto != null) {
+//					ChatDto chat = new ChatDto(0, "", new ChatRoom(roomDto.getSubscribeNum(), null), new Member(email, "", "", "", 0, ""), "", null, false);
+				}
+				
 			} else if (flag == 2){
 				service.endStart(subscribe_num); //끝남 (2) 로 수정 
 			} else {
