@@ -33,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.demo.auth.JwtTokenProvider;
 
 import io.jsonwebtoken.io.IOException;
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -204,16 +205,19 @@ public class MemberController {
 
 	// 로그인
 	@PostMapping("/login")
-	public Map login(String email, String pwd) {
+	public Map login(String email, String pwd, HttpSession session) {
 		Map map = new HashMap();
 		boolean flag = false;
 		MemberDto dto = service.getMember(email);
 		if (dto != null && pwd.equals(dto.getPwd())) {
 			String token = tokenprovider.generateJwtToken(dto);
 			String loginId = dto.getEmail();
+			
 			flag = true;
 			map.put("token", token);
 			map.put("loginId", loginId);
+			session.setAttribute("loginId", loginId);
+	
 		}
 		map.put("flag", flag);
 		return map;
@@ -421,11 +425,15 @@ public class MemberController {
 	@GetMapping("/getKakaomember/{email}")
 	public Map get(@PathVariable("email") String email) {
 		Map map = new HashMap();
+		boolean flag = false;
 		MemberDto d = service.getMember(email);
 		if (d != null) {// 로그인 후
+			flag = true;
 			map.put("dto", d);
+			map.put("flag", flag);
 		} else {
 			map.put("messeage", "존재하지 않는 회원이니 회원가입해라");
+			map.put("flag", flag);
 		}
 		return map;
 	}

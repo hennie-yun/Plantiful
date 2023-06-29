@@ -34,9 +34,9 @@ public class MemberService {
 	
 	
 	//카카오로 회원가입 했을 대 쓸거임 
-	public void saveMemberKaKao(String email, String id, String nickname) {   
-	        Member entity = dao.save(new Member(email, id, nickname, null, 0, null));	     
-	}
+//	public void saveMemberKaKao(String email, String id, String nickname) {   
+//	        Member entity = dao.save(new Member(email, id, nickname, null, 0, null));	     
+//	}
 
 	// 탈퇴
 	public void delMember(String email) {

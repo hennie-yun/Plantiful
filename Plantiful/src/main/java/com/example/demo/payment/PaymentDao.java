@@ -12,7 +12,7 @@ import com.example.demo.member.Member;
 import jakarta.transaction.Transactional;
 
 @Repository
-public interface PaymentDao extends JpaRepository<Payment, Member> {
+public interface PaymentDao extends JpaRepository<Payment, Integer> {
 
 	@Transactional
 	@Query(value = "select * from payment where email = :email", nativeQuery = true)

@@ -24,6 +24,7 @@ public class LoginController {
 	@Autowired
 	private LoginService loginService;
 
+
 	// 코드를 빼와서 access token 을 얻어다 줄 것임
 	@GetMapping("/kakaologin/{code}")
 	public HashMap<String, String> kakaoLogin(@PathVariable("code") String code) {
@@ -33,12 +34,13 @@ public class LoginController {
 		System.out.println("카카오토큰" + kakaoToken);
 		// 사용자 정보를 요청하여 얻음
 		HashMap<String, String> userInfo = loginService.requestUser(kakaoToken);
-		
 		System.out.println("userInfo : " + userInfo);
+
 		
+		//토큰을 아이디와 함께 저장할 것임 혹시 같은 아이디가 있다면 토큰 정보만 업데이트 할 것
+		
+
 		return userInfo;
 	}
-
-
 
 }
