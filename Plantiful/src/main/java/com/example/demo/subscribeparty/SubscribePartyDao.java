@@ -17,8 +17,10 @@ import jakarta.transaction.Transactional;
 public interface SubscribePartyDao extends JpaRepository<SubscribeParty, Integer> {
 
 	ArrayList<SubscribeParty> findBySubscribeNum(SubscribeBoard subscribe_num);
-
+//	@Transactional
+//	@Query(value = "select * from subscribe_party where email =:email order by start_check asc", nativeQuery = true)
 	ArrayList<SubscribeParty> findByEmail(Member email);
+
 
 	@Transactional
 	@Modifying
