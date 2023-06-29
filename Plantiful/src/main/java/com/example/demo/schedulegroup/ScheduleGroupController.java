@@ -19,6 +19,9 @@ import com.example.demo.groupparty.GroupPartyDto;
 import com.example.demo.groupparty.GroupPartyService;
 import com.example.demo.member.Member;
 import com.example.demo.member.MemberService;
+import com.example.demo.schedule.Schedule;
+import com.example.demo.schedule.ScheduleDto;
+import com.example.demo.schedule.ScheduleService;
 
 @RestController // rest api controller
 @CrossOrigin(origins = "*") // 모든 ip로부터 요청 받기 허용
@@ -32,6 +35,8 @@ public class ScheduleGroupController {
 
 	@Autowired
 	private MemberService memberservice;
+	@Autowired
+	private ScheduleService Scheduleservice;
 	
 	@Autowired
 	private JwtTokenProvider tokenProvider;
@@ -54,11 +59,13 @@ public class ScheduleGroupController {
 		String email = tokenProvider.getUsernameFromToken(token);
 		Member member = new Member(email, null, null, null, 0, null);
 		ScheduleGroup group = new ScheduleGroup(sg.getSchedulegroup_num(), null, 0);
+//		ScheduleDto schedule = new ScheduleDto(0,group,member,null,null,null,null,null,null,null,0,null);
 		GroupPartyDto party = new GroupPartyDto(0, group, member);
 		
 		Map map = new HashMap();
 		map.put("dto", sg);
 		
+//		Scheduleservice.save(schedule);
 		groupservice.save(party);
 		
 		return map;
