@@ -27,9 +27,9 @@ public class KakaotokenController {
 	@PostMapping("")
 	public void kakaoLogin(Kakaotoken ktokenput) {
 		String email = ktokenput.getEmail();
-		System.out.println(email);
+		System.out.println("카카오토큰받는 이메일" + email);
 		String token = ktokenput.getToken();
-		System.out.println(token);
+		System.out.println("카카오토큰의 토큰" + token);
 		boolean exists = service.findByEmail(email) != null;
 		if (exists) {
 			// 기존 정보가 있는 경우

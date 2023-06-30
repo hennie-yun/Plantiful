@@ -178,6 +178,24 @@ public class MemberController {
 		response.put("flag", flag);
 		return response;
 	}
+	
+	public Map newPassword(String email, String pwd) {
+		boolean flag = true;
+		Map response = new HashMap<>();
+		MemberDto dto = service.getMember(email);
+		if (dto == null) {
+			flag = false;
+		} else {
+			MemberDto old = service.getMember(dto.getEmail());
+			old.setPwd(pwd);
+			old.setEmail(dto.getEmail());
+			MemberDto updatedDto = service.edit(old);
+			response.put("dto", updatedDto);
+		}
+
+		response.put("flag", flag);
+		return response;
+	}
 
 	// 이미지 빼기
 	@GetMapping("plantiful/{email}") // email/이미지파일명
@@ -303,7 +321,6 @@ public class MemberController {
 	@ResponseBody
 	@PostMapping("/email")
 	public Map email(String email) {
-
 		JavaMailSenderImpl mailSenderImpl = new JavaMailSenderImpl();
 		Properties prop = new Properties();
 		mailSenderImpl.setHost("smtp.gmail.com");
@@ -317,7 +334,11 @@ public class MemberController {
 		MemberDto dto = service.getMember(email);
 		if (dto != null) {
 			map.put("exist", "이미 존재하는 이메일입니다.");
-		} else {
+		} else { 
+			if (!isValidEmail(email)) {
+			    map.put("message", "이메일 형식이 올바르지 않습니다.");
+			    return map;
+			  }
 			Random random = new Random(); // 난수 생성을 위한 랜덤 클래스
 			String key = ""; // 인증번호
 
@@ -350,6 +371,10 @@ public class MemberController {
 		return map;
 	}
 
+	private boolean isValidEmail(String email) {
+		  return email.contains("@");
+		}
+	
 	// 비밀번호 재설정 메일
 	@ResponseBody
 	@PostMapping("/emailpwdcheck")
@@ -367,7 +392,11 @@ public class MemberController {
 		MemberDto dto = service.getMember(email);
 		if (dto == null) {
 			map.put("exist", "존재하지 않는 이메일 입니다.");
-		} else {
+		} else { 
+			if (!isValidEmail(email)) {
+			    map.put("message", "이메일 형식이 올바르지 않습니다.");
+			    return map;
+			  }
 			Random random = new Random(); // 난수 생성을 위한 랜덤 클래스
 			String key = ""; // 인증번호
 
@@ -386,11 +415,12 @@ public class MemberController {
 			}
 
 			String mail = "\n Plantiful 비밀번호 재설정 이메일 인증.";
-			message.setSubject("비밀번호 재설정을 위한 이메일 인증번호 전송 메일입니다."); // 이메일 제목
-			message.setText(mail + "인증번호는 " + key + " 입니다."); // 이메일 내용
+			message.setSubject("비밀번호 재설정을 위한 임시비밀번호 전송 메일입니다."); // 이메일 제목
+			message.setText(mail + "임시비밀번호는 " + key + " 입니다."); // 이메일 내용
 			try {
-//				javaMailSender.send(message); // 이메일 전송
 				mailSenderImpl.send(message);
+				System.out.println(email + key );
+				newPassword(email,key);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
