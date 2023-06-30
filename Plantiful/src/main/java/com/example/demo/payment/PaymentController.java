@@ -33,10 +33,8 @@ public class PaymentController {
 		Map<String, Object> map = new HashMap<>();
 		MemberDto memDto = memservice.getMember(email);
 		PaymentDto oldPayment = service.findByEmail(memDto);
-		System.out.println(oldPayment);
 		if (oldPayment != null) {
 			int newPaidAmount = oldPayment.getPaidamount() + dto.getPaidamount();
-			System.out.println(newPaidAmount);
 			oldPayment.setPaidamount(newPaidAmount);
 			Payment savedPayment = service.edit(oldPayment);
 			map.put("dto", savedPayment);
@@ -57,6 +55,8 @@ public class PaymentController {
 		Map<String, Object> map = new HashMap<>();
 		MemberDto memDto = memservice.getMember(email);
 		PaymentDto oldPayment = service.findByEmail(memDto);
+		System.out.println(dto);
+		System.out.println(oldPayment);
 		if (oldPayment != null) {
 			int newPaidAmount = oldPayment.getPaidamount() - dto.getPaidamount();
 			oldPayment.setPaidamount(newPaidAmount);
@@ -77,9 +77,9 @@ public class PaymentController {
 		
 		MemberDto memDto = memservice.getMember(email);
 		PaymentDto paymentdto = service.findByEmail(memDto);
-
+		
 		System.out.println("payment: " + paymentdto);
-
+		
 		if (paymentdto != null) {
 			map.put("paydto", paymentdto);
 		} else  {

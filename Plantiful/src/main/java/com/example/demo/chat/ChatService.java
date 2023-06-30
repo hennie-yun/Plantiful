@@ -15,17 +15,22 @@ public class ChatService {
 	@Autowired
 	private MemberDao memDao;
 	
+	@Autowired 
+	private ChatRoomService roomService;
+	
 	public ChatDto chatting(ChatDto dto) {
-		dto.setRoom(new ChatRoom(1, dto.getMessage(), dto.getMember(), null));
+		System.out.println("chatting 시작");
+		System.out.println("chatting 내부 dto : " + dto);
 		Chat chat = new Chat(0, dto.getRoom(), dto.getMember(), dto.getMessage(), dto.getSendTime(), dto.isRequest());
 		String email = dto.getMember().getEmail();
 		Member member = memDao.findById(email).orElse(null); 
 		chat.setMember(member);
 		Chat savedChat = dao.save(chat);
+		System.out.println("savedChat : " + savedChat);
+		roomService.saveLastMsg(savedChat.getRoom());
 		if(savedChat != null) {
 			ChatDto newDto = new ChatDto(savedChat.getNum(), savedChat.getRoom(), savedChat.getMember(), 
 					savedChat.getMessage(), savedChat.getSendTime(), true);
-			System.out.println(newDto.getSendTime());
 			return newDto;
 		} else {
 			return null;
