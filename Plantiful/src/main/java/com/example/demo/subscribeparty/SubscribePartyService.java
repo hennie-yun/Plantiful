@@ -78,6 +78,11 @@ public class SubscribePartyService {
 		dao.endStartCheck(subscribe_num);
 	}
 	
+	//start check 시작 전 
+	public void beforeStart(int subscribe_num) {
+		dao.beforeStartCheck(subscribe_num);
+	}
+	
 	//돈 움직이기(팀원들 pb 0으로 만듦)
 	public void minusMoney(int subscribe_num) {
 		dao.minusPeople(subscribe_num);

@@ -17,8 +17,7 @@ import jakarta.transaction.Transactional;
 public interface SubscribePartyDao extends JpaRepository<SubscribeParty, Integer> {
 
 	ArrayList<SubscribeParty> findBySubscribeNum(SubscribeBoard subscribe_num);
-//	@Transactional
-//	@Query(value = "select * from subscribe_party where email =:email order by start_check asc", nativeQuery = true)
+
 	ArrayList<SubscribeParty> findByEmail(Member email);
 
 
@@ -29,6 +28,9 @@ public interface SubscribePartyDao extends JpaRepository<SubscribeParty, Integer
 	
 	@Query(value = "update subscribe_party set start_check=2 where subscribe_num=:subscribe_num", nativeQuery = true)
 	void endStartCheck(@Param("subscribe_num") int subscribe_num);
+	
+	@Query(value = "update subscribe_party set start_check=0 where subscribe_num=:subscribe_num", nativeQuery = true)
+	void beforeStartCheck(@Param("subscribe_num") int subscribe_num);
 
 	SubscribeParty findBySubscribeNumAndEmail(SubscribeBoard subscribe_num, Member email);
 
