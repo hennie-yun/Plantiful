@@ -28,7 +28,7 @@ public class PaymentController {
 	private MemberService memservice;
 
 	// 추가
-	@PostMapping("")
+	@PostMapping("/{email}")
 	public Map<String, Object> savePayment(@PathVariable("email") String email, PaymentDto dto) {
 		Map<String, Object> map = new HashMap<>();
 		MemberDto memDto = memservice.getMember(email);
