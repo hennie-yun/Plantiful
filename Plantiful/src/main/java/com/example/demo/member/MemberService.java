@@ -25,11 +25,14 @@ public class MemberService {
 	// 로그인, 내정보확인
 	public MemberDto getMember(String email) {
 		Member entity = dao.findById(email).orElse(null);
+		MemberDto dto = null;
 		if (entity == null) {
-			return null;
+			return dto;
+		} else {
+			dto = new MemberDto(entity.getEmail(), entity.getPwd(), entity.getNickname(), entity.getPhone(),
+					entity.getId(),entity.getImg(), null);
+			return dto;
 		}
-		return new MemberDto(entity.getEmail(), entity.getPwd(), entity.getNickname(), entity.getPhone(),
-				entity.getId(),entity.getImg(), null);
 	}
 	
 	

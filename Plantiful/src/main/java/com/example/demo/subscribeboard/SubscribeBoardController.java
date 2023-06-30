@@ -29,7 +29,6 @@ public class SubscribeBoardController {
 	public Map add(SubscribeBoardDto dto) {
 //		dto.makeDate();
 //		System.out.println(dto.getPayment_date());
-		System.out.println(dto);
 		Map map = new HashMap();
 		SubscribeBoardDto dto2 = null;
 		boolean flag = true;

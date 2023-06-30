@@ -1,7 +1,7 @@
 package com.example.demo.chat;
 
 import com.example.demo.member.Member;
-import com.example.demo.subscribeparty.SubscribeParty;
+import com.example.demo.subscribeboard.SubscribeBoard;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,5 +18,5 @@ public class ChatRoomDto {
 	private long num;
 	private String lastMsg;
 	private Member lastSender;
-	private SubscribeParty subscribeNum;
+	private SubscribeBoard subscribeNum;
 }

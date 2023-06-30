@@ -19,9 +19,6 @@ public class ChatController {
 	@Autowired
 	private MemberService memService;
 	
-	@Autowired 
-	private ChatRoomService roomService;
-	
 	@MessageMapping("/receive")
 	@SendTo("/sub")
 	public ChatDto chatting(ChatDto dto) {
@@ -32,7 +29,7 @@ public class ChatController {
 					memDto.getId() , memDto.getImg());
 		room.setLastSender(member);
 		room.setLastMsg(message);
-		roomService.saveLastMsg(room);
+		dto.setRoom(room);
 		return service.chatting(dto);
 	}
 
