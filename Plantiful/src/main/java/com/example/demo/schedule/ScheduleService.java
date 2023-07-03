@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.member.Member;
+import com.example.demo.schedulegroup.ScheduleGroup;
 
 @Service
 public class ScheduleService {
@@ -17,7 +18,7 @@ public class ScheduleService {
 		Schedule entity = dao.save(new Schedule(dto.getSchedule_num(), dto.getGroup_num(), dto.getEmail(),
 				dto.getTitle(), dto.getStart(), dto.getEnd(), dto.getStartTime(), dto.getEndTime(), dto.getInfo(),
 				dto.getAlert(), dto.getIsLoop(), dto.getDay()));
-		return new ScheduleDto(entity.getSchedule_num(), entity.getGroup_num(), entity.getEmail(), entity.getTitle(),
+		return new ScheduleDto(entity.getSchedule_num(), entity.getGroupnum(), entity.getEmail(), entity.getTitle(),
 				entity.getStartDate(), entity.getEndDate(), entity.getStartTime(), entity.getEndTime(),
 				entity.getInfo(), entity.getAlert(), entity.getIsLoop(), entity.getDay());
 
@@ -34,7 +35,7 @@ public class ScheduleService {
 		if (d == null) {
 			return null;
 		}
-		return new ScheduleDto(d.getSchedule_num(), d.getGroup_num(), d.getEmail(), d.getTitle(), d.getStartDate(),
+		return new ScheduleDto(d.getSchedule_num(), d.getGroupnum(), d.getEmail(), d.getTitle(), d.getStartDate(),
 				d.getEndDate(), d.getStartTime(), d.getEndTime(), d.getInfo(), d.getAlert(), d.getIsLoop(), d.getDay());
 	}
 
@@ -43,7 +44,7 @@ public class ScheduleService {
 		ArrayList<Schedule> list = (ArrayList<Schedule>) dao.findAll();
 		ArrayList<ScheduleDto> list2 = new ArrayList<ScheduleDto>();
 		for (Schedule s : list) {
-			list2.add(new ScheduleDto(s.getSchedule_num(), s.getGroup_num(), s.getEmail(), s.getTitle(),
+			list2.add(new ScheduleDto(s.getSchedule_num(), s.getGroupnum(), s.getEmail(), s.getTitle(),
 					s.getStartDate(), s.getEndDate(), s.getStartTime(), s.getEndTime(), s.getInfo(), s.getAlert(),
 					s.getIsLoop(), s.getDay()));
 		}
@@ -56,7 +57,20 @@ public class ScheduleService {
 		ArrayList<Schedule> list = (ArrayList<Schedule>) dao.findByemail(m);
 		ArrayList<ScheduleDto> list2 = new ArrayList<ScheduleDto>();
 		for (Schedule s : list) {
-			list2.add(new ScheduleDto(s.getSchedule_num(), s.getGroup_num(), s.getEmail(), s.getTitle(),
+			list2.add(new ScheduleDto(s.getSchedule_num(), s.getGroupnum(), s.getEmail(), s.getTitle(),
+					s.getStartDate(), s.getEndDate(), s.getStartTime(), s.getEndTime(), s.getInfo(), s.getAlert(),
+					s.getIsLoop(), s.getDay()));
+		}
+		return list2;
+	}
+
+	// groupnum으로 검색
+	public ArrayList<ScheduleDto> getByGroupnum(int group_num) {
+		ScheduleGroup sg = new ScheduleGroup(group_num, "", 0);
+		ArrayList<Schedule> list = (ArrayList<Schedule>) dao.findBygroupnum(sg);
+		ArrayList<ScheduleDto> list2 = new ArrayList<ScheduleDto>();
+		for (Schedule s : list) {
+			list2.add(new ScheduleDto(s.getSchedule_num(), s.getGroupnum(), s.getEmail(), s.getTitle(),
 					s.getStartDate(), s.getEndDate(), s.getStartTime(), s.getEndTime(), s.getInfo(), s.getAlert(),
 					s.getIsLoop(), s.getDay()));
 		}

@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.member.Member;
 import com.example.demo.schedulegroup.ScheduleGroup;
-import com.example.demo.schedulegroup.ScheduleGroupDto;
 
 @Service
 public class GroupPartyService {
@@ -30,6 +29,16 @@ public class GroupPartyService {
 	public ArrayList<GroupPartyDto> getByEmail(String email) {
 		Member m = new Member(email, "", "", "", 0, "");
 		ArrayList<GroupParty> list = (ArrayList<GroupParty>) dao.findBymemberEmail(m);
+		ArrayList<GroupPartyDto> list2 = new ArrayList<GroupPartyDto>();
+		for (GroupParty gp : list) {
+			list2.add(new GroupPartyDto(gp.getGroupparty_num(), gp.getSchedulegroupnum(), gp.getMemberEmail()));
+		}
+		return list2;
+	}
+	//schedule_num으로 검색
+	public ArrayList<GroupPartyDto>getByScheduleGroupNum(int schedulegroupnum){
+		ScheduleGroup sg = new ScheduleGroup(schedulegroupnum, "", 0);
+		ArrayList<GroupParty> list = (ArrayList<GroupParty>)dao.findByschedulegroupnum(sg);
 		ArrayList<GroupPartyDto> list2 = new ArrayList<GroupPartyDto>();
 		for (GroupParty gp : list) {
 			list2.add(new GroupPartyDto(gp.getGroupparty_num(), gp.getSchedulegroupnum(), gp.getMemberEmail()));

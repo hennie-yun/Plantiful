@@ -35,7 +35,7 @@ public class Schedule {
 	@ManyToOne
 	@JoinColumn(name = "group_num", nullable = true)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-	private ScheduleGroup group_num; // 그룹번호
+	private ScheduleGroup groupnum; // 그룹번호
 
 	@ManyToOne
 	@JoinColumn(name = "email", nullable = false)
