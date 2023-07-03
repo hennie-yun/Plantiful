@@ -18,7 +18,7 @@ public interface SubscribePartyDao extends JpaRepository<SubscribeParty, Integer
 
 	ArrayList<SubscribeParty> findBySubscribeNum(SubscribeBoard subscribe_num);
 
-	ArrayList<SubscribeParty> findByEmail(Member email);
+	ArrayList<SubscribeParty> findByEmailOrderByStartcheckAsc(Member email);
 
 
 	@Transactional

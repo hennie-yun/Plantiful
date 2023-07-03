@@ -45,7 +45,8 @@ public class SubscribeParty {
 	private Member email;
 	private int point_basket;
 	private Date enddate;
-	private int start_check;
+	@Column(name = "start_check")
+	private int startcheck;
 	@OneToOne
 	@JoinColumn(name="schedule_num", nullable=true)
 	@OnDelete(action=OnDeleteAction.CASCADE)
