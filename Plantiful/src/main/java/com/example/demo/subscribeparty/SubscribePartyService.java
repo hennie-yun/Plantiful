@@ -22,7 +22,7 @@ public class SubscribePartyService {
 //			Member memail = new Member(email,null,null,null,0,null);
 //			SubscribeParty dto = dao.findBySubscribeNumAndEmail(subnum, memail);
 //			SubscribePartyDto dto2 = new SubscribePartyDto();
-//			return new SubscribePartyDto(dto2.getParty(),dto2.getSubscribe_num(),dto2.getEmail(),dto2.getPoint_basket(),dto2.getEnddate(),dto2.getStart_check(),dto2.getSchedule_num());
+//			return new SubscribePartyDto(dto2.getParty(),dto2.getSubscribe_num(),dto2.getEmail(),dto2.getPoint_basket(),dto2.getEnddate(),dto2.getStartcheck(),dto2.getSchedule_num());
 //		}
 	
 	//추가
@@ -30,7 +30,7 @@ public class SubscribePartyService {
 		SubscribeParty checkdto = dao.findBySubscribeNumAndEmail(dto.getSubscribe_num(), dto.getEmail());
 		if (checkdto == null) {
 			SubscribeParty sp = dao.save(new SubscribeParty(dto.getParty(),dto.getSubscribe_num(),dto.getEmail(), dto.getPoint_basket(),dto.getEnddate(),dto.getStart_check(),dto.getSchedule_num()));
-			return new SubscribePartyDto(sp.getParty(),sp.getSubscribeNum(),sp.getEmail(), sp.getPoint_basket(),sp.getEnddate(),sp.getStart_check(),sp.getSchedule_num());
+			return new SubscribePartyDto(sp.getParty(),sp.getSubscribeNum(),sp.getEmail(), sp.getPoint_basket(),sp.getEnddate(),sp.getStartcheck(),sp.getSchedule_num());
 			
 		}
 		return null;
@@ -42,7 +42,7 @@ public class SubscribePartyService {
 		ArrayList<SubscribeParty> list = (ArrayList<SubscribeParty>) dao.findBySubscribeNum(subscribe_num2);
 		ArrayList<SubscribePartyDto> list2 = new ArrayList<SubscribePartyDto>();
 		for (SubscribeParty sp : list) {
-			list2.add(new SubscribePartyDto(sp.getParty(),sp.getSubscribeNum(),sp.getEmail(), sp.getPoint_basket(),sp.getEnddate(),sp.getStart_check(),sp.getSchedule_num()));
+			list2.add(new SubscribePartyDto(sp.getParty(),sp.getSubscribeNum(),sp.getEmail(), sp.getPoint_basket(),sp.getEnddate(),sp.getStartcheck(),sp.getSchedule_num()));
 		}
 		return list2;
 	}
@@ -51,10 +51,10 @@ public class SubscribePartyService {
 //	@Transactional
 	public ArrayList<SubscribePartyDto> getByEmail(String email){
 		Member email2 = new Member(email, "","","",0,"");
-		ArrayList<SubscribeParty> list = (ArrayList<SubscribeParty>) dao.findByEmail(email2);
+		ArrayList<SubscribeParty> list = (ArrayList<SubscribeParty>) dao.findByEmailOrderByStartcheckAsc(email2); 
 		ArrayList<SubscribePartyDto> list2 = new ArrayList<SubscribePartyDto>();
 		for (SubscribeParty sp : list) {
-			list2.add(new SubscribePartyDto(sp.getParty(),sp.getSubscribeNum(),sp.getEmail(), sp.getPoint_basket(),sp.getEnddate(),sp.getStart_check(),sp.getSchedule_num()));
+			list2.add(new SubscribePartyDto(sp.getParty(),sp.getSubscribeNum(),sp.getEmail(), sp.getPoint_basket(),sp.getEnddate(),sp.getStartcheck(),sp.getSchedule_num()));
 		}
 		return list2;
 	}
@@ -65,7 +65,7 @@ public class SubscribePartyService {
 		if(sp == null) {
 			return null;
 		}
-		return new SubscribePartyDto(sp.getParty(),sp.getSubscribeNum(),sp.getEmail(), sp.getPoint_basket(),sp.getEnddate(),sp.getStart_check(),sp.getSchedule_num());
+		return new SubscribePartyDto(sp.getParty(),sp.getSubscribeNum(),sp.getEmail(), sp.getPoint_basket(),sp.getEnddate(),sp.getStartcheck(),sp.getSchedule_num());
 	}
 	
 	//start check 수정
