@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.tomcat.jni.Sockaddr;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,13 +12,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.auth.JwtTokenProvider;
-import com.example.demo.member.Member;
 import com.example.demo.schedulegroup.ScheduleGroup;
-import com.example.demo.schedulegroup.ScheduleGroupDto;
 import com.example.demo.schedulegroup.ScheduleGroupService;
 
 @RestController
@@ -71,11 +66,21 @@ public class GroupPartyController {
 				return map;
 			}
 		}
-
 		ArrayList<GroupPartyDto> list = service.getByEmail(email);
 		System.out.println(list);
 		map.put("list", list);
 		return map;
+	}
+
+	// schedulegroup_num으로 검색
+	@GetMapping("schedulegroup_num/{schedulegroup_num}")
+	public Map getByScehdulegroupnum(@PathVariable("schedulegroup_num") int schedulegroup_num) {
+		ArrayList<GroupPartyDto> list = service.getByScheduleGroupNum(schedulegroup_num);
+		Map map = new HashMap();
+		map.put("list", list);
+		System.out.println(list);
+		return map;
+
 	}
 
 //	 @GetMapping("/schedulegroup/title")
@@ -88,7 +93,7 @@ public class GroupPartyController {
 //	    }
 
 	// 그룹 삭제
-	@DeleteMapping("/{groupparty_num}")
+	@DeleteMapping("groupparty_num/{groupparty_num}")
 	public Map outGroup(@PathVariable("groupparty_num") int groupparty_num) {
 		boolean flag = true;
 		Map map = new HashMap();
@@ -105,6 +110,20 @@ public class GroupPartyController {
 		} catch (Exception e) {
 			flag = false;
 		}
+		map.put("flag", flag);
+		return map;
+	}
+
+	// 그룹 나가기
+	@DeleteMapping("outparty/{groupparty_num}")
+	public Map outParty(@PathVariable("groupparty_num") int groupparty_num) {
+		boolean flag = true;
+		try {
+			service.outParty(groupparty_num);
+		} catch (Exception e) {
+			flag = false;
+		}
+		Map map = new HashMap();
 		map.put("flag", flag);
 		return map;
 	}

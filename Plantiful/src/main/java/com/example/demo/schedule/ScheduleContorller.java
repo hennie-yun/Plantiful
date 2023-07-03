@@ -37,7 +37,7 @@ public class ScheduleContorller {
 	}
 
 	// 스케줄 검색
-	@GetMapping("/{schedule_num}")
+	@GetMapping("schedule_num/{schedule_num}")
 	public Map getBySchedulenum(@PathVariable("schedule_num") int schedule_num) {
 		ScheduleDto dto = service.getSchedule(schedule_num);
 		Map map = new HashMap();
@@ -46,20 +46,20 @@ public class ScheduleContorller {
 	}
 
 	// 토큰값으로 정보 불러오기
-		@GetMapping("")
-		public Map getInfo(@RequestHeader("token") String token) {
-			boolean flag = true;
-			Map map = new HashMap();
-			try {
-				String email = tokenProvider.getUsernameFromToken(token);
-				map.put("email", email);
-			} catch (Exception e) {
-				flag = false;
-			}
-			map.put("flag", flag);
-			return map;
+	@GetMapping("")
+	public Map getInfo(@RequestHeader("token") String token) {
+		boolean flag = true;
+		Map map = new HashMap();
+		try {
+			String email = tokenProvider.getUsernameFromToken(token);
+			map.put("email", email);
+		} catch (Exception e) {
+			flag = false;
 		}
-	
+		map.put("flag", flag);
+		return map;
+	}
+
 	// email로 검색
 	@GetMapping("email/{email}")
 	public Map getByEmail(@PathVariable("email") String email,
@@ -80,6 +80,16 @@ public class ScheduleContorller {
 		ArrayList<ScheduleDto> list = service.getByEmail(email);
 		System.out.println(list);
 		map.put("list", list);
+		return map;
+	}
+
+	// 그룹 검색
+	@GetMapping("group_num/{group_num}")
+	public Map getByGroupNum(@PathVariable("group_num") int group_num) {
+		ArrayList<ScheduleDto> list = service.getByGroupnum(group_num);
+		Map map = new HashMap();
+		map.put("list", list);
+		System.out.println("확인" + list);
 		return map;
 	}
 
