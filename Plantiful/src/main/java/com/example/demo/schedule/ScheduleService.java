@@ -63,6 +63,16 @@ public class ScheduleService {
 		}
 		return list2;
 	}
+	// 스케줄title로 스케줄이 같은 email조회
+		public String getMemberEmail(ScheduleDto dto) {
+			ArrayList<Schedule> list = dao.findBytitle(dto.getTitle());
+			String names = "";
+			for(Schedule s : list) {
+				names += s.getEmail()+" ";
+			}
+			System.out.println(names);
+			return names;
+		}
 
 	// groupnum으로 검색
 	public ArrayList<ScheduleDto> getByGroupnum(int group_num) {

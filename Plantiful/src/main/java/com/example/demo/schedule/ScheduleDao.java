@@ -13,4 +13,5 @@ public interface ScheduleDao extends JpaRepository<Schedule, Integer> {
 	ArrayList<Schedule> findByemail(Member email);
 	ArrayList<Schedule> findBygroupnum (ScheduleGroup group_num);
 	ArrayList<Schedule> findByStartDate (String startDate);
+	ArrayList<Schedule> findBytitle(String title);
 }
