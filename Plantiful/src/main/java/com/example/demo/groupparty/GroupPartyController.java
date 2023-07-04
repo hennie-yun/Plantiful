@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.auth.JwtTokenProvider;
+import com.example.demo.schedule.Schedule;
+import com.example.demo.schedule.ScheduleDto;
+import com.example.demo.schedule.ScheduleService;
 import com.example.demo.schedulegroup.ScheduleGroup;
 import com.example.demo.schedulegroup.ScheduleGroupService;
 
@@ -27,6 +30,9 @@ public class GroupPartyController {
 
 	@Autowired
 	private ScheduleGroupService schedulegroupservice;
+	
+	@Autowired
+	private ScheduleService scheduleservice;
 
 	@Autowired(required = false)
 	private JwtTokenProvider tokenProvider;
@@ -103,6 +109,12 @@ public class GroupPartyController {
 			if (group.size() == 1) {
 				map.put("schedule_num", group);
 				service.outParty(groupparty_num);
+				ArrayList<ScheduleDto> num2 = scheduleservice.getByGroupnum(num.getSchedulegroup_num());
+				for (ScheduleDto scheduleDto : num2) {
+				    int scheduleNum = scheduleDto.getSchedule_num();
+				    System.out.println(scheduleNum + "번 일정 삭제");
+				    scheduleservice.delSchedule(scheduleNum);
+				}
 				int schedulenum = num.getSchedulegroup_num();
 				ScheduleGroup schedule = new ScheduleGroup(schedulenum, null, 0);
 				schedulegroupservice.DelGroup(schedule.getSchedulegroup_num());
@@ -120,6 +132,13 @@ public class GroupPartyController {
 		boolean flag = true;
 		try {
 			service.outParty(groupparty_num);
+			ScheduleGroup num = service.getSchedulenum(groupparty_num);
+			ArrayList<ScheduleDto> num2 = scheduleservice.getByGroupnum(num.getSchedulegroup_num());
+			for (ScheduleDto scheduleDto : num2) {
+			    int scheduleNum = scheduleDto.getSchedule_num();
+			    System.out.println(scheduleNum + "번 일정 삭제");
+			    scheduleservice.delSchedule(scheduleNum);
+			}
 		} catch (Exception e) {
 			flag = false;
 		}
