@@ -76,5 +76,15 @@ public class ScheduleService {
 		}
 		return list2;
 	}
-
+	// 시작날짜로 검색
+		public ArrayList<ScheduleDto> getByStartDate(String startDate) {
+			ArrayList<Schedule> list = (ArrayList<Schedule>) dao.findByStartDate(startDate);
+			ArrayList<ScheduleDto> list2 = new ArrayList<ScheduleDto>();
+			for (Schedule s : list) {
+				list2.add(new ScheduleDto(s.getSchedule_num(), s.getGroupnum(), s.getEmail(), s.getTitle(),
+						s.getStartDate(), s.getEndDate(), s.getStartTime(), s.getEndTime(), s.getInfo(), s.getAlert(),
+						s.getIsLoop(), s.getDay()));
+			}
+			return list2;
+		}
 }

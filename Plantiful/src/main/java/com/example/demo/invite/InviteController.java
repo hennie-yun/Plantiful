@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.auth.JwtTokenProvider;
 import com.example.demo.groupparty.GroupPartyDto;
 import com.example.demo.member.Member;
+import com.example.demo.member.MemberDto;
 import com.example.demo.member.MemberService;
 
 @RestController // rest api controller
@@ -25,6 +26,8 @@ import com.example.demo.member.MemberService;
 public class InviteController {
 	@Autowired
 	private InviteService service;
+	@Autowired
+	private MemberService mservice;
 
 	@Autowired
 	private JwtTokenProvider tokenProvider;
@@ -32,9 +35,15 @@ public class InviteController {
 	// 추가
 	@PostMapping("")
 	public Map add(InviteDto dto) {
-		InviteDto i = service.save(dto);
+		boolean flag = true;
 		Map map = new HashMap();
-		map.put("dto", i);
+		Member email = dto.getEmail();
+		if (email == null) {
+			map.put("flag", false);
+		} else {
+			InviteDto i = service.save(dto);
+			map.put("dto", i);
+		}
 		return map;
 	}
 
@@ -65,7 +74,7 @@ public class InviteController {
 			}
 		}
 		ArrayList<InviteDto> list = service.getByEmail(email);
-		System.out.println(list);
+		System.out.println("내 초대" + list);
 		map.put("list", list);
 		return map;
 	}

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -89,7 +90,16 @@ public class ScheduleContorller {
 		ArrayList<ScheduleDto> list = service.getByGroupnum(group_num);
 		Map map = new HashMap();
 		map.put("list", list);
-		System.out.println("확인" + list);
+		return map;
+	}
+
+	// 시작날짜 검색
+	@GetMapping("startdate/{startDate}")
+	public Map getByStartDate(@PathVariable("startDate") String startDate) {
+		ArrayList<ScheduleDto> list = service.getByStartDate(startDate);
+		Map map = new HashMap();
+		map.put("list", list);
+		System.out.println("날짜검색" + list);
 		return map;
 	}
 
@@ -115,6 +125,20 @@ public class ScheduleContorller {
 		old.setAlert(dto.getAlert());
 		old.setIsLoop(dto.getIsLoop());
 		old.setDay(dto.getDay());
+		ScheduleDto s = service.save(old);
+		Map map = new HashMap();
+		map.put("dto", s);
+		return map;
+	}
+
+	@PatchMapping("resize/{schedule_num}/{start}/{end}")
+	public Map edit(@PathVariable("schedule_num") int schedule_num, @PathVariable("start") String start,
+			@PathVariable("end") String end) {
+		System.out.println("하윙");
+		ScheduleDto old = service.getSchedule(schedule_num);
+		old.setStart(start);
+		old.setEnd(end);
+		System.out.println("날짜 길이" + start + end);
 		ScheduleDto s = service.save(old);
 		Map map = new HashMap();
 		map.put("dto", s);
