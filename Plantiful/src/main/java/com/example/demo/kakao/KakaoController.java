@@ -2,6 +2,10 @@ package com.example.demo.kakao;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,11 +14,9 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.auth.JwtTokenProvider;
-import com.example.demo.kakaoaccesstoken.Kakaotoken;
 import com.example.demo.kakaoaccesstoken.KakaotokenService;
 import com.example.demo.schedule.ScheduleDto;
 
@@ -31,13 +33,42 @@ public class KakaoController {
 	@Autowired(required = false)
 	private JwtTokenProvider tokenprovider;
 	
+	private String authorization_code="";
 	private String access_token="";
+
+	 
+	private static LocalTime roundToNearestFiveMinutes(LocalTime time) {
+        int minute = time.getMinute();
+        int roundedMinute = ((minute + 4) / 5) * 5;
+        return LocalTime.of(time.getHour(), roundedMinute);
+	}
 	
 	@PostMapping("/api/kakao/form")
 	public Map getKakaoData(ScheduleDto dto) {
 		System.out.println(dto.toString());
 		ScheduleDto savedto = new ScheduleDto();
+		
 		System.out.println(dto.getStartTime());
+		if(dto.getStartTime() == null) {
+			dto.setStartTime("00:00:00z");
+		} 
+		if (dto.getEndTime() == null) {
+			dto.setEndTime("00:00:00z");
+		}
+//		String startAt = dto.getStart()+"T"+dto.getStartTime()+"00";
+//		String endAt = dto.getEnd()+"T"+dto.getEndTime()+"00";
+//		
+//		LocalDateTime dateTime = LocalDateTime.parse(startAt);
+//		LocalDateTime dateTime2 = LocalDateTime.parse(endAt);
+//		
+//		LocalTime adjustedTime = roundToNearestFiveMinutes(dateTime.toLocalTime());
+//		LocalTime adjustedTime2 = roundToNearestFiveMinutes(dateTime2.toLocalTime());
+//		
+//		LocalDateTime adjustedDateTime = LocalDateTime.of(dateTime.toLocalDate(), adjustedTime);
+//		LocalDateTime adjustedDateTime2 = LocalDateTime.of(dateTime2.toLocalDate(), adjustedTime2);
+//		
+//		String startTimeAt = adjustedDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+//		String startTimeAt2 = adjustedDateTime2.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 		
 		try {	
 			data.schedule_num = dto.getSchedule_num();
@@ -86,27 +117,50 @@ public class KakaoController {
 		map.put("dto", savedto);
 		return map;
 	}
-	
+
 	@GetMapping("/api/kakao/token")
-	public Map getKakaotoken(@RequestHeader(value = "token", required = false) String token) {
-		Map map = new HashMap();
-		if(token != null) {
-			try {
-				String email = tokenprovider.getUsernameFromToken(token); 
-				System.out.println("token받은것 이메일"+email);
-				Kakaotoken kakaotoken = kakaotokenService.findByEmail(email);
-				access_token = kakaotoken.getToken();
-				String result = kakaoService.scheduleadd(access_token);
-				map.put("result", result);
-			} catch (Exception e) {
-				// TODO: handle exception
-				map.put("kakaotoken", e);
-			}
+	public Map getKakaotoken(@RequestHeader(value = "authorization_code", required = false) String authorization_code) {
+		String result = "";
+		String content = "";
+		if(authorization_code != null) {
+			System.out.println(authorization_code);
+			result = kakaoService.authToken(authorization_code);
+			//System.out.println(authorization_code);
+			access_token = result;
+			content = kakaoService.scheduleadd(access_token);
+		System.out.println("scheduleadd result:"+content);	
 		}
+		Map map = new HashMap();
+		map.put("result", result);
+		map.put("content", content);
 		return map;
 	}
 	
 
+	@GetMapping("/api/kakao/oauth")
+	public Map getOauth(@RequestHeader(value="authorization_code") String authorization_code) {
+		String access_token = kakaoService.authToken(authorization_code);
+	
+		
+		Map map = new HashMap();
+		map.put("access_token", access_token);
+	//	map.put("result", result);
+		return map;
+		
+	}
+	
+
+/*	
+	@GetMapping("/api/kakao/add")
+	public Map addschedule() {
+		System.out.println(">>> add access_token"+access_token);
+		Map map = new HashMap();
+		
+		String result = kakaoService.scheduleadd(access_token);
+		map.put("result", result);
+		return map;
+	}
+*/
 	
 
 }
