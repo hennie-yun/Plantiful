@@ -73,12 +73,7 @@ public class NaverService {
 	    url.append("&state=" + state);
 	    url.append("&redirect_uri=" + redirectURI);
 
-	    /* 로그인 중 선택 권한 허용 URL로 redirect 문제 해결하기
-	       로그인 시도시, "현재 UYouBooDan은 개발 중 상태입니다. 개발 중 상태에서는 등록된 아이디만 로그인할 수 있습니다." 화면으로 가버림.
-	       아래와 같은 URL로 리다이렉트 되도록 유도하는 해결책 찾기
-	       : https://nid.naver.com/oauth2.0/authorize?client_id=avgLtiDUfWMFfHpplTZh&redirect_uri=https://developers.naver.com/proxyapi/forum/auth/oAuth2&response_type=code&state=RZ760w
-	     */
-
+	  
 	    return url.toString();
 	}
 
@@ -89,8 +84,7 @@ public class NaverService {
 	    HttpHeaders naverTokenRequestHeadres = new HttpHeaders();  // Http 요청을 위한 헤더 생성
 	    naverTokenRequestHeadres.add("Content-type", "application/x-www-form-urlencoded"); // application/json 했다가 grant_type missing 오류남 (출력포맷만 json이라는 거엿음)
 
-	    // 파라미터들을 담아주기위한 맵 (파라미터용이기 때문에, 따로 앞에 ?나 &나 =같은 부호를 입력해주지 않아도 됨. 오히려 넣으면 인식못함)
-	    // 네이버 가이드에서 요청하는 파라미터들 (Developers 참고)
+	    // 파라미터들을 담아주기위한 맵 
 	    MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 	    params.add("grant_type", "authorization_code");
 	    params.add("client_id", "IiiFJKBOyzL3qvfXasPq");
