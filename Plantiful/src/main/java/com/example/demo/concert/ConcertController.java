@@ -42,10 +42,10 @@ public class ConcertController {
 		str += "?service=ce866e84481d4d8cb7883e90889e4a9d";
 		str += "&stdate="+formatedNow;
 		str += "&eddate="+formatedPlusMonth;
-		str += "&cpage="+page;
+		str += "&cpage=1";
 		str += "&rows=2000";
-		str += "&prfstate=01";
-		str += "&prfstate=02";
+//		str += "&prfstate=01";
+//		str += "&prfstate=02";
 		try {
 			URL url = new URL(str);
 			URLConnection connect = url.openConnection();
@@ -93,6 +93,8 @@ public class ConcertController {
 	public Map getDetail(@PathVariable(name = "id") String id) {
 		String str = "http://kopis.or.kr/openApi/restful/pblprfr/"+id;
 		str += "?service=ce866e84481d4d8cb7883e90889e4a9d";
+		
+		Concert concert = null;
 		try {
 			URL url = new URL(str);
 			URLConnection connect = url.openConnection();
@@ -105,12 +107,35 @@ public class ConcertController {
 			String mtid = element.getElementsByTagName("mt20id").item(0).getTextContent();
 			String name = element.getElementsByTagName("prfnm").item(0).getTextContent();
 			String poster = element.getElementsByTagName("poster").item(0).getTextContent();
-			System.out.println(element.getElementsByTagName("poster").getLength());
-			Node node = element.getElementsByTagName("styurls").item(0);
-			System.out.println(node);
+			NodeList node = element.getElementsByTagName("styurls");
+			Element elem = (Element) node.item(0);
+			NodeList urlList = elem.getElementsByTagName("styurl");
+			String[] styurls = new String[urlList.getLength()];
+			for(int i=0; i<urlList.getLength(); i++) {
+				styurls[i] = urlList.item(i).getTextContent();
+			}
+			
  			String startDate = element.getElementsByTagName("prfpdfrom").item(0).getTextContent();
 			String endDate = element.getElementsByTagName("prfpdto").item(0).getTextContent();
+			String cast = element.getElementsByTagName("prfcast").item(0).getTextContent();
+			String crew = element.getElementsByTagName("prfcrew").item(0).getTextContent();
+			String runTime = element.getElementsByTagName("prfruntime").item(0).getTextContent();
+			String age = element.getElementsByTagName("prfage").item(0).getTextContent();
+			String loc = element.getElementsByTagName("fcltynm").item(0).getTextContent();
+			String producer = element.getElementsByTagName("entrpsnm").item(0).getTextContent();
+			String price = element.getElementsByTagName("pcseguidance").item(0).getTextContent();
+			String sty = element.getElementsByTagName("sty").item(0).getTextContent();
+			String genre = element.getElementsByTagName("genrenm").item(0).getTextContent();
+			String state = element.getElementsByTagName("prfstate").item(0).getTextContent();
+			String run = element.getElementsByTagName("prfstate").item(0).getTextContent();
+			boolean openrun = false;
+			if(run.equals("Y")) {
+				openrun = true;
+			} 
 			
+			String locId = element.getElementsByTagName("mt10id").item(0).getTextContent();
+			String concertTime = element.getElementsByTagName("dtguidance").item(0).getTextContent();
+			concert = new Concert(mtid, name, poster, styurls, startDate, endDate, cast, crew, runTime, age, loc, producer, price, sty, genre, state, openrun, locId, concertTime);
 			
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
@@ -124,6 +149,7 @@ public class ConcertController {
 		
 		
 		Map map = new HashMap();
+		map.put("concert", concert);
 		return map;
 	}
 }
