@@ -9,6 +9,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalTime;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -39,6 +44,8 @@ public class KakaoService {
 	public String authToken(String authorization_code) {
 		String access_Token = "";
 		String refresh_Token ="";
+		
+		String scheduleres = "";
 
 		
 		System.out.println("authToken: "+authorization_code);
@@ -78,6 +85,7 @@ public class KakaoService {
 
 			// 실제 요청을 보내는 부분, 결과 코드가 200이라면 성공
 			int responseCode = conn.getResponseCode();
+			System.out.println("responseCode"+responseCode);
 		//	log.info("responsecode(200이면성공): {}", responseCode);
 			
 	
@@ -96,7 +104,7 @@ public class KakaoService {
 			ObjectMapper mapper = new ObjectMapper();
 			// kakaoToken에 result를 KakaoToken.class 형식으로 변환하여 저장
 			kakaoToken = mapper.readValue(result, KakaoToken.class);
-			System.out.println(kakaoToken);
+			System.out.println("kakaoToken"+kakaoToken);
 
 			// api호출용 access token
 			access_Token = kakaoToken.getAccess_token();
@@ -105,6 +113,9 @@ public class KakaoService {
 
 		//	log.info(access_Token);
 		//	log.info(refresh_Token);
+			
+			String scheduleres1= scheduleadd(access_Token);
+			System.out.println("add schedule >" + scheduleres1);
 
 			br.close();
 			bw.close();
@@ -112,18 +123,62 @@ public class KakaoService {
 			e.printStackTrace();
 		}
 		//log.info("카카오토큰생성완료>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-		return access_Token;
+		return scheduleres;
 	}
-	
+	 private static LocalTime roundToNearestFiveMinutes(LocalTime time) {
+	        int minute = time.getMinute();
+	        int roundedMinute = ((minute + 4) / 5) * 5;
+	        return LocalTime.of(time.getHour(), roundedMinute);
+	    }
 	
 	
 	public String scheduleadd(String access_token) {
 		System.out.println("scheduleadd " + access_token);
-		String header = "Bear " + access_token;
+		String response1 = "";
+		
+	    String apiUrl = "https://kapi.kakao.com/v2/api/calendar/create/event";
 		String calendar_id = "primary";
-		String result = "";
+		StringBuilder result;
+		
+		String startAt = data.startTime+":00";
+		String endAt = data.endTime+":00";
+		
+		
+		String decodedStartAt = URLDecoder.decode(startAt, StandardCharsets.UTF_8);
+		String decodedEndAt = URLDecoder.decode(endAt, StandardCharsets.UTF_8);
+		
+		String[] timeComponents = decodedStartAt.split(":");
+	    int hour = Integer.parseInt(timeComponents[0]);
+	    int minute = Integer.parseInt(timeComponents[1]);
+	    int second = Integer.parseInt(timeComponents[2]);
+	    
+	    LocalTime time = LocalTime.of(hour, minute, second);
+	    LocalTime time2 = LocalTime.of(hour, minute, second);
+
+	    LocalTime adjustedTime = roundToNearestFiveMinutes(time);
+	    LocalTime adjustedTime2 = roundToNearestFiveMinutes(time2);
+		
+		String adjustedStartAt = (adjustedTime+":00").toString();
+		String adjustedStartAt2 = (adjustedTime2+":00").toString();
+	    System.out.println("Adjusted startAt: " + adjustedStartAt);
+	    System.out.println("Adjusted endAt: " + adjustedStartAt2);
+
+	    String title = data.title;
+	    String info = data.info;
+	    
+	    
+	    
+	    System.out.println(title);
+	    
+	    String decodedTitle = URLDecoder.decode(title, StandardCharsets.UTF_8);
+	    String decodedInfo = URLDecoder.decode(info, StandardCharsets.UTF_8);
+		
 		try {
-			String apiURL = "https://kapi.kakao.com/v2/api/calendar/create/event";
+			  URL url = new URL(apiUrl);
+	          HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+	          connection.setRequestMethod("POST");
+	          connection.setRequestProperty("Authorization", "Bearer " + access_token);
+	          connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 //			String event = "{\n";
 //				   event += "title: "+data.title+",\n";
 //				   event += "time: {\n";
@@ -146,66 +201,44 @@ public class KakaoService {
 //				   event += "color: RED\n";
 //				   event += "}";
 				   
-			 String payload = "{\n" +
-		                "    \"title\": \""+data.title+"\",\n" +
-		                "    \"time\": {\n" +
-		                "        \"start_at\": \""+data.start+"T"+data.startTime+"\",\n" +
-		                "        \"end_at\": \""+data.end+"T"+data.endTime+"\",\n" +
-		                "        \"time_zone\": \"Asia/Seoul\",\n" +
-		                "        \"all_day\": false,\n" +
-		                "        \"lunar\": false\n" +
-		                "    },\n" +
-		                "    \"rrlue\":\"FREQ=DAILY;UNTIL=20221031T000000Z\",\n" +
-		                "    \"description\": \""+data.info+"\",\n" +
-		                "    \"location\": {\n" +
-		                "        \"name\": \"cacao\",\n" +
-		                "        \"location_id\": 18577297,\n" +
-		                "        \"address\": \"166 Pangyoyeok-ro, Bundang-gu, Seongnam-si, Gyeonggi-do\",\n" +
-		                "        \"latitude\": 37.39570088983171,\n" +
-		                "        \"longitude\": 127.1104335101161\n" +
-		                "    },\n" +
-		                "    \"reminders\": [15, 30],\n" +
-		                "    \"color\": \"RED\"\n" +
-		                "}"; 
-		URL url = new URL(apiURL);
-		HttpURLConnection con = (HttpURLConnection)url.openConnection();
-		con.setRequestMethod("POST");
-	    con.setRequestProperty("Authorization", "Bearer " + access_token);
-		con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");   
+	          String requestBody = "calendar_id=primary&event="
+	                    + "{\"title\":\"" + decodedTitle + "\", \"time\":{\"start_at\": \"" + data.start + "T" + adjustedStartAt + "Z\", \"end_at\": \"" + data.end + "T" + adjustedStartAt2 + "Z\", \"time_zone\": \"Asia/Seoul\", \"all_day\": false, \"lunar\": false }, \"description\": \"" + decodedInfo + "\"}";
+
+
+			 	System.out.println(requestBody);
+			 	connection.setDoOutput(true);
+			 	connection.getOutputStream().write(requestBody.getBytes());
+			 	
+			 	int responseCode = connection.getResponseCode();
+			 	System.out.println("Response Code:" +responseCode);
+			 	
+			 	
+			
 		
-		String postParams = "calendar_id=primary&event="+payload;
-		System.out.println(postParams);
+			 	BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			 	String line;
+			 	StringBuilder response = new StringBuilder();
+			 	
+			 	while((line=reader.readLine()) != null) {
+			 		response.append(line);
+			 	}
+			 	result = response;
+			 	reader.close();
+			 	connection.disconnect();
+			 	System.out.println("response:"+ result.toString());
+			 	response1 = result.toString(); 
+			 	
+			 	
+	
+    } catch (Exception e) {
+        e.printStackTrace();
+       
+       response1 = e.toString();
 		
-		con.setDoOutput(true);
-		DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-		wr.writeBytes(postParams);
-		wr.flush();
-		wr.close();
-		
-		int responseCode= con.getResponseCode();
-		System.out.println("Response Code:"+responseCode);
-		
-		BufferedReader br;
-		if(responseCode == 200) { // 정상호출
-			br = new BufferedReader(new InputStreamReader(con.getInputStream()));
-		} else {
-			br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
-		}
-		String inputLine;
-		StringBuffer response = new StringBuffer();
-		while((inputLine = br.readLine()) != null) {
-			response.append(inputLine);
-		}
-		br.close();
-		System.out.println(response.toString());
-		result = response.toString();
-		} catch (Exception e) {
-			// TODO: handle exception
-			System.out.println(e);
-			result = e.toString();
-		}
-		return result;
 			
 	
-}
+    }
+		return response1;
+
+		}
 }

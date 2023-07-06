@@ -2,10 +2,7 @@ package com.example.demo.kakao;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.auth.JwtTokenProvider;
 import com.example.demo.kakaoaccesstoken.KakaotokenService;
+import com.example.demo.member.MemberDto;
+import com.example.demo.member.MemberService;
 import com.example.demo.schedule.ScheduleDto;
 
 @RestController
@@ -26,6 +25,9 @@ public class KakaoController {
 	
 	@Autowired
 	private KakaoService kakaoService;
+	
+	@Autowired
+	private MemberService memberService;
 	
 	@Autowired
 	private KakaotokenService kakaotokenService;
@@ -121,18 +123,20 @@ public class KakaoController {
 	@GetMapping("/api/kakao/token")
 	public Map getKakaotoken(@RequestHeader(value = "authorization_code", required = false) String authorization_code) {
 		String result = "";
-		String content = "";
-		if(authorization_code != null) {
+		String kakao = "";
+		System.out.println("kakao token");
+		System.out.println(authorization_code);
+		Map map = new HashMap();
+		if(authorization_code != " ") {
 			System.out.println(authorization_code);
 			result = kakaoService.authToken(authorization_code);
-			//System.out.println(authorization_code);
+			System.out.println("new access_token"+result);
 			access_token = result;
-			content = kakaoService.scheduleadd(access_token);
-		System.out.println("scheduleadd result:"+content);	
+//			kakao = kakaoService.scheduleadd(access_token);
 		}
-		Map map = new HashMap();
+		System.out.println("scheduleadd result:"+map);	
 		map.put("result", result);
-		map.put("content", content);
+		map.put("kakao", kakao);
 		return map;
 	}
 	
@@ -149,8 +153,18 @@ public class KakaoController {
 		
 	}
 	
+	@GetMapping("/api/kakao/member")
+	public Map getMemberCheck(@RequestHeader(value="token") String token) {
+		String email = tokenprovider.getUsernameFromToken(token);
+		MemberDto dto = memberService.getMember(email);
+		long id = dto.getId();
+		Map map = new HashMap();
+		map.put("id", id);
+		return map;
+	}
+	
 
-/*	
+
 	@GetMapping("/api/kakao/add")
 	public Map addschedule() {
 		System.out.println(">>> add access_token"+access_token);
@@ -160,7 +174,7 @@ public class KakaoController {
 		map.put("result", result);
 		return map;
 	}
-*/
+
 	
 
 }
