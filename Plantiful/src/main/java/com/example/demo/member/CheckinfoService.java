@@ -19,8 +19,9 @@ import com.google.gson.JsonParser;
 public class CheckinfoService {
 
 	// 인증코드로 token요청하고 사용자 phone 만 빼내기
-	public String getAccessToken(String impUid) {
+	public HashMap getAccessToken(String impUid) {
 
+		HashMap map = new HashMap<>();
 		System.out.println("impUid");
 
 		String impKey = "6828054376104647";
@@ -28,6 +29,7 @@ public class CheckinfoService {
 		String strUrl = "https://api.iamport.kr/users/getToken"; // 토큰 요청 보낼 주소
 		String access_token = " ";
 		String phone = "";
+		String name = "";
 
 		try {
 			URL url = new URL(strUrl);
@@ -90,13 +92,22 @@ public class CheckinfoService {
 					}
 					getBr.close();
 
-					// 전화번호 값 빼기
+					
 					String getResponse = getResponseSb.toString();
 					System.out.println("GET 응답 결과: " + getResponse);
 					JsonParser parser1 = new JsonParser();
 					JsonObject phoneJson1 = parser1.parse(getResponse).getAsJsonObject();
+					
+					// 전화번호 값 빼기
 					phone = phoneJson1.getAsJsonObject("response").get("phone").getAsString();
 					System.out.println("phone: " + phone);
+					
+					map.put("phone", phone);
+					//이름 값 빼기 
+					name =  phoneJson1.getAsJsonObject("response").get("name").getAsString();
+					System.out.println("이름>>>>>" + name);
+					map.put("name", name);
+					
 				} else {
 					System.out.println("GET 에러 응답 메시지: " + getConn.getResponseMessage());
 				}
@@ -108,7 +119,7 @@ public class CheckinfoService {
 			e.printStackTrace();
 		}
 
-		return phone;
+		return map;
 	}
 
 }

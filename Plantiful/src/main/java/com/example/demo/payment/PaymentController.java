@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.member.Member;
@@ -34,7 +35,10 @@ public class PaymentController {
 		MemberDto memDto = memservice.getMember(email);
 		PaymentDto oldPayment = service.findByEmail(memDto);
 		if (oldPayment != null) {
+			System.out.println(dto);
+			System.out.println(oldPayment.getPaidamount());
 			int newPaidAmount = oldPayment.getPaidamount() + dto.getPaidamount();
+			System.out.println(newPaidAmount);
 			oldPayment.setPaidamount(newPaidAmount);
 			Payment savedPayment = service.edit(oldPayment);
 			map.put("dto", savedPayment);
@@ -53,10 +57,14 @@ public class PaymentController {
 	@PostMapping("/withdraw/{email}")
 	public Map<String, Object> cashout(@PathVariable("email") String email, PaymentDto dto) {
 		Map<String, Object> map = new HashMap<>();
+		
+		System.out.println(dto.getPaidamount());
 		MemberDto memDto = memservice.getMember(email);
+		
 		PaymentDto oldPayment = service.findByEmail(memDto);
-		System.out.println(dto);
+		System.out.println("dto>>>>>>>>>>>" + dto);
 		System.out.println(oldPayment);
+		
 		if (oldPayment != null) {
 			int newPaidAmount = oldPayment.getPaidamount() - dto.getPaidamount();
 			oldPayment.setPaidamount(newPaidAmount);
@@ -72,21 +80,23 @@ public class PaymentController {
 	// 돈 얼마 있나 뺴오기
 	@GetMapping("/getcash/{email}")
 	public Map<String, Object> getPaymentDtoByEmail(@PathVariable("email") String email) {
-		System.out.println("email: " + email);
-		Map<String, Object> map = new HashMap<>();
-		
-		MemberDto memDto = memservice.getMember(email);
-		PaymentDto paymentdto = service.findByEmail(memDto);
-		
-		System.out.println("payment: " + paymentdto);
-		
-		if (paymentdto != null) {
-			map.put("paydto", paymentdto);
-		} else  {
-			map.put("message", "돈이 없습니다");
-		}
+	    System.out.println("email: " + email);
+	    Map<String, Object> map = new HashMap<>();
 
-		return map;
+	    MemberDto memDto = memservice.getMember(email);
+	    PaymentDto paymentdto = service.findByEmail(memDto);
+
+	    System.out.println("payment: " + paymentdto);
+
+	    if (paymentdto != null) {
+	        map.put("paydto", paymentdto);
+	    } else {
+	        map.put("message", "돈이 없습니다");
+	        map.put("paydto", null);
+	    }
+
+	    return map;
 	}
+
 
 }

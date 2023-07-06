@@ -178,7 +178,7 @@ public class MemberController {
 		response.put("flag", flag);
 		return response;
 	}
-	
+
 	public Map newPassword(String email, String pwd) {
 		boolean flag = true;
 		Map response = new HashMap<>();
@@ -201,24 +201,31 @@ public class MemberController {
 	@GetMapping("plantiful/{email}") // email/이미지파일명
 	public ResponseEntity<byte[]> read_img(@PathVariable("email") String email) {
 		String fname = "";
-		MemberDto dto = service.getMember(email);// 이메일로 검색
+		MemberDto dto = service.getMember(email); // 이메일로 검색
+		String imageUrl = dto != null ? dto.getImg() : null; // 이미지 URL 가져오기
 		fname = dto.getImg();
 		System.out.println(fname);
 		File f = new File(fname);
-		HttpHeaders header = new HttpHeaders();
-		ResponseEntity<byte[]> result = null;
-		try {
-			header.add("Content-Type", Files.probeContentType(f.toPath()));
-			// 응답 객체 생성
-			result = new ResponseEntity<byte[]>(FileCopyUtils.copyToByteArray(f), header, HttpStatus.OK);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (java.io.IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (imageUrl != null && !imageUrl.isEmpty()) {
+			// 이미지 파일이 존재하는 경우 해당 URL로 응답 생성
+			HttpHeaders header = new HttpHeaders();
+			ResponseEntity<byte[]> result = null;
+
+			try {
+				header.add("Content-Type", Files.probeContentType(f.toPath()));
+				// 응답 객체 생성
+				result = new ResponseEntity<byte[]>(FileCopyUtils.copyToByteArray(f), header, HttpStatus.OK);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (java.io.IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return result;
 		}
-		return result;
+		return null;
+
 	}
 
 	// 로그인
@@ -230,12 +237,13 @@ public class MemberController {
 		if (dto != null && pwd.equals(dto.getPwd())) {
 			String token = tokenprovider.generateJwtToken(dto);
 			String loginId = dto.getEmail();
-			
 			flag = true;
 			map.put("token", token);
+			System.out.println("로그인의 토큰 " + token);
 			map.put("loginId", loginId);
 			session.setAttribute("loginId", loginId);
-	
+			System.out.println("loginId 아이디 : " + loginId);
+
 		}
 		map.put("flag", flag);
 		return map;
@@ -334,11 +342,11 @@ public class MemberController {
 		MemberDto dto = service.getMember(email);
 		if (dto != null) {
 			map.put("exist", "이미 존재하는 이메일입니다.");
-		} else { 
+		} else {
 			if (!isValidEmail(email)) {
-			    map.put("message", "이메일 형식이 올바르지 않습니다.");
-			    return map;
-			  }
+				map.put("message", "이메일 형식이 올바르지 않습니다.");
+				return map;
+			}
 			Random random = new Random(); // 난수 생성을 위한 랜덤 클래스
 			String key = ""; // 인증번호
 
@@ -372,9 +380,9 @@ public class MemberController {
 	}
 
 	private boolean isValidEmail(String email) {
-		  return email.contains("@");
-		}
-	
+		return email.contains("@");
+	}
+
 	// 비밀번호 재설정 메일
 	@ResponseBody
 	@PostMapping("/emailpwdcheck")
@@ -392,11 +400,11 @@ public class MemberController {
 		MemberDto dto = service.getMember(email);
 		if (dto == null) {
 			map.put("exist", "존재하지 않는 이메일 입니다.");
-		} else { 
+		} else {
 			if (!isValidEmail(email)) {
-			    map.put("message", "이메일 형식이 올바르지 않습니다.");
-			    return map;
-			  }
+				map.put("message", "이메일 형식이 올바르지 않습니다.");
+				return map;
+			}
 			Random random = new Random(); // 난수 생성을 위한 랜덤 클래스
 			String key = ""; // 인증번호
 
@@ -419,8 +427,8 @@ public class MemberController {
 			message.setText(mail + "임시비밀번호는 " + key + " 입니다."); // 이메일 내용
 			try {
 				mailSenderImpl.send(message);
-				System.out.println(email + key );
-				newPassword(email,key);
+				System.out.println(email + key);
+				newPassword(email, key);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -438,16 +446,19 @@ public class MemberController {
 		boolean flag = false;
 		Map map = new HashMap<>();
 		System.out.println("Received imp_uid: " + impUid);
-		String phone = checkinfoservice.getAccessToken(impUid);
-		System.out.println(phone);
-
+		map = checkinfoservice.getAccessToken(impUid);
 		MemberDto dto = service.getMember(email);
+	
+		String phone = (String) map.get("phone");
+		String name = (String) map.get("name");
+
 		if (dto != null) {
 			if (dto.getPhone().equals(phone)) {
 				flag = true;
 			}
 		}
 		map.put("flag", flag);
+		map.put("name", name);
 		return map;
 	}
 
@@ -455,16 +466,18 @@ public class MemberController {
 	@GetMapping("/getKakaomember/{email}")
 	public Map get(@PathVariable("email") String email) {
 		Map map = new HashMap();
-		boolean flag = false;
+		boolean flag = false; // 존재하지 않는 회원
 		MemberDto d = service.getMember(email);
-		if (d != null) {// 로그인 후
-			flag = true;
+		System.out.println(d);
+		if (d != null) {// dto가 null 이 아니라면
+			flag = true; // 존재하는 회원
 			map.put("dto", d);
 			map.put("flag", flag);
 		} else {
 			map.put("messeage", "존재하지 않는 회원이니 회원가입해라");
 			map.put("flag", flag);
 		}
+		System.out.println("flag = " + flag);
 		return map;
 	}
 
