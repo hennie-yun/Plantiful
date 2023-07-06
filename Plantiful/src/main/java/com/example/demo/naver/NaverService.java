@@ -77,7 +77,7 @@ public class NaverService {
 	    return url.toString();
 	}
 
-	public String loginNaver (String code, String state, HttpServletResponse response) throws JsonProcessingException {
+	public String loginNaver (String code, String state) throws JsonProcessingException {
 	    // 네이버 로그인 Token 발급 API 요청을 위한 header/parameters 설정 부분
 	    RestTemplate token_rt = new RestTemplate(); // REST API 요청용 Template
 
@@ -164,7 +164,7 @@ public class NaverService {
 	   // valueOperations.set("RTKey"+naverMember.getMemberId(), refreshToken);
 	    
 	    System.out.println(naverToken.getAccess_token());
-	    scheduleadd(naverToken.getAccess_token());
+	   // scheduleadd(naverToken.getAccess_token());
 	    
 	    return naverToken.getAccess_token();
 	}

@@ -3,7 +3,7 @@ package com.example.demo.naver;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.groupparty.GroupPartyService;
-import com.example.demo.member.Member;
 import com.example.demo.schedule.ScheduleDto;
 import com.example.demo.schedule.ScheduleService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -51,8 +49,11 @@ public class NaverController {
 	}
 
 	@GetMapping("/callback")
-	public String naverLogin(@RequestParam("code") String code, @RequestParam("state") String state, HttpServletResponse response) throws JsonProcessingException {
-		access_token =  naverService.loginNaver(code, state, response);
+	public Map naverLogin(@RequestParam("code") String code, @RequestParam("state") String state) throws JsonProcessingException {
+		
+		System.out.println("code"+code);
+		System.out.println("state"+state);
+		//access_token =  naverService.loginNaver(code, state);
 	    System.out.println("callback");
 	    System.out.println("access_token"+access_token);
 	    // 받아온 정보로 서비스 로직에 적용하기
@@ -68,8 +69,9 @@ public class NaverController {
         //String refreshToken = jwtTokenizer.delegateRefreshToken(naverMember);
         //response.setHeader("Authorization", "Bearer " + accessToken);
         //response.setHeader("RefreshToken", refreshToken);
-
-        return "Success Login: User"; // 클라이언트 바디로 해당 메세지가 전달된다.
+	    Map map = new HashMap();
+	    map.put("access_token", access_token);
+        return map; 
 
 	    /* Header가 아닌 Redis 서버에 잘 저장이 되었는지 확인하기 */
 	   // return response.getHeader("Authorization") == null ? "Fail Login: User" :  "Success Login: User";
