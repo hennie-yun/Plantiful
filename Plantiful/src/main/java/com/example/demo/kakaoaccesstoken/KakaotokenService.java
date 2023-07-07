@@ -34,9 +34,10 @@ public class KakaotokenService {
 		return ktoken;
 	}
 
-	// 우리 DB에서도 삭제
+	// 우리 토큰을 포함한 DB 삭제
 	public void delKtoken(String email) {
 		Kakaotoken ktoken = dao.findByEmail(email);
+		System.out.println("카카오톡엑세스토큰서비스에서 del" + ktoken);
 		dao.deleteById(ktoken.getTokennum());
 	}
 

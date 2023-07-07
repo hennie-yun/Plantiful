@@ -51,10 +51,12 @@ public class KakaotokenController {
 		System.out.println("삭제까지 들어왔음" + email);
 		Kakaotoken kakaoToken = service.findByEmail(email);
 		System.out.println("삭제들어와서 토큰" + kakaoToken.getToken());
-		System.out.println(kakaoToken.getEmail());
+		System.out.println("이메일뭔데?" + kakaoToken.getEmail());
 
 		service.outKakao(kakaoToken.getToken());
 		service.delKtoken(email);
+		
+		//멤버테이블에서도 삭제 
 		memservice.delMember(email);
 
 	}

@@ -32,15 +32,30 @@ public class PaymentController {
 	@PostMapping("/{email}")
 	public Map<String, Object> savePayment(@PathVariable("email") String email, PaymentDto dto) {
 		Map<String, Object> map = new HashMap<>();
+		System.out.println("axios 타서 왔어");
+		System.out.println(dto.getEmail());
+		System.out.println(dto.getPaidamount());
+		
 		MemberDto memDto = memservice.getMember(email);
+		System.out.println("memberdto = " + memDto);
 		PaymentDto oldPayment = service.findByEmail(memDto);
+		
+		System.out.println("oldPayment = " + oldPayment);
+		
 		if (oldPayment != null) {
-			System.out.println(dto);
-			System.out.println(oldPayment.getPaidamount());
+			System.out.println("여기입니다" + dto);
+			System.out.println("원래있던 금액이라죠 " + oldPayment.getPaidamount());
+			
 			int newPaidAmount = oldPayment.getPaidamount() + dto.getPaidamount();
+			System.out.println("새 금액입니다링");
 			System.out.println(newPaidAmount);
+			
+			
 			oldPayment.setPaidamount(newPaidAmount);
+			
 			Payment savedPayment = service.edit(oldPayment);
+			
+			System.out.println("savedPayment" + savedPayment);
 			map.put("dto", savedPayment);
 			map.put("message", "기존에 업데이트 완료");
 		} else {
