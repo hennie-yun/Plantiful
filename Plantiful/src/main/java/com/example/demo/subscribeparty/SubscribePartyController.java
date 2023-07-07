@@ -75,7 +75,7 @@ public class SubscribePartyController {
 					SubscribeBoardDto boardDto = sbservice.getBoard(subscribe_num);
 					ArrayList<SubscribePartyDto> partyList = service.getBySubNum(subscribe_num);
 					ChatRoomDto roomDto = roomService.createRoom(boardDto);
-					ChatRoom room = new ChatRoom(roomDto.getNum(), "", null, roomDto.getSubscribeNum());
+					ChatRoom room = new ChatRoom(roomDto.getNum(), "", roomDto.getLastSendTime() ,null, roomDto.getSubscribeNum());
 					partyList.forEach(t -> {
 						Member member = t.getEmail();
 						room.setLastSender(member);

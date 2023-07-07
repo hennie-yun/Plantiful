@@ -19,6 +19,11 @@ public class ChatController {
 	@Autowired
 	private MemberService memService;
 	
+	/**
+	 * receive로 들어온 메세지를 저장하고 sub라는 이름으로 구독 중인 모든 유저에게 메세지를 발송
+	 * @param dto
+	 * @return
+	 */
 	@MessageMapping("/receive")
 	@SendTo("/sub")
 	public ChatDto chatting(ChatDto dto) {
@@ -29,6 +34,7 @@ public class ChatController {
 					memDto.getId() , memDto.getImg());
 		room.setLastSender(member);
 		room.setLastMsg(message);
+		room.setLastSendTime(dto.getSendTime());
 		dto.setRoom(room);
 		return service.chatting(dto);
 	}

@@ -14,9 +14,11 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.w3c.dom.Document;
@@ -25,10 +27,16 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.example.demo.schedule.ScheduleDto;
+import com.example.demo.schedule.ScheduleService;
+
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/concert")
 public class ConcertController {
+	
+	@Autowired
+	ScheduleService service;
 	
 	@GetMapping("/{page}")
 	public Map findAll(@PathVariable(name = "page") int page) {
@@ -150,6 +158,45 @@ public class ConcertController {
 		
 		Map map = new HashMap();
 		map.put("concert", concert);
+		return map;
+	}
+	
+	@GetMapping("/getAdrs/{locId}")
+	public Map getAdrs(@PathVariable(name = "locId") String locId) {
+		String str = "http://kopis.or.kr/openApi/restful/prfplc/"+locId;
+		str += "?service=ce866e84481d4d8cb7883e90889e4a9d";
+		String adres = null;
+		try {
+			URL url = new URL(str);
+			URLConnection conn = url.openConnection();
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document doc = (Document) builder.parse(conn.getInputStream());
+			Element root = doc.getDocumentElement();
+			NodeList nodeList = root.getElementsByTagName("db");
+			Element element = (Element) nodeList.item(0); 
+			adres = element.getElementsByTagName("adres").item(0).getTextContent();
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		Map map = new HashMap();
+		map.put("adres", adres);
+		return map;
+	}
+	
+	@PostMapping("")
+	public Map add(ScheduleDto dto) {
+		Map map = new HashMap();
+		if(service.isAnySchedule(dto)) {
+			map.put("isJoin", true);
+		} else {
+			map.put("isJoin", false);
+			ScheduleDto d = service.save(dto);
+			map.put("msg", d);
+		}
+		
 		return map;
 	}
 }

@@ -1,5 +1,7 @@
 package com.example.demo.chat;
 
+import java.sql.Timestamp;
+
 import com.example.demo.member.Member;
 import com.example.demo.subscribeboard.SubscribeBoard;
 
@@ -30,6 +32,7 @@ public class ChatRoom {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_room")
 	private long num;
 	private String lastMsg;
+	private Timestamp lastSendTime;
 	
 	@ManyToOne
 	@JoinColumn(name = "email")

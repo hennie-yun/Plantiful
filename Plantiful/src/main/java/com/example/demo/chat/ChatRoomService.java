@@ -1,6 +1,8 @@
 package com.example.demo.chat;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,7 +27,7 @@ public class ChatRoomService {
 		}
 		ArrayList<ChatRoomDto> dtoList = new ArrayList<>();
 		for(ChatRoom room : roomList) {
-			ChatRoomDto dto = new ChatRoomDto(room.getNum(), room.getLastMsg(), room.getLastSender(), room.getSubscribeNum());
+			ChatRoomDto dto = new ChatRoomDto(room.getNum(), room.getLastMsg(), room.getLastSendTime(), room.getLastSender(), room.getSubscribeNum());
 			dtoList.add(dto);
 		}
 		
@@ -33,7 +35,8 @@ public class ChatRoomService {
 	}
 	
 	public ChatDto joinRoom(long roomNum, String email) {
-		Chat chat = chatDao.save(new Chat(0, new ChatRoom(roomNum, "", new Member(email, "", "", "", 0, ""), null), 
+		Timestamp timestap = new Timestamp(System.currentTimeMillis());
+		Chat chat = chatDao.save(new Chat(0, new ChatRoom(roomNum, "", timestap, new Member(email, "", "", "", 0, ""), null), 
 				new Member(email, "", "", "", 0, ""), email+" 님이 입장하셨습니다", null, true ));
 		ChatDto dto = new ChatDto(chat.getNum(), chat.getRoom(), chat.getMember(), chat.getMessage(), chat.getSendTime(), chat.isRequest());
 		return dto;
@@ -54,6 +57,7 @@ public class ChatRoomService {
 		ChatRoom newRoom = dao.findById(room.getNum()).orElse(null);
 		newRoom.setLastMsg(room.getLastMsg());
 		newRoom.setLastSender(room.getLastSender());
+		newRoom.setLastSendTime(room.getLastSendTime());
 		ChatRoom savedRoom = dao.save(newRoom);
 		if(savedRoom == null) {
 			System.out.println("null");
@@ -65,14 +69,16 @@ public class ChatRoomService {
 				boardDto.getSite(), boardDto.getTotal_point(), boardDto.getTotal_people(), 
 				boardDto.getRegister_date(), boardDto.getRegister_date(), boardDto.getPayment_date(), 
 				boardDto.getSubscribe_startdate(), boardDto.getSubscribe_enddate());
-		ChatRoom room = new ChatRoom(0, null, null, board);
+		ChatRoom room = new ChatRoom(0, null, null, null, board);
 		ChatRoom entity = dao.findBySubscribeNum(room.getSubscribeNum());
 		ChatRoomDto dto = null;
 		if(entity == null) {
 			ChatRoom savedRoom = dao.save(room);
-			dto = new ChatRoomDto(savedRoom.getNum(), savedRoom.getLastMsg(), savedRoom.getLastSender(), savedRoom.getSubscribeNum());
+			dto = new ChatRoomDto(savedRoom.getNum(), savedRoom.getLastMsg(), savedRoom.getLastSendTime(), 
+					savedRoom.getLastSender(), savedRoom.getSubscribeNum());
 		} else {
-			dto = new ChatRoomDto(entity.getNum(), entity.getLastMsg(), entity.getLastSender(), entity.getSubscribeNum());
+			dto = new ChatRoomDto(entity.getNum(), entity.getLastMsg(), entity.getLastSendTime(),
+					entity.getLastSender(), entity.getSubscribeNum());
 		}
 		
 		return dto;
@@ -82,7 +88,8 @@ public class ChatRoomService {
 		ArrayList<ChatRoom> roomList = (ArrayList<ChatRoom>) dao.findAll();
 		ArrayList<ChatRoomDto> list = new ArrayList<>();
 		roomList.forEach(t -> {
-			ChatRoomDto dto = new ChatRoomDto(t.getNum(), t.getLastMsg(), t.getLastSender(), t.getSubscribeNum());
+			ChatRoomDto dto = new ChatRoomDto(t.getNum(), t.getLastMsg(), t.getLastSendTime(),
+					t.getLastSender(), t.getSubscribeNum());
 			list.add(dto);
 		});
 		
