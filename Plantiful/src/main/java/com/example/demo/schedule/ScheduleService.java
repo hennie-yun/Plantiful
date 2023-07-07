@@ -63,6 +63,7 @@ public class ScheduleService {
 		}
 		return list2;
 	}
+	
 	// 스케줄title로 스케줄이 같은 email조회
 		public String getMemberEmail(ScheduleDto dto) {
 			ArrayList<Schedule> list = dao.findBytitle(dto.getTitle());
@@ -96,5 +97,21 @@ public class ScheduleService {
 						s.getIsLoop(), s.getDay()));
 			}
 			return list2;
+		}
+		
+		/**
+		 * 제목으로 검색해서 제목이 같은 스케쥴이 존재한다면 true 반환, 없으면 false 반환
+		 * @param dto
+		 * @return
+		 */
+		public boolean isAnySchedule(ScheduleDto dto) {
+			ArrayList<Schedule> list = dao.findBytitle(dto.getTitle());
+			if(!list.isEmpty()) {
+				System.out.println("Not Empty");
+				return true;
+			} else {
+				System.out.println("Empty");
+				return false;
+			}
 		}
 }
