@@ -53,7 +53,7 @@ public class NaverController {
 		
 		System.out.println("code"+code);
 		System.out.println("state"+state);
-		//access_token =  naverService.loginNaver(code, state);
+		access_token =  naverService.loginNaver(code, state);
 	    System.out.println("callback");
 	    System.out.println("access_token"+access_token);
 	    // 받아온 정보로 서비스 로직에 적용하기

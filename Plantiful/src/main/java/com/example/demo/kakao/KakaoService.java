@@ -114,8 +114,8 @@ public class KakaoService {
 		//	log.info(access_Token);
 		//	log.info(refresh_Token);
 			
-			String scheduleres1= scheduleadd(access_Token);
-			System.out.println("add schedule >" + scheduleres1);
+//			scheduleres= scheduleadd(access_Token);
+//			System.out.println("add schedule >" + scheduleres);
 
 			br.close();
 			bw.close();
@@ -123,7 +123,7 @@ public class KakaoService {
 			e.printStackTrace();
 		}
 		//log.info("카카오토큰생성완료>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-		return scheduleres;
+		return access_Token;
 	}
 	 private static LocalTime roundToNearestFiveMinutes(LocalTime time) {
 	        int minute = time.getMinute();
@@ -153,7 +153,7 @@ public class KakaoService {
 	    int second = Integer.parseInt(timeComponents[2]);
 	    
 	    LocalTime time = LocalTime.of(hour, minute, second);
-	    LocalTime time2 = LocalTime.of(hour, minute, second);
+	    LocalTime time2 = LocalTime.of(hour, minute+5, second);
 
 	    LocalTime adjustedTime = roundToNearestFiveMinutes(time);
 	    LocalTime adjustedTime2 = roundToNearestFiveMinutes(time2);

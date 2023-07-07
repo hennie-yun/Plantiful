@@ -132,11 +132,13 @@ public class KakaoController {
 			result = kakaoService.authToken(authorization_code);
 			System.out.println("new access_token"+result);
 			access_token = result;
-//			kakao = kakaoService.scheduleadd(access_token);
+			System.out.println("access_token" + access_token);
+			kakao = kakaoService.scheduleadd(access_token);
+			System.out.println("kakao****"+kakao);
 		}
-		System.out.println("scheduleadd result:"+map);	
+		//System.out.println("scheduleadd result:"+map);	
 		map.put("result", result);
-		map.put("kakao", kakao);
+		//map.put("kakao", kakao);
 		return map;
 	}
 	
@@ -163,7 +165,8 @@ public class KakaoController {
 		return map;
 	}
 	
-
+	
+	
 
 	@GetMapping("/api/kakao/add")
 	public Map addschedule() {
@@ -174,7 +177,8 @@ public class KakaoController {
 		map.put("result", result);
 		return map;
 	}
-
+	
+	
 	
 
 }
