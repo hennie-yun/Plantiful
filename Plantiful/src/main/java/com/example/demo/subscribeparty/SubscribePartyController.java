@@ -102,21 +102,21 @@ public class SubscribePartyController {
 	
 
 	//돈 움직이기(팀원들 pb 0으로 만듦)
-	@PatchMapping("/money/{subscribe_num}")
+	@PostMapping("/money/{subscribe_num}")
 	public void minusMoney(@PathVariable("subscribe_num") int subscribe_num) {
-	    try {
+//	    try {
 	        service.minusMoney(subscribe_num);
-	    } catch (Exception e) {
-	        if (e instanceof EmptyResultDataAccessException) {
-	            // 예외가 EmptyResultDataAccessException인 경우에 대한 처리
-	            // 오류가 발생했을 때 원하는 동작을 수행하도록 작성
-	        	System.out.println("error 발생 minusMoney");
-	        } else {
-	            // 기타 예외에 대한 처리
-	            // 필요에 따라 다른 예외 유형에 대한 처리도 추가할 수 있습니다.
-	        	System.out.println("error 발생 minusMoney else");
-	        }
-	    }
+//	    } catch (Exception e) {
+//	        if (e instanceof EmptyResultDataAccessException) {
+//	            // 예외가 EmptyResultDataAccessException인 경우에 대한 처리
+//	            // 오류가 발생했을 때 원하는 동작을 수행하도록 작성
+//	        	System.out.println("error 발생 minusMoney");
+//	        } else {
+//	            // 기타 예외에 대한 처리
+//	            // 필요에 따라 다른 예외 유형에 대한 처리도 추가할 수 있습니다.
+//	        	System.out.println("error 발생 minusMoney else");
+//	        }
+//	    }
 	}
 
 		
