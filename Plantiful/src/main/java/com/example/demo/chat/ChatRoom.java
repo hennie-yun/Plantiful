@@ -2,6 +2,9 @@ package com.example.demo.chat;
 
 import java.sql.Timestamp;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import com.example.demo.member.Member;
 import com.example.demo.subscribeboard.SubscribeBoard;
 
@@ -35,10 +38,12 @@ public class ChatRoom {
 	private Timestamp lastSendTime;
 	
 	@ManyToOne
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "email")
 	private Member lastSender;
 	
 	@OneToOne
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "subscribe_num")
 	private SubscribeBoard subscribeNum ;
 	
