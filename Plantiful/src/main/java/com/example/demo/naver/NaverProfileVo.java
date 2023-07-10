@@ -1,8 +1,11 @@
 package com.example.demo.naver;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Data
+
 public class NaverProfileVo {
 	private String resultcode;
 	private String message;
@@ -11,6 +14,7 @@ public class NaverProfileVo {
 	
 	
 	@Data
+	
 	public class response {
 		private String id;
 		private String nickname;

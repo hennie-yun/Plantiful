@@ -3,7 +3,6 @@ package com.example.demo.kakaologin;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -13,6 +12,7 @@ import java.util.HashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.example.demo.member.MemberDto;
 import com.example.demo.member.MemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -105,6 +105,7 @@ public class LoginService {
 	// 유저 정보 얻기
 	public HashMap<String, String> requestUser(String accessToken) {
 		
+		String email = "";
 		log.info("유저정보 요청 시작");
 		String strUrl = "https://kapi.kakao.com/v2/user/me"; // request를 보낼 주소
 		HashMap userInfo = new HashMap<>();
@@ -146,20 +147,32 @@ public class LoginService {
 
 			HashMap<String, Object> resultMap = mapper.readValue(result, HashMap.class);
 			String id =String.valueOf((Long) resultMap.get("id"));
-			 
+			
 			System.out.println(id);
+			
+			userInfo.put("id", id);
 
 			// json 파싱하여 id 가져오기
 
 			// 결과json 안에 properties key는 json Object를 value로 가짐
 			HashMap<String, Object> properties = (HashMap<String, Object>) resultMap.get("properties");
 			String nickname = (String) properties.get("nickname");
+			
+			userInfo.put("nickname", nickname);
 
 			// 결과json 안에 kakao_account key는 json Object를 value로 가짐
 			HashMap<String, Object> kakao_account = (HashMap<String, Object>) resultMap.get("kakao_account");
 
 			// 이메일은 동의 해야 알 수 있는데 그건 진짜 계정만 되서 일단 무조건 동의한다는 가정 아래 진행
-			String email = (String) kakao_account.get("email");
+			email = (String) kakao_account.get("email");
+			MemberDto dto = memberservice.getMember(email);
+			
+			if(dto!= null) {
+				email = null;
+				userInfo.put("message", "동일 아이디로 회원가입 된 계정이 있습니다.");
+			} else {
+				userInfo.put("email", email);
+			}
 
 			// 만약 선책하는거라면 이렇게 해주면 될듯?
 //	        String email=null;
@@ -170,9 +183,6 @@ public class LoginService {
 			log.info("resultMap= {}", resultMap);
 			log.info("properties= {}", properties);
 			
-			userInfo.put("email", email);
-			userInfo.put("id", id);
-			userInfo.put("nickname", nickname);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

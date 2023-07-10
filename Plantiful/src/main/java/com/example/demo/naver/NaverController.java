@@ -21,7 +21,7 @@ import com.example.demo.schedule.ScheduleDto;
 import com.example.demo.schedule.ScheduleService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-@CrossOrigin("*")
+@CrossOrigin(origins = "*")
 @RequestMapping("/api/naver")
 @RestController
 public class NaverController {

@@ -25,6 +25,8 @@ import org.springframework.web.client.RestTemplate;
 
 import com.example.demo.auth.JwtTokenProvider;
 import com.example.demo.groupparty.GroupPartyService;
+import com.example.demo.member.MemberDto;
+import com.example.demo.member.MemberService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -50,7 +52,8 @@ public class NaverService {
 	@Autowired
 	private GroupPartyService groupservice;
 	
-	
+	@Autowired
+	private MemberService memberservice;
 	
 	
 	
@@ -114,6 +117,8 @@ public class NaverService {
 	
 	// 토큰 받아오기
 	public Map userInfo(String access_token) throws JsonProcessingException {
+		
+		Map map = new HashMap<>();
 		 // 토큰을 이용해 정보를 받아올 API 요청을 보낼 로직 작성하기
 	    RestTemplate profile_rt = new RestTemplate();
 	    HttpHeaders userDetailReqHeaders = new HttpHeaders();
@@ -141,13 +146,17 @@ public class NaverService {
 	    } catch (JsonMappingException je) {
 	        je.printStackTrace();
 	    }
-	    System.out.println(naverProfile);
+	    System.out.println("여기봐바>>>>>>>>>>"+naverProfile);
+	    
+	    String email = naverProfile.getResponse().getEmail();
+	    MemberDto dto = memberservice.getMember(email);
+	    
+	    if(dto !=null) {
+	    	map.put("message", "동일 아이디로 회원가입 된 계정이 있습니다.");
+	    }
 	    
 	    NaverProfileVo.response naverResponse = naverProfile.getResponse();
-	    
-	    
-	    
-	    Map map = new HashMap<>();
+
 	    map.put("naverResponse", naverResponse);
 	    return map;
 	    
