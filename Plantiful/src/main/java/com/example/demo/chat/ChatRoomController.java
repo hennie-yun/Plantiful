@@ -70,7 +70,7 @@ public class ChatRoomController {
 	 */
 	@RequestMapping("chat/{email}")
 	@ResponseBody
-	public ResponseEntity<byte[]> getImg(@PathVariable(name = "eamil")String email) {
+	public ResponseEntity<byte[]> getImg(@PathVariable(name = "email")String email) {
 		MemberDto member = memService.getMember(email);
 		String fname = member.getImg();
 		File f = new File(fname);

@@ -2,6 +2,9 @@ package com.example.demo.chat;
 
 import java.sql.Timestamp;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import com.example.demo.member.Member;
 
 import jakarta.persistence.Entity;
@@ -31,10 +34,12 @@ public class Chat {
 	private long num;
 	
 	@ManyToOne
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "room_num")
 	private ChatRoom room;
 	
 	@ManyToOne
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "email")
 	private Member member;
 	private String message;
