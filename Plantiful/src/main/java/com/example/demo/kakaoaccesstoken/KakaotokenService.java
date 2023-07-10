@@ -45,7 +45,7 @@ public class KakaotokenService {
 	public void outKakao(String token) {
 		String accessToken = token;
 
-		System.out.println(accessToken);
+		System.out.println("엑세스토큰에서 out " + accessToken);
 		// 요청 URL
 		String url = "https://kapi.kakao.com/v1/user/unlink";
 

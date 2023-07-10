@@ -57,10 +57,10 @@ public class PaymentController {
 			
 			System.out.println("savedPayment" + savedPayment);
 			map.put("dto", savedPayment);
-			map.put("message", "기존에 업데이트 완료");
+			map.put("message", newPaidAmount + "가 충전 되었습니다");
 		} else {
 			PaymentDto savedPayment = service.save(dto);
-			map.put("message", "새롭게 추가 완료");
+			map.put("message", "포인트가 충전 되었습니다");
 			map.put("dto", savedPayment);
 		}
 
@@ -85,7 +85,7 @@ public class PaymentController {
 			oldPayment.setPaidamount(newPaidAmount);
 			Payment savedPayment = service.edit(oldPayment);
 			map.put("dto", savedPayment);
-			map.put("message", "돈 잘 빠져나갔다링.");
+			map.put("message", "포인트가 출금 되었습니다.");
 		} else {
 			map.put("message", "찾는 정보가 없습니다.");
 		}

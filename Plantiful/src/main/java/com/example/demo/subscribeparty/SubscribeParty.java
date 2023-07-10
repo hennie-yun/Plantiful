@@ -42,6 +42,7 @@ public class SubscribeParty {
 	private SubscribeBoard subscribeNum;
 	@ManyToOne
 	@JoinColumn(name="email", nullable=true)
+	@OnDelete(action = OnDeleteAction.SET_NULL) 
 	private Member email;
 	private int point_basket;
 	private Date enddate;
