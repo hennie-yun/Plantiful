@@ -1,5 +1,6 @@
 package com.example.demo.groupparty;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -112,8 +113,8 @@ public class GroupPartyController {
 				ArrayList<ScheduleDto> num2 = scheduleservice.getByGroupnum(num.getSchedulegroup_num());
 				for (ScheduleDto scheduleDto : num2) {
 				    int scheduleNum = scheduleDto.getSchedule_num();
-				    System.out.println(scheduleNum + "번 일정 삭제");
 				    scheduleservice.delSchedule(scheduleNum);
+				    System.out.println(scheduleNum + "번 일정 삭제");
 				}
 				int schedulenum = num.getSchedulegroup_num();
 				ScheduleGroup schedule = new ScheduleGroup(schedulenum, null, 0);
@@ -126,19 +127,30 @@ public class GroupPartyController {
 		return map;
 	}
 
+//	스케줄 그룹 번호로 스케줄에서 그룹번호와 && 이메일이 같은 list 출력
+	//그안에서 for문으로 스케줄 삭제
 	// 그룹 나가기
-	@DeleteMapping("outparty/{groupparty_num}")
-	public Map outParty(@PathVariable("groupparty_num") int groupparty_num) {
+	@DeleteMapping("outparty/{groupparty_num}/{email}")
+	public Map outParty(@PathVariable("groupparty_num") int groupparty_num, @PathVariable("email")String email) {
 		boolean flag = true;
-		try {
-			service.outParty(groupparty_num);
-			ScheduleGroup num = service.getSchedulenum(groupparty_num);
-			ArrayList<ScheduleDto> num2 = scheduleservice.getByGroupnum(num.getSchedulegroup_num());
-			for (ScheduleDto scheduleDto : num2) {
-			    int scheduleNum = scheduleDto.getSchedule_num();
-			    System.out.println(scheduleNum + "번 일정 삭제");
-			    scheduleservice.delSchedule(scheduleNum);
-			}
+		 try {
+		        ArrayList<ScheduleDto> list = scheduleservice.getByEmail(email); // email로 찾은 스케줄 리스트
+		        ScheduleGroup num = service.getSchedulenum(groupparty_num);
+		        ArrayList<ScheduleDto> num2 = scheduleservice.getByGroupnum(num.getSchedulegroup_num());
+
+		        // 그룹 번호와 일치하는 스케줄만 삭제
+		        ArrayList<Integer> scheduleNumsToDelete = new ArrayList<>();
+		        for (ScheduleDto schedule : list) {
+		            if (num2.stream().anyMatch(s -> s.getSchedule_num() == schedule.getSchedule_num())) {
+		                scheduleNumsToDelete.add(schedule.getSchedule_num());
+		            }
+		        }
+
+		        for (int scheduleNum : scheduleNumsToDelete) {
+		            scheduleservice.delSchedule(scheduleNum);
+		            System.out.println(scheduleNum + "번 일정 삭제");
+		        }
+	        service.outParty(groupparty_num); // 그룹에서 멤버 제거
 		} catch (Exception e) {
 			flag = false;
 		}
