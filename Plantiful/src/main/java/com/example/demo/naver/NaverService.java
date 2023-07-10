@@ -9,7 +9,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.security.SecureRandom;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -26,14 +25,9 @@ import org.springframework.web.client.RestTemplate;
 
 import com.example.demo.auth.JwtTokenProvider;
 import com.example.demo.groupparty.GroupPartyService;
-import com.example.demo.member.Member;
-import com.example.demo.schedule.ScheduleDto;
-import com.example.demo.schedule.ScheduleService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import jakarta.servlet.http.HttpServletResponse;
 
 class content {
 	public static String calSum =  "";
@@ -64,7 +58,7 @@ public class NaverService {
 	    StringBuffer url = new StringBuffer();
 
 	    // 카카오 API 명세에 맞춰서 작성
-	    String redirectURI = URLEncoder.encode("http://www.localhost:8181/naver/callback", "UTF-8"); // redirectURI 설정 부분
+	    String redirectURI = URLEncoder.encode("http://www.localhost:8182/calendar", "UTF-8"); // redirectURI 설정 부분
 	    SecureRandom random = new SecureRandom();
 	    String state = new BigInteger(130, random).toString();
 
@@ -76,7 +70,84 @@ public class NaverService {
 	  
 	    return url.toString();
 	}
+	public String tokenNaver (String code, String state) throws JsonProcessingException {
+	    // 네이버 로그인 Token 발급 API 요청을 위한 header/parameters 설정 부분
+	    RestTemplate token_rt = new RestTemplate(); // REST API 요청용 Template
 
+	    HttpHeaders naverTokenRequestHeadres = new HttpHeaders();  // Http 요청을 위한 헤더 생성
+	    naverTokenRequestHeadres.add("Content-type", "application/x-www-form-urlencoded"); // application/json 했다가 grant_type missing 오류남 (출력포맷만 json이라는 거엿음)
+
+	    // 파라미터들을 담아주기위한 맵 
+	    MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+	    params.add("grant_type", "authorization_code");
+	    params.add("client_id", "IiiFJKBOyzL3qvfXasPq");
+	    params.add("client_secret", "PtvyRoMmt_");
+	    params.add("code", code);
+	    params.add("state", state);
+
+	    HttpEntity<MultiValueMap<String, String>> naverTokenRequest =
+	            new HttpEntity<>(params, naverTokenRequestHeadres);
+
+	    // 서비스 서버에서 네이버 인증 서버로 요청 전송(POST 또는 GET이라고 공식문서에 있음), 응답은 Json으로 제공됨
+	    ResponseEntity<String> oauthTokenResponse = token_rt.exchange(
+	            "https://nid.naver.com/oauth2.0/token",
+	            HttpMethod.POST,
+	            naverTokenRequest,
+	            String.class
+	    );
+
+	    // body로 access_token, refresh_token, ;token_type:bearer, expires_in:3600 온 상태
+	    System.out.println(oauthTokenResponse);
+
+	    // oauthTokenResponse로 받은 토큰정보 객체화
+	    ObjectMapper token_om = new ObjectMapper();
+	    NaverTokenVo naverToken = null;
+	    try {
+	        naverToken = token_om.readValue(oauthTokenResponse.getBody(), NaverTokenVo.class);
+	    } catch (JsonMappingException je) {
+	        je.printStackTrace();
+	    }
+	    
+	     
+	    return naverToken.getAccess_token();
+	}
+	
+	// 토큰 받아오기
+	public Map userInfo(String access_token) throws JsonProcessingException {
+		 // 토큰을 이용해 정보를 받아올 API 요청을 보낼 로직 작성하기
+	    RestTemplate profile_rt = new RestTemplate();
+	    HttpHeaders userDetailReqHeaders = new HttpHeaders();
+	    userDetailReqHeaders.add("Authorization", "Bearer " + access_token);
+	    userDetailReqHeaders.add("Content-type", "application/x-www-form-urlencoded;charset=UTF-8");
+	    HttpEntity<MultiValueMap<String, String>> naverProfileRequest = new HttpEntity<>(userDetailReqHeaders);
+
+	    // 서비스서버 - 네이버 인증서버 : 유저 정보 받아오는 API 요청
+	    ResponseEntity<String> userDetailResponse = profile_rt.exchange(
+	            "https://openapi.naver.com/v1/nid/me",
+	            HttpMethod.POST,
+	            naverProfileRequest,
+	            String.class
+	    );
+
+	    // 요청 응답 확인
+	    System.out.println(userDetailResponse);
+
+	    // 네이버로부터 받은 정보를 객체화
+	    // *이때, 공식문서에는 응답 파라미터에 mobile 밖에없지만, 국제전화 표기로 된 mobile_e164도 같이 옴. 따라서 NaverProfileVo에 mobile_e164 필드도 있어야 정상적으로 객체가 생성됨
+	    ObjectMapper profile_om = new ObjectMapper();
+	    NaverProfileVo naverProfile = null;
+	    try {
+	        naverProfile = profile_om.readValue(userDetailResponse.getBody(), NaverProfileVo.class);
+	    } catch (JsonMappingException je) {
+	        je.printStackTrace();
+	    }
+	    Map map = new HashMap<>();
+	    map.put("naverProfile", naverProfile);
+	    return map;
+	    
+	}
+	
+	// 통합 code ,state 받아서 access_token -> 유저 인포도 나옴 
 	public String loginNaver (String code, String state) throws JsonProcessingException {
 	    // 네이버 로그인 Token 발급 API 요청을 위한 header/parameters 설정 부분
 	    RestTemplate token_rt = new RestTemplate(); // REST API 요청용 Template
@@ -169,6 +240,8 @@ public class NaverService {
 	    return naverToken.getAccess_token();
 	}
 	
+	
+	
 	public String scheduleadd(String access_token) {
 //		  System.out.println(dto.toString());
 		  String result = "";
@@ -215,7 +288,7 @@ public class NaverService {
 	                    "END:VEVENT\n" +
 	                    "END:VCALENDAR";
 	            String postParams = "calendarId=defaultCalendarId&scheduleIcalString=" + scheduleIcalString;
-	            System.out.println(postParams);
+	            System.out.println("naver add start" + postParams + "naver add end ");
 	            con.setDoOutput(true);
 	            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
 	            wr.writeBytes(postParams);
