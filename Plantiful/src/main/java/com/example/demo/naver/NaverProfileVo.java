@@ -8,6 +8,8 @@ public class NaverProfileVo {
 	private String message;
 	private response response;
 	
+	
+	
 	@Data
 	public class response {
 		private String id;
@@ -19,6 +21,15 @@ public class NaverProfileVo {
         private String birthday;
         private String profile_image;
         private String birthyear;
-        private String mobile;
+      
 	}
+
+
+
+	@Override
+	public String toString() {
+		return "NaverProfileVo [response=" + response + "]";
+	}
+
+
 }

@@ -141,8 +141,14 @@ public class NaverService {
 	    } catch (JsonMappingException je) {
 	        je.printStackTrace();
 	    }
+	    System.out.println(naverProfile);
+	    
+	    NaverProfileVo.response naverResponse = naverProfile.getResponse();
+	    
+	    
+	    
 	    Map map = new HashMap<>();
-	    map.put("naverProfile", naverProfile);
+	    map.put("naverResponse", naverResponse);
 	    return map;
 	    
 	}

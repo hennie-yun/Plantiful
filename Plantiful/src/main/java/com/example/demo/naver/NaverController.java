@@ -47,17 +47,23 @@ public class NaverController {
 	    return new ResponseEntity<>(url, HttpStatus.OK); // 프론트 브라우저로 보내는 주소
 	}
 	
-	@GetMapping("/login")
-	public Map naverToken(@RequestParam("code") String code, @RequestParam("state") String state) throws JsonProcessingException {
-		System.out.println("code" + code);
-		System.out.println("state" + state);
+	@PostMapping("/login")
+	public Map naverToken(Code code) throws JsonProcessingException {
+	
+		System.out.println("code" + code.getCode());
+		System.out.println("state" + code.getState());
 		
-		access_token = naverService.tokenNaver(code, state);
+		
+		
+		access_token = naverService.loginNaver(code.getCode(), code.getState());
 		Map map = new HashMap<>();
 		map.put("access_token", access_token);
-		map.put("naveruserinfo", naverService.userInfo(access_token));
+		map.put("userinfo", naverService.userInfo(access_token));
+		//map.put("naveruserinfo", naverService.userInfo(access_token));
 		return map;
 	}
+
+	
 
 
 	
