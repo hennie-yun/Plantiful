@@ -151,9 +151,10 @@ public class NaverService {
 	    String email = naverProfile.getResponse().getEmail();
 	    MemberDto dto = memberservice.getMember(email);
 	    
-	    if(dto !=null) {
-	    	map.put("message", "동일 아이디로 회원가입 된 계정이 있습니다.");
+	    if(dto!= null && dto.getId() == '1') { 
+	    	map.put("message", "동일 아이디로 회원가입 된 카카오 계정이 있습니다.");
 	    }
+	 
 	    
 	    NaverProfileVo.response naverResponse = naverProfile.getResponse();
 

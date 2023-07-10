@@ -166,11 +166,13 @@ public class LoginService {
 			// 이메일은 동의 해야 알 수 있는데 그건 진짜 계정만 되서 일단 무조건 동의한다는 가정 아래 진행
 			email = (String) kakao_account.get("email");
 			MemberDto dto = memberservice.getMember(email);
-			
-			if(dto!= null) {
-				email = null;
-				userInfo.put("message", "동일 아이디로 회원가입 된 계정이 있습니다.");
-			} else {
+			//카카오톡으로 로그인 하려고하는데 네이버로 이미 가입 된 이메일이 있다면 
+			//혹은 이미 카카오로 회원가입을 진행 했다면? 
+			if(dto!= null && dto.getId() == '2') { //멤버에 있는지 찾아서 있다면  
+				email = null; //얻은 정보는 null을 만들고 
+				userInfo.put("message", "동일 아이디로 회원가입 된 네이버 계정이 있습니다.");
+				
+			} else { //없다면 정보에 담아 
 				userInfo.put("email", email);
 			}
 
