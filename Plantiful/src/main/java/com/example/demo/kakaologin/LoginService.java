@@ -97,6 +97,7 @@ public class LoginService {
 			e.printStackTrace();
 		}
 		log.info("카카오토큰생성완료>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+		log.info("KakakoToken!!!!!!!!" + kakaoToken.getId_token());
 		return access_Token;
 
 	}
