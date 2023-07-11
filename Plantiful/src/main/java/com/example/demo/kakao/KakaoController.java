@@ -41,11 +41,12 @@ public class KakaoController {
 	private String access_token="";
 
 	 
-	private static LocalTime roundToNearestFiveMinutes(LocalTime time) {
-        int minute = time.getMinute();
-        int roundedMinute = ((minute + 4) / 5) * 5;
-        return LocalTime.of(time.getHour(), roundedMinute);
-	}
+//	private static LocalTime roundToNearestFiveMinutes(LocalTime time) {
+//        int minute = time.getMinute();
+//        int roundedMinute = ((minute + 4) / 5) * 5;
+//        System.out.println(roundedMinute);
+//        return LocalTime.of(time.getHour(), roundedMinute);
+//	}
 	
 	@PostMapping("/api/kakao/form")
 	public Map getKakaoData(ScheduleDto dto) {
@@ -146,42 +147,16 @@ public class KakaoController {
 			return map;
 		}
 		
-		//System.out.println("scheduleadd result:"+map);	
-	
-	/*
-
-	@GetMapping("/api/kakao/token")
-	public Map getKakaotoken(@RequestHeader(value = "authorization_code", required = false) String authorization_code) {
-		String result = "";
-		String kakao = "";
-		System.out.println("kakao token");
-		System.out.println(authorization_code);
-		Map map = new HashMap();
-		if(authorization_code != " ") {
-			System.out.println(authorization_code);
-			result = kakaoService.authToken(authorization_code);
-			System.out.println("new access_token"+result);
-			access_token = result;
-			System.out.println("access_token" + access_token);
-			kakao = kakaoService.scheduleadd(access_token);
-			System.out.println("kakao****"+kakao);
-		}
-		//System.out.println("scheduleadd result:"+map);	
-		map.put("result", result);
-		//map.put("kakao", kakao);
-		return map;
-	}
-	*/
 	
 
 	@GetMapping("/api/kakao/oauth")
 	public Map getOauth(@RequestHeader(value="authorization_code") String authorization_code) {
 		access_token = kakaoService.authToken(authorization_code);
-	
-		
 		Map map = new HashMap();
+		System.out.println("oauth / access_token"+access_token);
+		String res = kakaoService.scheduleadd(access_token);
 		map.put("access_token", access_token);
-	//	map.put("result", result);
+		map.put("res", res);
 		return map;
 		
 	}
@@ -195,29 +170,36 @@ public class KakaoController {
 		System.out.println("kakaomember"+email);
 		MemberDto member = memberService.getMember(email);
 		long id = member.getId(); 
-		System.out.println("memberdto"+member);
-		Kakaotoken kakao = kakaotokenService.findByEmail(email);
-		System.out.println("kakao" + kakao);
+		Kakaotoken kakao =  kakaotokenService.findByEmail(email);
+		System.out.println("original // access_token"+kakao.getToken());
+		String res = kakaoService.scheduleadd(kakao.getToken());
 		Map map = new HashMap();
-		access_token = kakao.getToken();
-		if(id==1) {
-			result = kakaoService.scheduleadd(access_token);
-		}
 		map.put("id", id);
-		map.put("access_token", access_token);
-		map.put("result", result);
 		return map;
 	}
-	
+//	@GetMapping("/api/kakao/member")
+//	public Map getMemberCheck(@RequestHeader(value="token") String token) {
+//		String result = "";
+//		System.out.println("member token" + token);
+//		String email = tokenprovider.getUsernameFromToken(token);
+//		System.out.println("kakaomember"+email);
+//		MemberDto member = memberService.getMember(email);
+//		long id = member.getId(); 
+//		System.out.println("memberdto"+member.toString());
+//		Map map = new HashMap();
+//		map.put("id", id);
+//		return map;
+//	}
 	
 	
 
 	@GetMapping("/api/kakao/add")
-	public Map addschedule() {
+	public Map addschedule(@RequestHeader(value="access_token") String access_token) {
 		System.out.println(">>> add access_token"+access_token);
 		Map map = new HashMap();
 		
 		String result = kakaoService.scheduleadd(access_token);
+		System.out.println("result" + result);
 		map.put("result", result);
 		return map;
 	}
