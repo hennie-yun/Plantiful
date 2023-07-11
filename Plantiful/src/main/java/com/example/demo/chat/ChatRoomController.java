@@ -13,8 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -32,17 +32,15 @@ public class ChatRoomController {
 	@Autowired
 	private MemberService memService;
 	
-	@Autowired
-	private JwtTokenProvider tokenProvider;
-	
 	/**
 	 * 채팅방을 접속한 유저의 이메일을 기준으로 찾기 
 	 * @param email
 	 * @return 
 	 */
-	@RequestMapping("/chat/roomlist")
+	@GetMapping("/chat/roomlist")
 	@ResponseBody
 	public Map findRoomById(String email) {
+		System.out.println("here");
 		Map map = new HashMap();
 		ArrayList<ChatRoomDto> list = service.findRoomById(email);
 		map.put("list", list);
