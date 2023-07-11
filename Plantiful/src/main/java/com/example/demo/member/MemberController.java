@@ -364,9 +364,9 @@ public class MemberController {
 				key += numIndex;
 			}
 
-			String mail = "\n Plantiful 회원가입 이메일 인증.";
-			message.setSubject("회원가입을 위한 이메일 인증번호 전송 메일입니다."); // 이메일 제목
-			message.setText(mail + "인증번호는 " + key + " 입니다."); // 이메일 내용
+			String mail = "\n Plantiful 회원가입 이메일 인증입니다.\n";
+			message.setSubject("Plantiful 회원가입을 위한 인증번호 전송 메일입니다.\n"); // 이메일 제목
+			message.setText( mail + "인증번호는 " + key + " 입니다."); // 이메일 내용
 			try {
 				mailSenderImpl.send(message); // 이메일 전송
 			} catch (Exception e) {
@@ -422,8 +422,8 @@ public class MemberController {
 				key += numIndex;
 			}
 
-			String mail = "\n Plantiful 비밀번호 재설정 이메일 인증.";
-			message.setSubject("비밀번호 재설정을 위한 임시비밀번호 전송 메일입니다."); // 이메일 제목
+			String mail = "\n Plantiful 비밀번호 재 설정 인증 메일입니다.\n";
+			message.setSubject("Plantiful 임시비밀번호 전송 메일입니다."); // 이메일 제목
 			message.setText(mail + "임시비밀번호는 " + key + " 입니다."); // 이메일 내용
 			try {
 				mailSenderImpl.send(message);
