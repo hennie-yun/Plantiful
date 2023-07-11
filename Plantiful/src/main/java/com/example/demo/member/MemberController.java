@@ -2,6 +2,7 @@ package com.example.demo.member;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -31,6 +32,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.auth.JwtTokenProvider;
+import com.example.demo.subscribeparty.SubscribePartyDto;
+import com.example.demo.subscribeparty.SubscribePartyService;
 
 import io.jsonwebtoken.io.IOException;
 import jakarta.servlet.http.HttpSession;
@@ -52,6 +55,8 @@ public class MemberController {
 	@Autowired
 	private JwtTokenProvider tokenprovider;
 	// 회원가입/세션아이디발급/검색/내정보수정/삭제
+	@Autowired
+	private SubscribePartyService SubscribeParty;
 
 	@Value("${spring.servlet.multipart.location}")
 	private String path; // C:/plantiful/
@@ -302,27 +307,44 @@ public class MemberController {
 		return map;
 	}
 
-	// 계정 탈퇴
 	@DeleteMapping("/{email}")
-	public Map del(@PathVariable("email") String email, @RequestHeader(name = "token", required = false) String token) {
-		boolean flag = true;
-		Map map = new HashMap();
-		if (token != null) {
-			try {
-				String id = tokenprovider.getUsernameFromToken(token);
-				if (!email.equals(id)) {
-					flag = false;
-				}
-			} catch (Exception e) {
-				// flag = false;
-				flag = false;
-			}
-		}
-		if (flag) {
-			service.delMember(email);
-		}
-		map.put("flag", flag);
-		return map;
+	public Map<String, Object> del(@PathVariable("email") String email, @RequestHeader(name = "token", required = false) String token) {
+	    boolean flag = true;
+	    ArrayList<SubscribePartyDto> dto = SubscribeParty.getByEmail(email);
+	    MemberDto memdto = service.getMember(email);
+	    long id = memdto.getId();
+	    System.out.println("디티오!!!!!!!!!!!!!!" + dto);
+	    System.out.println("디티오!!!!!!!!!!!!!!" + memdto);
+
+	    Map<String, Object> map = new HashMap<>();
+	    
+	    // 토큰 값이 존재하고, 해당 이메일과 토큰으로 얻은 아이디가 일치하지 않는 경우 flag를 false로 설정
+	    if (token != null) {
+	        try {
+	            String getid = tokenprovider.getUsernameFromToken(token);
+	            if (!email.equals(getid)) {
+	                flag = false;
+	            }
+	        } catch (Exception e) {
+	            flag = false;
+	        }
+	    }
+	    
+	    //회원가입 된게 네이버나 카카오톡이면 
+	    if (id ==1 || id== 2) {
+	    	map.put("id", id);
+	    }
+	    
+	    // dto가 null이거나 비어있거나 start_check가 2인 경우 탈퇴 진행
+	    if (dto != null && !dto.isEmpty() && dto.get(0).getStart_check() != 2) {
+	        flag = false;
+	        map.put("message", "가입한 파티가 있어 탈퇴 불가능합니다");
+	    } else {
+	        service.delMember(email);
+	    }
+	    
+	    map.put("flag", flag);
+	    return map;
 	}
 
 	// 이메일 초기 인증
