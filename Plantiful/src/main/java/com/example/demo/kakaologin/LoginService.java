@@ -21,14 +21,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class LoginService {
-	
+
 	@Autowired
 	private MemberService memberservice;
 
 	// 인증코드로 token요청하기
 	public String requestToken(String code) {
 		String access_Token = "";
-		String refresh_Token ="";
+		String refresh_Token = "";
 
 		String strUrl = "https://kauth.kakao.com/oauth/token"; // 토큰 요청 보낼 주소
 		KakaoToken kakaoToken = new KakaoToken(); // 요청받을 객체
@@ -48,7 +48,7 @@ public class LoginService {
 			// 0번 파라미터 grant_type 입니다 authorization_code로 고정
 			sb.append("grant_type=authorization_code");
 
-			// 1번 파라미터 client_id입니다. 
+			// 1번 파라미터 client_id입니다.
 			sb.append("&client_id=d54083f94196531e75d7de474142e52e");
 
 			// 2번 파라미터 redirect_uri입니다.
@@ -65,8 +65,7 @@ public class LoginService {
 			// 실제 요청을 보내는 부분, 결과 코드가 200이라면 성공
 			int responseCode = conn.getResponseCode();
 			log.info("responsecode(200이면성공): {}", responseCode);
-			
-	
+
 			// 요청을 통해 얻은 JSON타입의 Response 메세지 읽어오기
 			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			String line = "";
@@ -104,14 +103,13 @@ public class LoginService {
 
 	// 유저 정보 얻기
 	public HashMap<String, String> requestUser(String accessToken) {
-		
+
 		String email = "";
 		log.info("유저정보 요청 시작");
 		String strUrl = "https://kapi.kakao.com/v2/user/me"; // request를 보낼 주소
 		HashMap userInfo = new HashMap<>();
-	
-		userInfo.put("accessToken", accessToken);
 
+		userInfo.put("accessToken", accessToken);
 
 		try {
 			URL url = new URL(strUrl);
@@ -146,10 +144,10 @@ public class LoginService {
 			// 결과 json을 HashMap 형태로 변환하여 resultMap에 담음
 
 			HashMap<String, Object> resultMap = mapper.readValue(result, HashMap.class);
-			String id =String.valueOf((Long) resultMap.get("id"));
-			
+			String id = String.valueOf((Long) resultMap.get("id"));
+
 			System.out.println(id);
-			
+
 			userInfo.put("id", id);
 
 			// json 파싱하여 id 가져오기
@@ -157,7 +155,7 @@ public class LoginService {
 			// 결과json 안에 properties key는 json Object를 value로 가짐
 			HashMap<String, Object> properties = (HashMap<String, Object>) resultMap.get("properties");
 			String nickname = (String) properties.get("nickname");
-			
+
 			userInfo.put("nickname", nickname);
 
 			// 결과json 안에 kakao_account key는 json Object를 value로 가짐
@@ -166,13 +164,13 @@ public class LoginService {
 			// 이메일은 동의 해야 알 수 있는데 그건 진짜 계정만 되서 일단 무조건 동의한다는 가정 아래 진행
 			email = (String) kakao_account.get("email");
 			MemberDto dto = memberservice.getMember(email);
-			//카카오톡으로 로그인 하려고하는데 네이버로 이미 가입 된 이메일이 있다면 
-			//혹은 이미 카카오로 회원가입을 진행 했다면? 
-			if(dto!= null && dto.getId() == '2') { //멤버에 있는지 찾아서 있다면  
-				email = null; //얻은 정보는 null을 만들고 
+			// 카카오톡으로 로그인 하려고하는데 네이버로 이미 가입 된 이메일이 있다면
+			// 혹은 이미 카카오로 회원가입을 진행 했다면?
+			if (dto != null && dto.getId() == '2') { // 멤버에 있는지 찾아서 있다면
+				email = null; // 얻은 정보는 null을 만들고
 				userInfo.put("message", "동일 아이디로 회원가입 된 네이버 계정이 있습니다.");
-				
-			} else { //없다면 정보에 담아 
+
+			} else { // 없다면 정보에 담아
 				userInfo.put("email", email);
 			}
 
@@ -184,13 +182,11 @@ public class LoginService {
 
 			log.info("resultMap= {}", resultMap);
 			log.info("properties= {}", properties);
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return userInfo;
 	}
-
-
 
 }

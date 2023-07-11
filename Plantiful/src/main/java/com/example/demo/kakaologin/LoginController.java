@@ -11,10 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.kakao.KakaoController;
 import com.example.demo.member.MemberService;
 
-//@Slf4j
 @RestController
 @CrossOrigin(origins = "*")
-//@RequestMapping("/Login")
 public class LoginController {
 
 	@Autowired
@@ -41,7 +39,5 @@ public class LoginController {
 
 		return userInfo;
 	}
-
-	
 
 }

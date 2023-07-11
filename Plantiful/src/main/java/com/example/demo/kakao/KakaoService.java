@@ -126,20 +126,24 @@ public class KakaoService {
 		return access_Token;
 	}
 	 private static LocalTime roundToNearestFiveMinutes(LocalTime time) {
-	        int minute = time.getMinute();
-	        int roundedMinute = ((minute + 4) / 5) * 5;
-	        return LocalTime.of(time.getHour(), roundedMinute);
-	    }
+		   int minute = time.getMinute();
+		   int roundedMinute = ((minute + 4) / 5) * 5;
+		   roundedMinute = roundedMinute > 59 ? 55 : roundedMinute; // Ensure it doesn't exceed 59
+		   return LocalTime.of(time.getHour(), roundedMinute);
+	 }
 	
 	
 	public String scheduleadd(String access_token) {
 		System.out.println("scheduleadd " + access_token);
-		String response1 = "";
+		String result = "";
 		
 	    String apiUrl = "https://kapi.kakao.com/v2/api/calendar/create/event";
 		String calendar_id = "primary";
-		StringBuilder result;
+		StringBuilder sb;
 		
+		
+		//String response = "";
+		String response1 = "";
 		String startAt = data.startTime+":00";
 		String endAt = data.endTime+":00";
 		
@@ -153,10 +157,15 @@ public class KakaoService {
 	    int second = Integer.parseInt(timeComponents[2]);
 	    
 	    LocalTime time = LocalTime.of(hour, minute, second);
-	    LocalTime time2 = LocalTime.of(hour, minute+5, second);
+	    LocalTime time2 = LocalTime.of(hour, minute, second);
+	    
+	    if(time == time2) {
+	    	time2 = time.plusMinutes(10);
+	    	System.out.println(time2);
+	    }
 
 	    LocalTime adjustedTime = roundToNearestFiveMinutes(time);
-	    LocalTime adjustedTime2 = roundToNearestFiveMinutes(time2);
+	    LocalTime adjustedTime2 = roundToNearestFiveMinutes(time2).plusMinutes(5);
 		
 		String adjustedStartAt = (adjustedTime+":00").toString();
 		String adjustedStartAt2 = (adjustedTime2+":00").toString();
@@ -166,7 +175,8 @@ public class KakaoService {
 	    String title = data.title;
 	    String info = data.info;
 	    
-	    
+	 	String res = null;
+
 	    
 	    System.out.println(title);
 	    
@@ -179,66 +189,69 @@ public class KakaoService {
 	          connection.setRequestMethod("POST");
 	          connection.setRequestProperty("Authorization", "Bearer " + access_token);
 	          connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-//			String event = "{\n";
-//				   event += "title: "+data.title+",\n";
-//				   event += "time: {\n";
-//				   event += "start_at: "+data.start+"T"+data.startTime+",\n";
-//				   event += "end_at: "+data.end+"T"+data.endTime+",\n";
-//				   event += "time_zone: Asia/Seoul,\n";
-//				   event += "all_day: false,\n";
-//				   event += "lunar: false\n";
-//				   event += "},\n";
-//				   event += "rrlue:FREQ=DAILY;UNTIL=20231231T000000Z,\n";
-//				   event += "description: "+data.info+",\n";
-//				   event += "location: {\n";
-//				   event += "name: 카카오,\n";
-//				   event += "location_id: 18577297,\n";
-//				   event += "address: 경기 성남시 분당구 판교역로 166,\n";
-//				   event += "latitude: 37.39570088983171,\n";
-//				   event += "longitude: 127.1104335101161\n";
-//				   event += "},\n";
-//				   event += "reminders: [15, 30],\n";
-//				   event += "color: RED\n";
-//				   event += "}";
-				   
-	          String requestBody = "calendar_id=primary&event="
-	                    + "{\"title\":\"" + decodedTitle + "\", \"time\":{\"start_at\": \"" + data.start + "T" + adjustedStartAt + "Z\", \"end_at\": \"" + data.end + "T" + adjustedStartAt2 + "Z\", \"time_zone\": \"Asia/Seoul\", \"all_day\": false, \"lunar\": false }, \"description\": \"" + decodedInfo + "\"}";
+	          /*
+			String event = "{\n";
+				   event += "title: "+data.title+",\n";
+				   event += "time: {\n";
+				   event += "start_at: "+data.start+"T"+data.startTime+",\n";
+				   event += "end_at: "+data.end+"T"+data.endTime+",\n";
+				   event += "time_zone: Asia/Seoul,\n";
+				   event += "all_day: false,\n";
+				   event += "lunar: false\n";
+				   event += "},\n";
+				   event += "rrlue:FREQ=DAILY;UNTIL=20231231T000000Z,\n";
+				   event += "description: "+data.info+",\n";
+				   event += "location: {\n";
+				   event += "name: 카카오,\n";
+				   event += "location_id: 18577297,\n";
+				   event += "address: 경기 성남시 분당구 판교역로 166,\n";
+				   event += "latitude: 37.39570088983171,\n";
+				   event += "longitude: 127.1104335101161\n";
+				   event += "},\n";
+				   event += "reminders: [15, 30],\n";
+				   event += "color: RED\n";
+				   event += "}";
+				   */
+				    String requestBody = "calendar_id=primary&event="
+//		                    + "{\"title\":\"" + decodedTitle + "\", \"time\":{\"start_at\": \"" + data.start + "T" + adjustedStartAt + "Z\", \"end_at\": \"" + data.end + "T" + adjustedStartAt2 + "Z\", \"time_zone\": \"Asia/Seoul\", \"all_day\": false, \"lunar\": false }, \"description\": \"" + decodedInfo + "\"}";
 
+				    + "{\"title\":\""+decodedTitle+"\",\"time\":{\"start_at\":\""+ data.start + "T" + adjustedStartAt+"Z\",\"end_at\":\""+ data.end + "T" + adjustedStartAt2+"Z\",\"time_zone\":\"Asia/Seoul\",\"all_day\":false,\"lunar\":false},\"rrlue\":\"FREQ=DAILY;UNTIL=20221031T000000Z\",\"description\":\""+decodedInfo+"\",\"location\":{\"name\":\"cacao\",\"location_id\":18577297,\"address\":\"166 Pangyoyeok-ro, Bundang-gu, Seongnam-si, Gyeonggi-do\",\"latitude\":37.39570088983171,\"longitude\":127.1104335101161},\"reminders\":[15,30],\"color\":\"RED\"}";
+			          
+//			          
 
-			 	System.out.println(requestBody);
-			 	connection.setDoOutput(true);
-			 	connection.getOutputStream().write(requestBody.getBytes());
-			 	
-			 	int responseCode = connection.getResponseCode();
-			 	System.out.println("Response Code:" +responseCode);
-			 	
-			 	
-			
+				 	System.out.println(requestBody);
+				 	connection.setDoOutput(true);
+				 	connection.getOutputStream().write(requestBody.getBytes());
+
+				 
+					
+					int responseCode= connection.getResponseCode();
+					System.out.println("Response Code:"+responseCode);
+					BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+				 	String line;
+				 	StringBuilder response = new StringBuilder();
+				 	
+				 	while((line=reader.readLine()) != null) {
+				 		response.append(line);
+				 	}
+				 	result = response.toString();
+				 	reader.close();
+				 	connection.disconnect();
+				 	System.out.println("response:"+ result.toString());
+				 	response1 = result.toString(); 
+				 	
+				 	
 		
-			 	BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			 	String line;
-			 	StringBuilder response = new StringBuilder();
-			 	
-			 	while((line=reader.readLine()) != null) {
-			 		response.append(line);
-			 	}
-			 	result = response;
-			 	reader.close();
-			 	connection.disconnect();
-			 	System.out.println("response:"+ result.toString());
-			 	response1 = result.toString(); 
-			 	
-			 	
-	
-    } catch (Exception e) {
-        e.printStackTrace();
-       
-       response1 = e.toString();
-		
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	       
+	       response1 = e.toString();
 			
-	
-    }
-		return response1;
+				
+		
+	    }
+			return response1;
 
-		}
+
+	}
 }
