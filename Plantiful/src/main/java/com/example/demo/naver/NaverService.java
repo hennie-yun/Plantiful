@@ -149,9 +149,12 @@ public class NaverService {
 	    System.out.println("여기봐바>>>>>>>>>>"+naverProfile);
 	    
 	    String email = naverProfile.getResponse().getEmail();
+	    System.out.println("이메일!!!!!!!!!" + email);
 	    MemberDto dto = memberservice.getMember(email);
+	    System.out.println("dto!!!!!!!!!" + dto);
+
 	    
-	    if(dto!= null && dto.getId() == '1') { 
+	    if(dto!= null && dto.getId() == 1) { 
 	    	map.put("message", "동일 아이디로 회원가입 된 카카오 계정이 있습니다.");
 	    }
 	 
@@ -218,7 +221,7 @@ public class NaverService {
 	    );
 
 	    // 요청 응답 확인
-	    System.out.println(userDetailResponse);
+	    System.out.println("유저인포!!!!!!!!!!!!!!!!" + userDetailResponse);
 
 	    // 네이버로부터 받은 정보를 객체화
 	    // *이때, 공식문서에는 응답 파라미터에 mobile 밖에없지만, 국제전화 표기로 된 mobile_e164도 같이 옴. 따라서 NaverProfileVo에 mobile_e164 필드도 있어야 정상적으로 객체가 생성됨
@@ -250,7 +253,7 @@ public class NaverService {
 	    //ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
 	   // valueOperations.set("RTKey"+naverMember.getMemberId(), refreshToken);
 	    
-	    System.out.println(naverToken.getAccess_token());
+	    System.out.println("%%%%%네이버토큰%%%%%%%%%%%" + naverToken.getAccess_token());
 	   // scheduleadd(naverToken.getAccess_token());
 	    
 	    return naverToken.getAccess_token();

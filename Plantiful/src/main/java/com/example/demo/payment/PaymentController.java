@@ -106,7 +106,7 @@ public class PaymentController {
 	    if (paymentdto != null) {
 	        map.put("paydto", paymentdto);
 	    } else {
-	        map.put("message", "돈이 없습니다");
+	        map.put("message", "충전 된 금액이 없어 등록이 취소 됩니다");
 	        map.put("paydto", null);
 	    }
 

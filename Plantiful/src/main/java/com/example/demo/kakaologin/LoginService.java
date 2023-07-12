@@ -167,7 +167,7 @@ public class LoginService {
 			MemberDto dto = memberservice.getMember(email);
 			// 카카오톡으로 로그인 하려고하는데 네이버로 이미 가입 된 이메일이 있다면
 			// 혹은 이미 카카오로 회원가입을 진행 했다면?
-			if (dto != null && dto.getId() == '2') { // 멤버에 있는지 찾아서 있다면
+			if (dto != null && dto.getId() == 2) { // 멤버에 있는지 찾아서 있다면
 				email = null; // 얻은 정보는 null을 만들고
 				userInfo.put("message", "동일 아이디로 회원가입 된 네이버 계정이 있습니다.");
 
