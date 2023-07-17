@@ -111,7 +111,7 @@ plan + tiful 과 기존 서비스와의 차별점은 아래와 같습니다.
 - Tomcat 9.0.43 or 9+
 - Your prefered IDE
     - Spring Tools Suite(STS)
-    - IntelliJ IDEA
+    - Eclipse IDE
    
 #### 1️⃣ 프로젝트 클론
 ~~~ 
