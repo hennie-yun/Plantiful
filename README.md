@@ -9,7 +9,7 @@ plan + tiful (계획으로 가득 찬)
 
 <br><br/>
 ## 🔗 Link
-- **deploy site :** 배포사이트 업로드 
+- **Deploy site :** 배포사이트 업로드 
 
 - **Github Repository :** <br/>
 https://github.com/hennie-yun/Plantiful <br/>
