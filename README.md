@@ -138,7 +138,6 @@ git clone https://github.com/hennie-yun/Plantiful
    >   spring.datasource.url=jdbc:oracle:thin:@localhost:1521/xe
    >   spring.datasource.username=<YOUR_DB_USERNAME>
    >   spring.datasource.password=<YOUR_DB_PASSWORD>
-
    >   ~~~
    #
    >> 2. src/main/resources/application.properties/```#multipart```
