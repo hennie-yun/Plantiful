@@ -188,46 +188,66 @@ git clone https://github.com/hennie-yun/Plantiful
 ## 📸 Site Screenshot
 
 ### [Join]
+
 ![image](https://github.com/hennie-yun/Plantiful/assets/129652734/13a74d55-a7b5-406c-8de0-68e264011a83)
 ###  [Login]
+
 ![image](https://github.com/hennie-yun/Plantiful/assets/129652734/0ba616eb-5ad0-4208-bfdb-337506386c29)
 ### [FindPwd]
+
 ![image](https://github.com/hennie-yun/Plantiful/assets/129652734/769f8fc5-4a63-410b-bd9c-026615959b0c)
 ###  [Main Page]
+
 ![image](https://github.com/hennie-yun/Plantiful/assets/129652734/2e6bfcc8-31de-4196-80aa-046adfdbb822)
 ### [Add Schedule]
-![image](https://github.com/hennie-yun/Plantiful/assets/129652734/fc77d6e2-e700-4310-a1f4-84c3d7615c18)
+
+![image](https://github.com/hennie-yun/Plantiful/assets/129652734/0127f51a-df77-416d-b6ed-07a59b0e2dd4)
 ### [Share Schedule]
+
 ![image](https://github.com/hennie-yun/Plantiful/assets/129652734/f5dafb22-f1d1-4e36-ac32-c75a8f84f285)
 ### [Making Group]
+
 ![image](https://github.com/hennie-yun/Plantiful/assets/129652734/a95a7010-f99e-4c9e-87b6-2ac56856ba0b)
 ### [Invite Group]
+
 ![image](https://github.com/hennie-yun/Plantiful/assets/129652734/5dda3fce-3d3a-4ea2-91ec-f92b52821a6d)
 ### [SubcribeBoard List]
+
 ![image](https://github.com/hennie-yun/Plantiful/assets/129652734/b05b113f-e62d-474d-a03b-59305c552981)
 ### [SubcribeBoard Add]
+
 ![image](https://github.com/hennie-yun/Plantiful/assets/129652734/67893384-3251-41fb-9429-70d1351ab930)
 ### [SubcribeBoard Detail]
+
 ![image](https://github.com/hennie-yun/Plantiful/assets/129652734/ad268b11-60de-4e05-8005-2865b8ea73d9)
 ### [My Subscribe]
+
 ![image](https://github.com/hennie-yun/Plantiful/assets/129652734/99b61cc9-b431-42b2-980b-928605159f3e)
 ### [My page]
+
 ![image](https://github.com/hennie-yun/Plantiful/assets/129652734/82e08598-4178-4444-a60a-74ef621e0796)
 ### [Edit Myinfo]
+
 ![image](https://github.com/hennie-yun/Plantiful/assets/129652734/1355e037-057d-46fd-b5f2-3a6b9562377c)
 ### [Payment]
+
 ![image](https://github.com/hennie-yun/Plantiful/assets/129652734/6fad6d7c-4c95-4fa4-829f-ef3474a63c39)
 ![image](https://github.com/hennie-yun/Plantiful/assets/129652734/25bd9bae-0feb-40f9-9b83-78081b568ab4)
 ### [Withdraw Cash]
+
 ![image](https://github.com/hennie-yun/Plantiful/assets/129652734/fda3fa72-260b-4e44-9bcb-2da5ec71a370)
 ![image](https://github.com/hennie-yun/Plantiful/assets/129652734/046f7310-a703-459e-9fb1-cc571c7a1f1a)
 ### [Chat List]
+
 ![image](https://github.com/hennie-yun/Plantiful/assets/129652734/5aff620f-7aa3-401b-b1a1-f2ec40415283)
 ### [ChatRoom] 
+
 ![image](https://github.com/hennie-yun/Plantiful/assets/129652734/d67195a8-4afb-4661-bdfd-87096b4d9ff8)
 ### [Exhibition List]
+
 ![image](https://github.com/hennie-yun/Plantiful/assets/129652734/bb92bfc0-3e4b-4863-a2e4-9b1afe7bc740)
 ### [Exhibition Detail]
+
 ![image](https://github.com/hennie-yun/Plantiful/assets/129652734/fdadd7e6-5311-4555-a6fa-c1b24d972041)
 ![image](https://github.com/hennie-yun/Plantiful/assets/129652734/ac6aec51-a2f7-49bb-bb93-08275bef2760)
 ![image](https://github.com/hennie-yun/Plantiful/assets/129652734/1896ebc4-be92-458c-b3b4-84e32cb8ebed)
