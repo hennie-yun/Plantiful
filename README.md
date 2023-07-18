@@ -63,6 +63,7 @@ plan + tiful 과 기존 서비스와의 차별점은 아래와 같습니다.
 - 남영우 : https://github.com/youngwoo0624
 - 이서연 : https://github.com/seoyeonDev
 
+<br><br/>
 ## 📌 Features
 - Kakao, Naver 소셜 로그인
 - 이메일 인증
