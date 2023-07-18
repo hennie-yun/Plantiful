@@ -22,12 +22,13 @@ https://github.com/hennie-yun/vscodePlantiful
 <br><br/>
 ## 📖 Summary
 > ```Introduce Project```
->  - [💡 Motivation](#-motivation)  
+>  - [💡 Motivation](#-motivation)
+>  - [🧑🏻‍💻 Team Member](#-team-member)
 >  - [📌 Features](#-features)  
 >  - [🛠 Stack](#-stack)
 >  - [💿 Installation](#-installation)  
 >  - [📸 Site Screenshot](#-site-screenshot)
->  - [🧑🏻‍💻 Team Member](#-team-member)
+
 #
 * * *
 #
@@ -54,6 +55,14 @@ plan + tiful 과 기존 서비스와의 차별점은 아래와 같습니다.
 이처럼 plan + tiful은 스케줄 관리에서 더 나아가 다양한 기능들을 통합하여 사용자들에게 편리한 경험을 제공하는데 중점을 두어 프로젝트를 진행 하였습니다. 
 
 <br><br/>
+
+## 🧑🏻‍💻 Team Member
+- 윤해현 : https://github.com/hennie-yun
+- 정근희 : https://github.com/rmsgml7553
+- 이주원 : https://github.com/leejuwon92
+- 남영우 : https://github.com/youngwoo0624
+- 이서연 : https://github.com/seoyeonDev
+
 ## 📌 Features
 - Kakao, Naver 소셜 로그인
 - 이메일 인증
@@ -177,6 +186,7 @@ git clone https://github.com/hennie-yun/Plantiful
 #### 4️⃣ _STS_ or _Eclipse_ > Tomcat Configure 설정 후 > Run
 <br><br/>
 ## 📸 Site Screenshot
+
 ### [Join]
 ![image](https://github.com/hennie-yun/Plantiful/assets/129652734/13a74d55-a7b5-406c-8de0-68e264011a83)
 ###  [Login]
@@ -222,11 +232,6 @@ git clone https://github.com/hennie-yun/Plantiful
 ![image](https://github.com/hennie-yun/Plantiful/assets/129652734/ac6aec51-a2f7-49bb-bb93-08275bef2760)
 ![image](https://github.com/hennie-yun/Plantiful/assets/129652734/1896ebc4-be92-458c-b3b4-84e32cb8ebed)
 
-## 🧑🏻‍💻 Team Member
-- 윤해현 : https://github.com/hennie-yun
-- 정근희 : https://github.com/rmsgml7553
-- 이주원 : https://github.com/leejuwon92
-- 남영우 : https://github.com/youngwoo0624
-- 이서연 : https://github.com/seoyeonDev
+
 
 
