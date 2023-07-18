@@ -177,6 +177,18 @@ git clone https://github.com/hennie-yun/Plantiful
 #### 4️⃣ _STS_ or _Eclipse_ > Tomcat Configure 설정 후 > Run
 <br><br/>
 ## 📸 Site Screenshot
+[Join]
+![image](https://github.com/hennie-yun/Plantiful/assets/129652734/13a74d55-a7b5-406c-8de0-68e264011a83)
+[Login]
+![image](https://github.com/hennie-yun/Plantiful/assets/129652734/0ba616eb-5ad0-4208-bfdb-337506386c29)
+[FindPwd]
+![image](https://github.com/hennie-yun/Plantiful/assets/129652734/769f8fc5-4a63-410b-bd9c-026615959b0c)
+[Main]
+![image](https://github.com/hennie-yun/Plantiful/assets/129652734/2e6bfcc8-31de-4196-80aa-046adfdbb822)
+
+[Making Group]
+![image](https://github.com/hennie-yun/Plantiful/assets/129652734/a95a7010-f99e-4c9e-87b6-2ac56856ba0b)
+
 ## 🧑🏻‍💻 Team Member
 - 윤해현 : https://github.com/hennie-yun
 - 정근희 : https://github.com/rmsgml7553
