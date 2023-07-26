@@ -3,23 +3,34 @@ package com.example.demo.kakao;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalTime;
-import java.util.HashMap;
-import java.util.Map;
 
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 import com.example.demo.kakaologin.KakaoToken;
 import com.example.demo.member.Member;
 import com.example.demo.schedulegroup.ScheduleGroup;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 class data{
@@ -41,14 +52,144 @@ class data{
 @Service
 public class KakaoService {
 	
-	public String authToken(String authorization_code) {
+
+	// accesstoken으로 톡캘린더 권한 확인 
+	public boolean checkToken(String accessToken) throws UnsupportedEncodingException {
+		String json = null;
+		boolean agreed = false;
+		String api_url = "https://kapi.kakao.com/v2/user/revoke/scopes";
+		//String accessToken = tokenService.findByEmail();
+		String scopes = URLEncoder.encode("[\"talk_calendar\"]", "UTF-8");
+		
+		try {
+			URL url = new URL(api_url);
+			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			connection.setRequestMethod("POST");
+			connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+			connection.setRequestProperty("Authorization", "Bearer " + accessToken);
+			connection.setDoOutput(true);
+			
+			String postData = "scopes=" + scopes;
+			OutputStream outputStream = connection.getOutputStream();
+			outputStream.write(postData.getBytes("UTF-8"));
+			outputStream.flush();
+			outputStream.close();
+			
+			int responseCode = connection.getResponseCode();
+			BufferedReader reader;
+			if(responseCode == HttpURLConnection.HTTP_OK) {
+				reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			} else {
+				reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+			}
+			
+			StringBuilder response = new StringBuilder();
+			String line;
+			while((line = reader.readLine()) != null){
+				response.append(line);
+			}
+			reader.close();
+			
+			System.out.println("ResponseCode: " + responseCode);
+			System.out.println("ResponseBody: " + response.toString());
+			
+			json = response.toString();
+			
+			ObjectMapper objectMapper = new ObjectMapper();
+			JsonNode rootNode = objectMapper.readTree(json);
+			
+			//"scopes" 배열에서 id가 "talk_calendar"인 항목을 찾아서 agreed값을 가져옴
+			JsonNode scopesNode = rootNode.get("scopes");
+			if(scopesNode.isArray()) {
+				for(JsonNode scopeNode : scopesNode) {
+					String id = scopeNode.get("id").asText();
+					if(id.equals("talk_calendar")) {
+						agreed = scopeNode.get("agreed").asBoolean();
+						System.out.println("talk_calendar : " + agreed);
+						break;
+					
+					}
+				}
+			}
+			
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return agreed;
+
+	}
+	
+	// 톡캘린더 권한 획득하기 위해 code 요청  
+	public String createKakaoURL() throws UnsupportedEncodingException {
+		StringBuffer url = new StringBuffer();
+		
+
+		url.append("https://kauth.kakao.com/oauth/authorize?client_id=" + "d54083f94196531e75d7de474142e52e");
+		url.append("&redirect_uri=http://localhost:8182/calendar");
+		url.append("&response_type=code");
+		url.append("&scope=talk_calendar");
+		
+		return url.toString();
+	}
+	
+	// 요청한 code로 accessToken 발급
+	public String tokenKakao(String code) {
+		// header/parameters 설정 부분
+		RestTemplate token_rt = new RestTemplate(); // rest api 요청용 template
+		
+		HttpHeaders kakaoTokenRequestHeaders = new HttpHeaders(); //Http 요청을 위한 헤더
+		kakaoTokenRequestHeaders.add("Content-type", "application/x-www-form-urlencoded");
+		
+		// 파라미터들을 담아주기 위한 맵
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("grant_type", "authorization_code");
+		params.add("client_id", "d54083f94196531e75d7de474142e52e");
+		params.add("redirect_uri", "http://localhost:8181/api/kakao/token");
+		params.add("code", code);
+		
+		HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = 
+				new HttpEntity<>(params, kakaoTokenRequestHeaders);
+		
+		// 서비스 서버에서 카카오 인증 서버로 요청 전송
+		ResponseEntity<String> oauthTokenResponse = token_rt.exchange(
+				"https://kauth.kakao.com/oauth/token",
+				HttpMethod.POST,
+				kakaoTokenRequest,
+				String.class
+				);
+		
+		System.out.println(oauthTokenResponse);
+		
+		//oauthTokenResponse로 받은 토큰정보 객체화
+		ObjectMapper token_om = new ObjectMapper();
+		KakaoToken kakaoToken = null;
+		try {
+			kakaoToken = token_om.readValue(oauthTokenResponse.getBody(), KakaoToken.class);
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return kakaoToken.getAccess_token();
+		
+	}
+
+	// code로 accessToken 요청 
+	public String authToken(String code) {
 		String access_Token = "";
 		String refresh_Token ="";
 		
-		String scheduleres = "";
+		//String scheduleres = "";
 
 		
-		System.out.println("authToken: "+authorization_code);
+		System.out.println("authToken: "+code);
 		
 		String strUrl = "https://kauth.kakao.com/oauth/token"; // 토큰 요청 보낼 주소
 		
@@ -77,7 +218,7 @@ public class KakaoService {
 			sb.append("&redirect_uri=http://localhost:8182/calendar");
 
 			// 3번 파라미터 code
-			sb.append("&code=" + authorization_code);
+			sb.append("&code=" + code);
 
 
 			bw.write(sb.toString());
@@ -125,6 +266,7 @@ public class KakaoService {
 		//log.info("카카오토큰생성완료>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		return access_Token;
 	}
+	
 	 private static LocalTime roundToNearestFiveMinutes(LocalTime time) {
 		   int minute = time.getMinute();
 		   int roundedMinute = ((minute + 4) / 5) * 5;
@@ -132,7 +274,7 @@ public class KakaoService {
 		   return LocalTime.of(time.getHour(), roundedMinute);
 	 }
 	
-	
+	//  카카오 캘린더에 스케줄 추가
 	public String scheduleadd(String access_token) {
 		System.out.println("scheduleadd " + access_token);
 		String result = "";
@@ -167,6 +309,8 @@ public class KakaoService {
 	    LocalTime adjustedTime = roundToNearestFiveMinutes(time);
 	    LocalTime adjustedTime2 = roundToNearestFiveMinutes(time2).plusMinutes(5);
 		
+
+	    
 		String adjustedStartAt = (adjustedTime+":00").toString();
 		String adjustedStartAt2 = (adjustedTime2+":00").toString();
 	    System.out.println("Adjusted startAt: " + adjustedStartAt);
@@ -214,8 +358,11 @@ public class KakaoService {
 				   */
 				    String requestBody = "calendar_id=primary&event="
 //		                    + "{\"title\":\"" + decodedTitle + "\", \"time\":{\"start_at\": \"" + data.start + "T" + adjustedStartAt + "Z\", \"end_at\": \"" + data.end + "T" + adjustedStartAt2 + "Z\", \"time_zone\": \"Asia/Seoul\", \"all_day\": false, \"lunar\": false }, \"description\": \"" + decodedInfo + "\"}";
-
-				    + "{\"title\":\""+decodedTitle+"\",\"time\":{\"start_at\":\""+ data.start + "T" + adjustedStartAt+"Z\",\"end_at\":\""+ data.end + "T" + adjustedStartAt2+"Z\",\"time_zone\":\"Asia/Seoul\",\"all_day\":false,\"lunar\":false},\"rrlue\":\"FREQ=DAILY;UNTIL=20221031T000000Z\",\"description\":\""+decodedInfo+"\",\"location\":{\"name\":\"cacao\",\"location_id\":18577297,\"address\":\"166 Pangyoyeok-ro, Bundang-gu, Seongnam-si, Gyeonggi-do\",\"latitude\":37.39570088983171,\"longitude\":127.1104335101161},\"reminders\":[15,30],\"color\":\"RED\"}";
+				    +  "{\"title\":\"" + decodedTitle + "\",\"time\":{\"start_at\":\"" + data.start + "T"+ adjustedStartAt +
+			        "\",\"end_at\":\"" + data.end + "T"+ adjustedStartAt2 + "\",\"time_zone\":\"Asia/Seoul\",\"all_day\":false,\"lunar\":false}," +
+			        "\"rrlue\":\"FREQ=DAILY;UNTIL=20221031T000000Z\",\"description\":\"" + decodedInfo +
+			        "\",\"location\":{\"name\":\"cacao\",\"location_id\":18577297,\"address\":\"166 Pangyoyeok-ro, Bundang-gu, Seongnam-si, Gyeonggi-do\"," +
+			        "\"latitude\":37.39570088983171,\"longitude\":127.1104335101161},\"reminders\":[15,30],\"color\":\"RED\"}";
 			          
 //			          
 

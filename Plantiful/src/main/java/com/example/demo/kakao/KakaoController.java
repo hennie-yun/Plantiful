@@ -2,16 +2,19 @@ package com.example.demo.kakao;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.example.demo.auth.JwtTokenProvider;
 import com.example.demo.kakaoaccesstoken.Kakaotoken;
@@ -20,6 +23,7 @@ import com.example.demo.kakaologin.KakaoToken;
 import com.example.demo.member.MemberDto;
 import com.example.demo.member.MemberService;
 import com.example.demo.schedule.ScheduleDto;
+import com.example.demo.schedule.ScheduleService;
 
 @RestController
 @CrossOrigin("*")
@@ -34,20 +38,14 @@ public class KakaoController {
 	@Autowired
 	private KakaotokenService kakaotokenService;
 	
-	@Autowired(required = false)
+	@Autowired(required = false) 
 	private JwtTokenProvider tokenprovider;
 	
 	private String authorization_code="";
 	private String access_token="";
-
+	private String email = "";
 	 
-//	private static LocalTime roundToNearestFiveMinutes(LocalTime time) {
-//        int minute = time.getMinute();
-//        int roundedMinute = ((minute + 4) / 5) * 5;
-//        System.out.println(roundedMinute);
-//        return LocalTime.of(time.getHour(), roundedMinute);
-//	}
-	
+
 	@PostMapping("/api/kakao/form")
 	public Map getKakaoData(ScheduleDto dto) {
 		System.out.println(dto.toString());
@@ -60,20 +58,6 @@ public class KakaoController {
 		if (dto.getEndTime() == null) {
 			dto.setEndTime("00:00:00z");
 		}
-//		String startAt = dto.getStart()+"T"+dto.getStartTime()+"00";
-//		String endAt = dto.getEnd()+"T"+dto.getEndTime()+"00";
-//		
-//		LocalDateTime dateTime = LocalDateTime.parse(startAt);
-//		LocalDateTime dateTime2 = LocalDateTime.parse(endAt);
-//		
-//		LocalTime adjustedTime = roundToNearestFiveMinutes(dateTime.toLocalTime());
-//		LocalTime adjustedTime2 = roundToNearestFiveMinutes(dateTime2.toLocalTime());
-//		
-//		LocalDateTime adjustedDateTime = LocalDateTime.of(dateTime.toLocalDate(), adjustedTime);
-//		LocalDateTime adjustedDateTime2 = LocalDateTime.of(dateTime2.toLocalDate(), adjustedTime2);
-//		
-//		String startTimeAt = adjustedDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-//		String startTimeAt2 = adjustedDateTime2.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 		
 		try {	
 			data.schedule_num = dto.getSchedule_num();
@@ -124,44 +108,94 @@ public class KakaoController {
 	}
 
 	@GetMapping("/api/kakao/token")
-	public Map getKakaotoken(@RequestHeader(value = "authorization_code", required = false) String authorization_code) {
+	public ModelAndView getKakaotoken(@RequestParam("code") String code) throws UnsupportedEncodingException {
 		String result = "";
 		String kakao = "";
+		String redirectURL = null;
+		
 		System.out.println("kakao token");
-		System.out.println(authorization_code);
-		Map map = new HashMap();
-			System.out.println("kakao token");
-			System.out.println(authorization_code);
-			if(authorization_code != null) {
-				System.out.println(authorization_code);
-				result = kakaoService.authToken(authorization_code);
+		System.out.println(code);
+		
+			if(code != null) {
+				// result에 access_token 담아옴
+				result = kakaoService.tokenKakao(code);
 				System.out.println("new access_token"+result);
 				access_token = result;
-				System.out.println("access_token" + access_token);
+				System.out.println("새로받아온 토큰"+access_token);
+				// 담아온 토큰을 email 토큰에 저장
+				Kakaotoken token = kakaotokenService.findByEmail(email);
+				token.setToken(access_token);
+				System.out.println(token);
+				kakaotokenService.edit(token);
+				System.out.println("access_token" + token);
 				kakao = kakaoService.scheduleadd(access_token);
-				System.out.println("kakao****"+kakao);
+				
+				redirectURL = "http://localhost:8182/calendar?result="+URLEncoder.encode(kakao, "UTF-8");
+				
 			}
 			System.out.println("scheduleadd result:"+kakao);	
-			map.put("result", result);
-			map.put("kakao", kakao);
-			return map;
+			return new ModelAndView("redirect:"+redirectURL);
 		}
 		
 	
-
-	@GetMapping("/api/kakao/oauth")
-	public Map getOauth(@RequestHeader(value="authorization_code") String authorization_code) {
-		access_token = kakaoService.authToken(authorization_code);
-		Map map = new HashMap();
-		System.out.println("oauth / access_token"+access_token);
-		String res = kakaoService.scheduleadd(access_token);
-		map.put("access_token", access_token);
-		map.put("res", res);
+	@GetMapping("/api/kakao/gettoken")
+	public Map token(@RequestHeader(value="token") String token) {
+		boolean result;
+		Map map = new HashMap<>();
+		String email = tokenprovider.getUsernameFromToken(token);
+		Kakaotoken kakaotoken= kakaotokenService.findByEmail(email);
+		String accessToken = kakaotoken.getToken();
+		map.put("accessToken", accessToken);
 		return map;
+	}
+	
+	@GetMapping("/api/kakao/tokencheck")
+	public Map tokenCheck(@RequestHeader(value="token") String token) {
+		boolean result;
+		Map map = new HashMap<>();
+		email = tokenprovider.getUsernameFromToken(token);
+		Kakaotoken kakaotoken= kakaotokenService.findByEmail(email);
+		try {
+			System.out.println("kakaotoken" + kakaotoken.getToken());
+			result = kakaoService.checkToken(kakaotoken.getToken());
+			map.put("result", result);
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return map;
+	}
+	
+	
+	@GetMapping("/api/kakao/oauth")
+	public ResponseEntity<?> kakaoConnect() throws UnsupportedEncodingException{
+		String url = kakaoService.createKakaoURL();
+		return new ResponseEntity<>(url, HttpStatus.OK);
+	}
+
+	@GetMapping("/api/kakao/callback")
+	public ModelAndView kakaoMerge(@RequestParam("code") String code) {
+		System.out.println("code"+code);
+		
+		access_token = kakaoService.tokenKakao(code);
+		System.out.println("callback");
+		System.out.println("access_token"+access_token);
+		Kakaotoken token = kakaotokenService.findByEmail(email);
+		token.setToken(access_token);
+		//String result = kakaoService.scheduleadd(access_token);
+		String redirectURL = null;
+		try {
+			redirectURL = "http://localhost:8182/calendar?result="+URLEncoder.encode(token.getToken(), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return new ModelAndView("redirect:"+redirectURL);
 		
 	}
 	
-
+	
 	@GetMapping("/api/kakao/member")
 	public Map getMemberCheck(@RequestHeader(value="token") String token) {
 		String result = "";
@@ -169,14 +203,18 @@ public class KakaoController {
 		String email = tokenprovider.getUsernameFromToken(token);
 		System.out.println("kakaomember"+email);
 		MemberDto member = memberService.getMember(email);
+		// 일반 : 0, 카카오 : 1, 네이버 : 2
 		long id = member.getId(); 
-		Kakaotoken kakao =  kakaotokenService.findByEmail(email);
-		System.out.println("original // access_token"+kakao.getToken());
-		String res = kakaoService.scheduleadd(kakao.getToken());
+//		Kakaotoken kakao =  kakaotokenService.findByEmail(email);
+//		System.out.println("original // access_token"+kakao.getToken());
+		
 		Map map = new HashMap();
 		map.put("id", id);
 		return map;
 	}
+	
+
+	
 //	@GetMapping("/api/kakao/member")
 //	public Map getMemberCheck(@RequestHeader(value="token") String token) {
 //		String result = "";
