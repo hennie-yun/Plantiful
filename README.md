@@ -19,18 +19,19 @@ https://github.com/hennie-yun/vscodePlantiful
 - **Presentation :** pdf 파일 첨부예정
 <br><br/>
 ## 📖 Summary
-> ```Introduce Project```
+> ```Introduction```
 >  - [💡 Motivation](#-motivation)
 >  - [🧑🏻‍💻 Team Member](#-team-member)
 >  - [📌 Features](#-features)  
 >  - [🛠 Stack](#-stack)
 >  - [💿 Installation](#-installation)  
 >  - [📸 Site Screenshot](#-site-screenshot)
->  - [✅Code Refactoring](#-Code-refactoring) : 7월 29일 
+>  - [✅ Refactoring](#-refactoring)
+
 
 #
 #
-# Introduce Project
+# Introduction
 plan + tiful은 KOSTA 257기 파이널 프로젝트로 진행 되었습니다.
 2023.06.12 ~ 2021.07.12 총 31일간 설계 및 개발하였으며, 5명의 팀원이 함께 하였습니다.
 <br><br/>
@@ -253,7 +254,7 @@ git clone https://github.com/hennie-yun/Plantiful
 
 
 <br><br/>
-## ✅Code Refactoring
+## ✅ Refactoring
 
 **[🔨추가 기술 스택]** 
 - 금융결제원 계좌실명조회 API
