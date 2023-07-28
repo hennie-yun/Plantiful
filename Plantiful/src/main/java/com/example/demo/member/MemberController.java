@@ -63,9 +63,17 @@ public class MemberController {
 
 	// 가입
 	@PostMapping("")
-	public void join(MemberDto dto, @RequestParam(required = false) MultipartFile f) {
+	public Map join(MemberDto dto, @RequestParam(required = false) MultipartFile f) {
 		boolean flag = true;
-		try {
+		HashMap map = new HashMap(); 
+		
+		String checkemail = dto.getEmail();
+		System.out.println(checkemail);
+		MemberDto serviceemail = service.getMember(checkemail);
+		System.out.println(serviceemail);
+
+		  if (serviceemail == null || serviceemail.getEmail() == null || serviceemail.getEmail().isEmpty()) {		
+			  try {
 			String email = service.save(dto);
 			File dir = new File(path + "/" + email);
 			dir.mkdir(); // 파일 디렉토리까지 생성
@@ -84,9 +92,14 @@ public class MemberController {
 			}
 
 			service.save(dto);
+			map.put("dtook", dto);
 		} catch (Exception e) {
 			flag = false;
+		} 
+		} else {
+			map.put("msg", "중복된 아이디 입니다");
 		}
+		return map; 
 	}
 
 	// 이미지 제외 수정
@@ -302,8 +315,11 @@ public class MemberController {
 				return map;
 			}
 		}
+		//로그인 전 
 		MemberDto d = service.getMember(email);
+		long id = d.getId();
 		map.put("dto", d);
+		map.put("id", id);
 		return map;
 	}
 
@@ -409,6 +425,7 @@ public class MemberController {
 	@ResponseBody
 	@PostMapping("/emailpwdcheck")
 	public Map pwdcheck(String email) {
+		System.out.println("###############이메일인증" + email);
 		JavaMailSenderImpl mailSenderImpl = new JavaMailSenderImpl();
 		Properties prop = new Properties();
 		mailSenderImpl.setHost("smtp.gmail.com");
@@ -465,7 +482,7 @@ public class MemberController {
 	// 일치하면 true 아니면 false 를 반환해서 완벽하게 이루어 졌나 확인 한다.
 	@GetMapping("/certifications/redirect")
 	public Map handleRedirect(@RequestParam("imp_uid") String impUid, @RequestParam("email") String email) {
-		boolean flag = false;
+//		boolean flag = false;
 		Map map = new HashMap<>();
 		System.out.println("Received imp_uid: " + impUid);
 		map = checkinfoservice.getAccessToken(impUid);
@@ -474,13 +491,15 @@ public class MemberController {
 		String phone = (String) map.get("phone");
 		String name = (String) map.get("name");
 
-		if (dto != null) {
-			if (dto.getPhone().equals(phone)) {
-				flag = true;
-			}
-		}
-		map.put("flag", flag);
+//		if (dto != null) { // 가입이 이미 되어 있고 정
+//			if (dto.getPhone().equals(phone)) {
+//				flag = true;
+//			}
+//		}
+//		map.put("flag", flag);
+		
 		map.put("name", name);
+		map.put("phone", phone);
 		return map;
 	}
 
@@ -500,6 +519,25 @@ public class MemberController {
 			map.put("flag", flag);
 		}
 		System.out.println("flag = " + flag);
+		return map;
+	}
+	
+	@GetMapping("/certifications/checkAccount")
+	public Map CheckAccount(@RequestParam("bank_code") String bank_code, @RequestParam("bank_num") String bank_num) {
+		Map map = new HashMap<>();
+		map = checkinfoservice.getAccessToken1(bank_code, bank_num);
+	
+		String bankHolderInfo = (String) map.get("bankHolderInfo");
+		
+		Object errorObj = map.get("error");
+		if (errorObj instanceof String) {
+		    String errorStr = (String) errorObj;
+		    int error1 = Integer.parseInt(errorStr);
+		    map.put("errormsg", String.valueOf(error1));
+		} 
+
+		
+		map.put("bankHolderInfo", bankHolderInfo);
 		return map;
 	}
 

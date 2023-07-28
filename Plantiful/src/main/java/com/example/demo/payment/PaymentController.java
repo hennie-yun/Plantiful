@@ -80,6 +80,8 @@ public class PaymentController {
 		System.out.println("dto>>>>>>>>>>>" + dto);
 		System.out.println(oldPayment);
 		
+	
+		
 		if (oldPayment != null) {
 			int newPaidAmount = oldPayment.getPaidamount() - dto.getPaidamount();
 			oldPayment.setPaidamount(newPaidAmount);

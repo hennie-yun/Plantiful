@@ -27,7 +27,7 @@ public class MemberService {
 		Member entity = dao.findById(email).orElse(null);
 		MemberDto dto = null;
 		if (entity == null) {
-			return dto;
+		    return dto; 
 		} else {
 			dto = new MemberDto(entity.getEmail(), entity.getPwd(), entity.getNickname(), entity.getPhone(),
 					entity.getId(),entity.getImg(), null);
