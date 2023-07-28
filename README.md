@@ -26,6 +26,7 @@ https://github.com/hennie-yun/vscodePlantiful
 >  - [🛠 Stack](#-stack)
 >  - [💿 Installation](#-installation)  
 >  - [📸 Site Screenshot](#-site-screenshot)
+>  - [✅Code Refactoring](#-Code-refactoring) : 7월 29일 
 
 #
 #
@@ -104,6 +105,7 @@ plan + tiful 과 기존 서비스와의 차별점은 아래와 같습니다.
 - Kakao talk calendar API
 - Naver calendar API
 - Kakao messeage API
+- kftc API
 
 <br><br/>
 ## 💿 Installation
@@ -249,6 +251,37 @@ git clone https://github.com/hennie-yun/Plantiful
 ![image](https://github.com/hennie-yun/Plantiful/assets/129652734/ac6aec51-a2f7-49bb-bb93-08275bef2760)
 ![image](https://github.com/hennie-yun/Plantiful/assets/129652734/1896ebc4-be92-458c-b3b4-84e32cb8ebed)
 
+
+<br><br/>
+## ✅Code Refactoring
+
+**[🔨추가 기술 스택]** 
+- 금융결제원 계좌실명조회 API
+
+<br><br/>
+**[📃추가 구현 상세]** 
+
+1. 일반 회원 가입 시 진행 하던 이메일 인증을 없애고 본인 인증으로 변경하였습니다.
+2. 임시 비밀번호 발급은 일반회원에 한정 되며 소셜 로그인으로 진행 하였다면 알림을 띄어줍니다. 
+3. 본인 인증만을 통해 인출 진행 한 부분을 실계좌주 일치 여부를 확인 하여 출금 하는 방식으로 보안을 높였습니다.(단, 테스트 버전으로 실제 출금은 진행 되지 않습니다)
+4. 카카오톡 공유하기 기능을 수정 하였습니다. 
+<br><br/>
+
+**[📸추가 구현 Site Screenshot]**
+
+#### [Login] - 휴대폰 본인 인증을 해야 가입이 가능합니다.
+![image](https://github.com/hennie-yun/Plantiful/assets/129652734/d88894df-7463-4d02-9a90-40544bd5b363)
+<br><br/>
+#### [Find pw - for SNS Member] - 간편로그인 멤버는 비밀번호 찾기를 진행 할 수 없습니다
+![image](https://github.com/hennie-yun/Plantiful/assets/129652734/e06968aa-3333-4c12-a51c-30c0fe2535d0)
+<br><br/>
+#### [edit myinfo] - 본인 인증을 해야만 전화번호를 변경 할 수 있습니다. 
+![image](https://github.com/hennie-yun/Plantiful/assets/129652734/7b1cabd3-d16f-419e-8045-d65994e27557)
+<br><br/>
+#### [withdraw] - 입력한 은행,이름,계좌번호를 조회하여 실계좌여부 및 예금주 일치 확인 후 인출이 가능합니다.
+![image](https://github.com/hennie-yun/Plantiful/assets/129652734/0623f52e-381b-48e4-b8ba-6b1e8bee3c25)
+
+* * *
 
 **FIN**
 
